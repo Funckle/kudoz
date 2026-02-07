@@ -1,11 +1,12 @@
 import { supabase } from './supabase';
+import { getAuthRedirectUrl } from './linking';
 import type { User } from '../types/database';
 
 export async function sendMagicLink(email: string): Promise<{ error?: string }> {
   const { error } = await supabase.auth.signInWithOtp({
     email,
     options: {
-      emailRedirectTo: 'kudoz://auth/callback',
+      emailRedirectTo: getAuthRedirectUrl(),
     },
   });
   if (error) return { error: error.message };

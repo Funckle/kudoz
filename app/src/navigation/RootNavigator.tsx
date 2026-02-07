@@ -10,6 +10,7 @@ import { CreatePostScreen } from '../screens/posts/CreatePostScreen';
 import { CreateGoalScreen } from '../screens/goals/CreateGoalScreen';
 import { EditGoalScreen } from '../screens/goals/EditGoalScreen';
 import { EditPostScreen } from '../screens/posts/EditPostScreen';
+import { linking } from '../services/linking';
 import type { RootStackParamList, CreateStackParamList } from '../types/navigation';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -34,7 +35,7 @@ export function RootNavigator() {
   }
 
   return (
-    <NavigationContainer>
+    <NavigationContainer linking={linking}>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         {!isAuthenticated ? (
           <Stack.Screen name="Auth" component={AuthNavigator} />
