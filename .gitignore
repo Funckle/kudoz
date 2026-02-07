@@ -1,0 +1,90 @@
+# Personal context & planning (do not commit)
+.claude/
+.tdad/
+memory/
+plans/
+
+# Environment variables & secrets
+.env
+.env.*
+env.*
+*.env
+!.env.example
+
+# Expo (managed workflow — native dirs are generated)
+.expo/
+dist/
+web-build/
+.expo-shared/
+ios/
+android/
+
+# Node
+node_modules/
+npm-debug.log
+yarn-error.log
+yarn.log
+
+# React Native
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*.orig.*
+
+# macOS
+.DS_Store
+*.swp
+*.swo
+*~.nib
+.AppleDouble
+.LSOverride
+
+# Linux
+*~
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# IDEs
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+.fleet/
+*.code-workspace
+
+# Testing
+coverage/
+*.lcov
+.nyc_output
+
+# Logs
+logs/
+*.log
+
+# Supabase (if using local dev)
+supabase/.branches
+supabase/.temp
+supabase/functions/.cache
+
+# Build artifacts
+build/
+*.apk
+*.ipa
+*.aab
+
+# TypeScript
+*.tsbuildinfo
+
+# Cache
+.cache/
+.turbo/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
