@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Platform } from 'react-native';
+import { Platform, View, StyleSheet } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -36,11 +36,30 @@ function AppInner() {
 
 export default function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <SafeAreaProvider>
-        <AppInner />
-        <StatusBar style="auto" />
-      </SafeAreaProvider>
-    </QueryClientProvider>
+    <View style={styles.outer}>
+      <View style={styles.inner}>
+        <QueryClientProvider client={queryClient}>
+          <SafeAreaProvider>
+            <AppInner />
+            <StatusBar style="auto" />
+          </SafeAreaProvider>
+        </QueryClientProvider>
+      </View>
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  outer: {
+    flex: 1,
+    backgroundColor: '#F5F5F5',
+    alignItems: 'center',
+  },
+  inner: {
+    flex: 1,
+    width: '100%',
+    maxWidth: 480,
+    backgroundColor: '#FFFFFF',
+    ...(Platform.OS === 'web' ? { borderLeftWidth: 1, borderRightWidth: 1, borderColor: '#E5E5E5' } : {}),
+  },
+});
