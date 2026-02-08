@@ -108,6 +108,17 @@ export function ProfileScreen({ navigation }: ProfileScreenProps<'Profile'>) {
       ListEmptyComponent={
         <EmptyState title={tab === 'active' ? 'No active goals' : 'No completed goals'} />
       }
+      ListFooterComponent={
+        <View style={styles.legalRow}>
+          <TouchableOpacity onPress={() => navigation.navigate('PrivacyPolicy')}>
+            <Text style={[styles.legalLink, { color: colors.textSecondary }]}>Privacy Policy</Text>
+          </TouchableOpacity>
+          <Text style={[styles.legalSep, { color: colors.textSecondary }]}> · </Text>
+          <TouchableOpacity onPress={() => navigation.navigate('Terms')}>
+            <Text style={[styles.legalLink, { color: colors.textSecondary }]}>Terms & Conditions</Text>
+          </TouchableOpacity>
+        </View>
+      }
       style={[styles.list, { backgroundColor: colors.background }]}
     />
   );
@@ -132,4 +143,7 @@ const styles = StyleSheet.create({
   tab: { flex: 1, paddingVertical: spacing.sm, alignItems: 'center' },
   tabText: { ...typography.body },
   goalContainer: { paddingHorizontal: spacing.md },
+  legalRow: { flexDirection: 'row', justifyContent: 'center', alignItems: 'center', paddingVertical: spacing.lg },
+  legalLink: { ...typography.caption },
+  legalSep: { ...typography.caption },
 });

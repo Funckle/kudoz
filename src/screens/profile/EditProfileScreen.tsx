@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { ScrollView, StyleSheet, Alert, TouchableOpacity, View, KeyboardAvoidingView, Platform } from 'react-native';
+import { ScrollView, StyleSheet, Alert, TouchableOpacity, View, Text, KeyboardAvoidingView, Platform } from 'react-native';
 import { ScreenContainer } from '../../components/ScreenContainer';
 import { Avatar } from '../../components/Avatar';
 import { TextInput } from '../../components/TextInput';
 import { Button } from '../../components/Button';
-import { spacing } from '../../utils/theme';
+import { spacing, typography } from '../../utils/theme';
 import { useTheme } from '../../utils/ThemeContext';
 import { LIMITS, validateUsername, validateUrl } from '../../utils/validation';
 import { useAuth } from '../../hooks/useAuth';
@@ -100,6 +100,15 @@ export function EditProfileScreen({ navigation }: ProfileScreenProps<'EditProfil
           <TextInput label="Bio" value={bio} onChangeText={setBio} maxLength={LIMITS.BIO} multiline />
           <TextInput label="Website" value={website} onChangeText={setWebsite} keyboardType="url" autoCapitalize="none" />
           <Button title="Save" onPress={handleSave} loading={saving} />
+          <View style={styles.legalRow}>
+            <TouchableOpacity onPress={() => navigation.navigate('PrivacyPolicy')}>
+              <Text style={[styles.legalLink, { color: colors.textSecondary }]}>Privacy Policy</Text>
+            </TouchableOpacity>
+            <Text style={[styles.legalSep, { color: colors.textSecondary }]}> · </Text>
+            <TouchableOpacity onPress={() => navigation.navigate('Terms')}>
+              <Text style={[styles.legalLink, { color: colors.textSecondary }]}>Terms & Conditions</Text>
+            </TouchableOpacity>
+          </View>
         </ScrollView>
       </KeyboardAvoidingView>
     </ScreenContainer>
@@ -111,4 +120,7 @@ const styles = StyleSheet.create({
   container: { flex: 1, padding: spacing.md },
   avatarSection: { alignItems: 'center', marginBottom: spacing.lg },
   photoBtn: { marginTop: spacing.sm },
+  legalRow: { flexDirection: 'row', justifyContent: 'center', alignItems: 'center', paddingVertical: spacing.lg },
+  legalLink: { ...typography.caption },
+  legalSep: { ...typography.caption },
 });

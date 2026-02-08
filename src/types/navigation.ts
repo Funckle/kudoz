@@ -15,6 +15,8 @@ export type OnboardingStackParamList = {
   UsernameSetup: undefined;
   CategorySelection: undefined;
   SuggestedFollows: undefined;
+  PrivacyPolicy: undefined;
+  Terms: undefined;
 };
 
 // Main tab navigator
@@ -69,6 +71,8 @@ export type ProfileStackParamList = {
   MutedUsers: undefined;
   About: undefined;
   YourData: undefined;
+  PrivacyPolicy: undefined;
+  Terms: undefined;
 };
 
 // Create stack (modal)

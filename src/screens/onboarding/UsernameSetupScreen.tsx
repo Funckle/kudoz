@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { ScreenContainer } from '../../components/ScreenContainer';
 import { TextInput } from '../../components/TextInput';
 import { Button } from '../../components/Button';
@@ -91,6 +91,16 @@ export function UsernameSetupScreen({ navigation }: OnboardingScreenProps<'Usern
           loading={loading}
           disabled={!isValid}
         />
+        <View style={styles.legalRow}>
+          <Text style={[styles.legalText, { color: colors.textSecondary }]}>By continuing, you agree to our </Text>
+          <TouchableOpacity onPress={() => navigation.navigate('Terms')}>
+            <Text style={[styles.legalLink, { color: colors.text }]}>Terms</Text>
+          </TouchableOpacity>
+          <Text style={[styles.legalText, { color: colors.textSecondary }]}> and </Text>
+          <TouchableOpacity onPress={() => navigation.navigate('PrivacyPolicy')}>
+            <Text style={[styles.legalLink, { color: colors.text }]}>Privacy Policy</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </ScreenContainer>
   );
@@ -115,4 +125,12 @@ const styles = StyleSheet.create({
     marginBottom: spacing.md,
     marginTop: -spacing.sm,
   },
+  legalRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+    marginTop: spacing.lg,
+  },
+  legalText: { ...typography.caption },
+  legalLink: { ...typography.caption, fontWeight: '600' },
 });

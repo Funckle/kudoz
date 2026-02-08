@@ -3,6 +3,8 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { UsernameSetupScreen } from '../screens/onboarding/UsernameSetupScreen';
 import { CategorySelectionScreen } from '../screens/onboarding/CategorySelectionScreen';
 import { SuggestedFollowsScreen } from '../screens/onboarding/SuggestedFollowsScreen';
+import { PrivacyPolicyScreen } from '../screens/settings/PrivacyPolicyScreen';
+import { TermsScreen } from '../screens/settings/TermsScreen';
 import type { OnboardingStackParamList } from '../types/navigation';
 
 const Stack = createNativeStackNavigator<OnboardingStackParamList>();
@@ -13,6 +15,8 @@ export function OnboardingNavigator() {
       <Stack.Screen name="UsernameSetup" component={UsernameSetupScreen} />
       <Stack.Screen name="CategorySelection" component={CategorySelectionScreen} />
       <Stack.Screen name="SuggestedFollows" component={SuggestedFollowsScreen} />
+      <Stack.Screen name="PrivacyPolicy" component={PrivacyPolicyScreen} options={{ headerShown: true, title: 'Privacy Policy' }} />
+      <Stack.Screen name="Terms" component={TermsScreen} options={{ headerShown: true, title: 'Terms & Conditions' }} />
     </Stack.Navigator>
   );
 }

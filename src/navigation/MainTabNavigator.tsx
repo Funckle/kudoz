@@ -26,6 +26,8 @@ import { BlockedUsersScreen } from '../screens/settings/BlockedUsersScreen';
 import { MutedUsersScreen } from '../screens/settings/MutedUsersScreen';
 import { AboutScreen } from '../screens/settings/AboutScreen';
 import { YourDataScreen } from '../screens/settings/YourDataScreen';
+import { PrivacyPolicyScreen } from '../screens/settings/PrivacyPolicyScreen';
+import { TermsScreen } from '../screens/settings/TermsScreen';
 import { InvitesScreen } from '../screens/invites/InvitesScreen';
 import { AnalyticsScreen } from '../screens/analytics/AnalyticsScreen';
 
@@ -98,6 +100,8 @@ function ProfileStackNavigator() {
       <ProfileStack.Screen name="MutedUsers" component={MutedUsersScreen} options={{ title: 'Muted Users' }} />
       <ProfileStack.Screen name="About" component={AboutScreen} options={{ title: 'About' }} />
       <ProfileStack.Screen name="YourData" component={YourDataScreen} options={{ title: 'Your Data' }} />
+      <ProfileStack.Screen name="PrivacyPolicy" component={PrivacyPolicyScreen} options={{ title: 'Privacy Policy' }} />
+      <ProfileStack.Screen name="Terms" component={TermsScreen} options={{ title: 'Terms & Conditions' }} />
     </ProfileStack.Navigator>
   );
 }

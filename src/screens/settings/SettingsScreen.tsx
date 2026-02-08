@@ -50,6 +50,12 @@ export function SettingsScreen({ navigation }: ProfileScreenProps<'Settings'>) {
           <Text style={[styles.rowText, { color: colors.text }]}>Plan</Text>
           <Text style={[styles.rowValue, { color: colors.textSecondary }]}>{isPaid ? 'Premium' : 'Free'}</Text>
         </TouchableOpacity>
+        {user.invites_remaining > 0 && (
+          <TouchableOpacity style={[styles.row, { borderBottomColor: colors.border }]} onPress={() => navigation.navigate('Invites')}>
+            <Text style={[styles.rowText, { color: colors.text }]}>Invites</Text>
+            <Text style={[styles.rowValue, { color: colors.textSecondary }]}>{user.invites_remaining} left</Text>
+          </TouchableOpacity>
+        )}
 
         <Text style={[styles.section, { color: colors.textSecondary }]}>Privacy</Text>
         <View style={[styles.row, { borderBottomColor: colors.border }]}>
@@ -84,6 +90,12 @@ export function SettingsScreen({ navigation }: ProfileScreenProps<'Settings'>) {
         </TouchableOpacity>
         <TouchableOpacity style={[styles.row, { borderBottomColor: colors.border }]} onPress={() => navigation.navigate('YourData')}>
           <Text style={[styles.rowText, { color: colors.text }]}>Your data</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={[styles.row, { borderBottomColor: colors.border }]} onPress={() => navigation.navigate('PrivacyPolicy')}>
+          <Text style={[styles.rowText, { color: colors.text }]}>Privacy Policy</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={[styles.row, { borderBottomColor: colors.border }]} onPress={() => navigation.navigate('Terms')}>
+          <Text style={[styles.rowText, { color: colors.text }]}>Terms & Conditions</Text>
         </TouchableOpacity>
 
         <Text style={[styles.section, { color: colors.textSecondary }]}>Account</Text>
