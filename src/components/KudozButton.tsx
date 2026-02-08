@@ -2,6 +2,7 @@ import React, { useState, useCallback } from 'react';
 import { TouchableOpacity } from 'react-native';
 import { XStack, YStack, Text, useTheme } from 'tamagui';
 import { useAuth } from '../hooks/useAuth';
+import { useRole } from '../hooks/useRole';
 import { giveKudoz, removeKudoz } from '../services/reactions';
 import { checkRateLimit } from '../utils/rateLimit';
 
@@ -13,12 +14,13 @@ interface KudozButtonProps {
 
 export function KudozButton({ postId, initialCount, initialActive }: KudozButtonProps) {
   const { user } = useAuth();
+  const { isSuspended } = useRole();
   const theme = useTheme();
   const [active, setActive] = useState(initialActive);
   const [count, setCount] = useState(initialCount);
 
   const handlePress = useCallback(async () => {
-    if (!user) return;
+    if (!user || isSuspended) return;
 
     const rateCheck = checkRateLimit('kudoz');
     if (!rateCheck.allowed) return;
@@ -35,10 +37,10 @@ export function KudozButton({ postId, initialCount, initialActive }: KudozButton
       setActive(wasActive);
       setCount((c) => (wasActive ? c + 1 : c - 1));
     }
-  }, [user, active, postId]);
+  }, [user, isSuspended, active, postId]);
 
   return (
-    <TouchableOpacity onPress={handlePress} activeOpacity={0.6}>
+    <TouchableOpacity onPress={handlePress} activeOpacity={0.6} style={{ opacity: isSuspended ? 0.5 : 1 }}>
       <XStack alignItems="center">
         <YStack
           width={28}

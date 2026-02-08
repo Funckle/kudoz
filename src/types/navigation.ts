@@ -74,6 +74,10 @@ export type ProfileStackParamList = {
   YourData: undefined;
   PrivacyPolicy: undefined;
   Terms: undefined;
+  AdminDashboard: undefined;
+  ReportQueue: undefined;
+  ReportDetail: { reportId: string };
+  UserModeration: { userId: string };
 };
 
 // Create stack (modal)

@@ -29,6 +29,10 @@ import { PrivacyPolicyScreen } from '../screens/settings/PrivacyPolicyScreen';
 import { TermsScreen } from '../screens/settings/TermsScreen';
 import { InvitesScreen } from '../screens/invites/InvitesScreen';
 import { AnalyticsScreen } from '../screens/analytics/AnalyticsScreen';
+import { AdminDashboardScreen } from '../screens/admin/AdminDashboardScreen';
+import { ReportQueueScreen } from '../screens/admin/ReportQueueScreen';
+import { ReportDetailScreen } from '../screens/admin/ReportDetailScreen';
+import { UserModerationScreen } from '../screens/admin/UserModerationScreen';
 
 import type {
   MainTabParamList,
@@ -102,6 +106,10 @@ function ProfileStackNavigator() {
       <ProfileStack.Screen name="YourData" component={YourDataScreen} options={{ title: 'Your Data' }} />
       <ProfileStack.Screen name="PrivacyPolicy" component={PrivacyPolicyScreen} options={{ title: 'Privacy Policy' }} />
       <ProfileStack.Screen name="Terms" component={TermsScreen} options={{ title: 'Terms & Conditions' }} />
+      <ProfileStack.Screen name="AdminDashboard" component={AdminDashboardScreen} options={{ title: 'Moderation' }} />
+      <ProfileStack.Screen name="ReportQueue" component={ReportQueueScreen} options={{ title: 'Report Queue' }} />
+      <ProfileStack.Screen name="ReportDetail" component={ReportDetailScreen} options={{ title: 'Report' }} />
+      <ProfileStack.Screen name="UserModeration" component={UserModerationScreen} options={{ title: 'User Moderation' }} />
     </ProfileStack.Navigator>
   );
 }

@@ -1,10 +1,12 @@
 import React from 'react';
-import { useColorScheme } from 'react-native';
+import { useColorScheme, View } from 'react-native';
 import { NavigationContainer, NavigationContainerRef, DefaultTheme, DarkTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useTheme } from 'tamagui';
 import { useAuth } from '../hooks/useAuth';
+import { useRole } from '../hooks/useRole';
 import { LoadingSpinner } from '../components/LoadingSpinner';
+import { SuspensionBanner } from '../components/SuspensionBanner';
 import { AuthNavigator } from './AuthNavigator';
 import { OnboardingNavigator } from './OnboardingNavigator';
 import { MainTabNavigator } from './MainTabNavigator';
@@ -35,6 +37,7 @@ interface RootNavigatorProps {
 
 export function RootNavigator({ navigationRef }: RootNavigatorProps) {
   const { loading, isAuthenticated, isNewUser } = useAuth();
+  const { isSuspended } = useRole();
   const theme = useTheme();
   const isDark = useColorScheme() === 'dark';
 
@@ -50,26 +53,31 @@ export function RootNavigator({ navigationRef }: RootNavigatorProps) {
     return <LoadingSpinner />;
   }
 
+  const showSuspensionBanner = isAuthenticated && !isNewUser && isSuspended;
+
   return (
     <NavigationContainer linking={linking} ref={navigationRef} theme={navTheme}>
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
-        {!isAuthenticated ? (
-          <Stack.Screen name="Auth" component={AuthNavigator} />
-        ) : isNewUser ? (
-          <Stack.Screen name="Onboarding" component={OnboardingNavigator} />
-        ) : (
-          <>
-            <Stack.Screen name="Main" component={MainTabNavigator} />
-            <Stack.Group screenOptions={{ presentation: 'modal' }}>
-              <Stack.Screen
-                name="CreateModal"
-                component={CreateModalNavigator}
-                options={{ headerShown: false }}
-              />
-            </Stack.Group>
-          </>
-        )}
-      </Stack.Navigator>
+      <View style={{ flex: 1 }}>
+        {showSuspensionBanner && <SuspensionBanner />}
+        <Stack.Navigator screenOptions={{ headerShown: false }}>
+          {!isAuthenticated ? (
+            <Stack.Screen name="Auth" component={AuthNavigator} />
+          ) : isNewUser ? (
+            <Stack.Screen name="Onboarding" component={OnboardingNavigator} />
+          ) : (
+            <>
+              <Stack.Screen name="Main" component={MainTabNavigator} />
+              <Stack.Group screenOptions={{ presentation: 'modal' }}>
+                <Stack.Screen
+                  name="CreateModal"
+                  component={CreateModalNavigator}
+                  options={{ headerShown: false }}
+                />
+              </Stack.Group>
+            </>
+          )}
+        </Stack.Navigator>
+      </View>
     </NavigationContainer>
   );
 }

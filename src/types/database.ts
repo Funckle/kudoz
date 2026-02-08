@@ -4,6 +4,8 @@ export type Visibility = 'public' | 'friends' | 'private';
 export type PostType = 'progress' | 'goal_created' | 'goal_completed';
 export type GoalStatus = 'active' | 'completed';
 export type SubscriptionStatus = 'active' | 'lapsed' | 'none';
+export type UserRole = 'user' | 'moderator' | 'admin';
+export type ModerationActionType = 'warn' | 'remove_content' | 'suspend' | 'ban' | 'dismiss' | 'lift_suspension';
 export type NotificationType =
   | 'kudoz'
   | 'comment'
@@ -17,7 +19,10 @@ export type NotificationType =
   | 'social_digest'
   | 'quarterly_reflection'
   | 'milestone_reached'
-  | 'target_date_reached';
+  | 'target_date_reached'
+  | 'moderation_warning'
+  | 'moderation_suspension'
+  | 'moderation_ban';
 export type ContentType = 'post' | 'comment' | 'user' | 'goal';
 export type ReportReason =
   | 'spam'
@@ -51,6 +56,9 @@ export interface User {
   subscription_started_at?: string;
   subscription_expires_at?: string;
   onboarded: boolean;
+  role: UserRole;
+  suspended_until?: string;
+  suspension_reason?: string;
   created_at: string;
 }
 
@@ -196,4 +204,25 @@ export interface GoalWithCategories extends Goal {
 
 export interface NotificationWithData extends Notification {
   actor?: Pick<User, 'id' | 'name' | 'username' | 'avatar_url'>;
+}
+
+export interface ModerationAction {
+  id: string;
+  moderator_id?: string;
+  report_id?: string;
+  target_user_id: string;
+  action_type: ModerationActionType;
+  notes?: string;
+  created_at: string;
+}
+
+export interface ModerationActionWithModerator extends ModerationAction {
+  moderator?: Pick<User, 'id' | 'name' | 'username'>;
+}
+
+export interface ReportWithDetails extends Report {
+  reporter?: Pick<User, 'id' | 'name' | 'username' | 'avatar_url'>;
+  target_user?: Pick<User, 'id' | 'name' | 'username' | 'avatar_url'>;
+  content_preview?: string;
+  violation_count?: number;
 }

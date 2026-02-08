@@ -39,6 +39,14 @@ function getNotificationContent(notification: NotificationRecord): { title: stri
       return { title: 'Milestone Reached!', body: (data.message as string) || "You've hit your target!" };
     case 'target_date_reached':
       return { title: 'Goal Check-in', body: (data.message as string) || 'Your goal target date has arrived' };
+    case 'moderation_warning':
+      return { title: 'Account Notice', body: (data.reason as string) || 'You have received a warning regarding your account activity' };
+    case 'moderation_suspension': {
+      const days = data.days as number;
+      return { title: 'Account Suspended', body: `Your account has been suspended for ${days} day${days === 1 ? '' : 's'}` };
+    }
+    case 'moderation_ban':
+      return { title: 'Account Banned', body: 'Your account has been permanently banned' };
     default:
       return { title: 'Kudoz', body: 'You have a new notification' };
   }

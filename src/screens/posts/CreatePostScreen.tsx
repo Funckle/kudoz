@@ -10,6 +10,7 @@ import { EmptyState } from '../../components/EmptyState';
 import { LoadingSpinner } from '../../components/LoadingSpinner';
 import { LIMITS } from '../../utils/validation';
 import { useAuth } from '../../hooks/useAuth';
+import { useRole } from '../../hooks/useRole';
 import { getUserGoals } from '../../services/goals';
 import { createPost } from '../../services/posts';
 import { checkGoalCompletion } from '../../services/goals';
@@ -21,6 +22,7 @@ import type { CreateScreenProps } from '../../types/navigation';
 export function CreatePostScreen({ route, navigation }: CreateScreenProps<'CreatePost'>) {
   const theme = useTheme();
   const { user } = useAuth();
+  const { isSuspended } = useRole();
   const [goals, setGoals] = useState<GoalWithCategories[]>([]);
   const [selectedGoal, setSelectedGoal] = useState<GoalWithCategories | null>(null);
   const [content, setContent] = useState('');
@@ -116,6 +118,17 @@ export function CreatePostScreen({ route, navigation }: CreateScreenProps<'Creat
   };
 
   if (loading) return <LoadingSpinner />;
+
+  if (isSuspended) {
+    return (
+      <ScreenContainer noTopInset>
+        <EmptyState
+          title="Posting is disabled"
+          message="Your account is currently suspended. You can browse but cannot create new posts."
+        />
+      </ScreenContainer>
+    );
+  }
 
   if (goals.length === 0) {
     return (

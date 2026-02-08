@@ -4,6 +4,7 @@ import { YStack, XStack, Text, useTheme } from 'tamagui';
 import { ScreenContainer } from '../../components/ScreenContainer';
 import { LoadingSpinner } from '../../components/LoadingSpinner';
 import { useAuth } from '../../hooks/useAuth';
+import { useRole } from '../../hooks/useRole';
 import { useSubscription } from '../../hooks/useSubscription';
 import { updateUserProfile, signOut } from '../../services/auth';
 import { exportUserData } from '../../services/dataExport';
@@ -13,6 +14,7 @@ import type { Visibility } from '../../types/database';
 export function SettingsScreen({ navigation }: ProfileScreenProps<'Settings'>) {
   const theme = useTheme();
   const { user, refreshUser } = useAuth();
+  const { isModerator } = useRole();
   const { isPaid } = useSubscription();
   const [defaultVisibility, setDefaultVisibility] = useState<Visibility>(user?.default_visibility ?? 'public');
   const [exporting, setExporting] = useState(false);
@@ -85,6 +87,15 @@ export function SettingsScreen({ navigation }: ProfileScreenProps<'Settings'>) {
         <TouchableOpacity style={{ paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: theme.borderColor.val, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }} onPress={() => navigation.navigate('MutedUsers')}>
           <Text fontSize="$2" color="$color">Muted users</Text>
         </TouchableOpacity>
+
+        {isModerator && (
+          <>
+            <Text fontSize="$1" fontWeight="600" color="$colorSecondary" marginTop="$lg" marginBottom="$sm" textTransform="uppercase">Moderation</Text>
+            <TouchableOpacity style={{ paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: theme.borderColor.val, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }} onPress={() => navigation.navigate('AdminDashboard')}>
+              <Text fontSize="$2" color="$color">Moderation Dashboard</Text>
+            </TouchableOpacity>
+          </>
+        )}
 
         <Text fontSize="$1" fontWeight="600" color="$colorSecondary" marginTop="$lg" marginBottom="$sm" textTransform="uppercase">Data</Text>
         <TouchableOpacity style={{ paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: theme.borderColor.val, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }} onPress={handleExport}>
