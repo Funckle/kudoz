@@ -1,5 +1,6 @@
 import React, { useCallback } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image, Alert } from 'react-native';
+import { MessageCircle } from 'lucide-react-native';
 import { Avatar } from './Avatar';
 import { CategoryBadge } from './CategoryBadge';
 import { KudozButton } from './KudozButton';
@@ -18,6 +19,7 @@ interface PostCardProps {
   onEdit?: () => void;
   onReport?: () => void;
   onDeleted?: () => void;
+  isExpanded?: boolean;
 }
 
 export function PostCard({
@@ -29,6 +31,7 @@ export function PostCard({
   onEdit,
   onReport,
   onDeleted,
+  isExpanded,
 }: PostCardProps) {
   const { user } = useAuth();
   const { colors } = useTheme();
@@ -136,6 +139,7 @@ export function PostCard({
       <View style={styles.actions}>
         <KudozButton postId={post.id} initialCount={post.kudoz_count} initialActive={post.has_kudozd} />
         <TouchableOpacity onPress={onPressComments} style={styles.commentBtn}>
+          <MessageCircle size={14} color={colors.textSecondary} />
           <Text style={[styles.commentText, { color: colors.textSecondary }]}>
             {post.comment_count > 0 ? `${post.comment_count} comments` : 'Comment'}
           </Text>
@@ -215,10 +219,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   commentBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
     marginLeft: spacing.md,
     paddingVertical: spacing.xs,
   },
   commentText: {
     ...typography.caption,
+    marginLeft: 4,
   },
 });
