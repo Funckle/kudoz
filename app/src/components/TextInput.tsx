@@ -6,7 +6,8 @@ import {
   StyleSheet,
   TextInputProps as RNTextInputProps,
 } from 'react-native';
-import { colors, typography, spacing, borderRadius, borders } from '../utils/theme';
+import { typography, spacing, borderRadius } from '../utils/theme';
+import { useTheme } from '../utils/ThemeContext';
 import { checkContent } from '../utils/moderation';
 
 interface TextInputProps extends Omit<RNTextInputProps, 'style'> {
@@ -27,6 +28,7 @@ export function TextInput({
   value,
   ...rest
 }: TextInputProps) {
+  const { colors } = useTheme();
   const [badWordWarning, setBadWordWarning] = useState('');
 
   const handleChangeText = (text: string) => {
@@ -47,23 +49,23 @@ export function TextInput({
 
   return (
     <View style={styles.container}>
-      {label && <Text style={styles.label}>{label}</Text>}
+      {label && <Text style={[styles.label, { color: colors.text }]}>{label}</Text>}
       <RNTextInput
-        style={[styles.input, rest.multiline && styles.multiline, displayError && styles.inputError]}
+        style={[styles.input, { borderColor: colors.border, color: colors.text, backgroundColor: colors.background }, rest.multiline && styles.multiline, displayError && { borderColor: colors.error }]}
         value={value}
         onChangeText={handleChangeText}
         maxLength={maxLength}
-        placeholderTextColor={colors.gray}
+        placeholderTextColor={colors.textSecondary}
         {...rest}
       />
       <View style={styles.footer}>
         {displayError ? (
-          <Text style={styles.error}>{displayError}</Text>
+          <Text style={[styles.error, { color: colors.error }]}>{displayError}</Text>
         ) : (
           <View />
         )}
         {maxLength && (
-          <Text style={[styles.counter, charCount >= maxLength && styles.counterLimit]}>
+          <Text style={[styles.counter, { color: colors.textSecondary }, charCount >= maxLength && { color: colors.error }]}>
             {charCount}/{maxLength}
           </Text>
         )}
@@ -80,25 +82,18 @@ const styles = StyleSheet.create({
     ...typography.body,
     fontWeight: '600',
     marginBottom: spacing.xs,
-    color: colors.black,
   },
   input: {
     ...typography.body,
-    borderWidth: borders.width,
-    borderColor: borders.color,
+    borderWidth: 1,
     borderRadius,
     paddingHorizontal: spacing.sm + 4,
     paddingVertical: spacing.sm + 2,
-    color: colors.black,
-    backgroundColor: colors.white,
     minHeight: 44,
   },
   multiline: {
     minHeight: 88,
     textAlignVertical: 'top',
-  },
-  inputError: {
-    borderColor: colors.red,
   },
   footer: {
     flexDirection: 'row',
@@ -107,14 +102,9 @@ const styles = StyleSheet.create({
   },
   error: {
     ...typography.caption,
-    color: colors.red,
     flex: 1,
   },
   counter: {
     ...typography.caption,
-    color: colors.gray,
-  },
-  counterLimit: {
-    color: colors.red,
   },
 });

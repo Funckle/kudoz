@@ -1,7 +1,8 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Avatar } from './Avatar';
-import { colors, typography, spacing, borders } from '../utils/theme';
+import { typography, spacing } from '../utils/theme';
+import { useTheme } from '../utils/ThemeContext';
 import type { NotificationWithData } from '../types/database';
 
 interface NotificationItemProps {
@@ -10,6 +11,8 @@ interface NotificationItemProps {
 }
 
 export function NotificationItem({ notification, onPress }: NotificationItemProps) {
+  const { colors } = useTheme();
+
   const getMessage = () => {
     const name = notification.actor?.name || 'Someone';
     switch (notification.type) {
@@ -27,6 +30,16 @@ export function NotificationItem({ notification, onPress }: NotificationItemProp
         return 'Your subscription expires soon';
       case 'subscription_expired':
         return 'Your subscription has expired';
+      case 'weekly_summary':
+        return (notification.data as Record<string, string>).message || 'Check your weekly progress';
+      case 'social_digest':
+        return (notification.data as Record<string, string>).message || 'Your friends made progress this week';
+      case 'quarterly_reflection':
+        return (notification.data as Record<string, string>).message || 'Reflect on your progress';
+      case 'milestone_reached':
+        return (notification.data as Record<string, string>).message || "You've hit your target!";
+      case 'target_date_reached':
+        return (notification.data as Record<string, string>).message || 'Your goal target date has arrived';
       default:
         return 'New notification';
     }
@@ -44,16 +57,20 @@ export function NotificationItem({ notification, onPress }: NotificationItemProp
 
   return (
     <TouchableOpacity
-      style={[styles.container, !notification.read && styles.unread]}
+      style={[
+        styles.container,
+        { borderBottomColor: colors.border },
+        !notification.read && { backgroundColor: colors.borderLight },
+      ]}
       onPress={onPress}
       activeOpacity={0.7}
     >
       <Avatar uri={notification.actor?.avatar_url} name={notification.actor?.name} size={32} />
       <View style={styles.body}>
-        <Text style={styles.message}>{getMessage()}</Text>
-        <Text style={styles.time}>{formatDate(notification.created_at)}</Text>
+        <Text style={[styles.message, { color: colors.text }]}>{getMessage()}</Text>
+        <Text style={[styles.time, { color: colors.textSecondary }]}>{formatDate(notification.created_at)}</Text>
       </View>
-      {!notification.read && <View style={styles.dot} />}
+      {!notification.read && <View style={[styles.dot, { backgroundColor: colors.text }]} />}
     </TouchableOpacity>
   );
 }
@@ -63,11 +80,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     padding: spacing.md,
-    borderBottomWidth: borders.width,
-    borderBottomColor: borders.color,
-  },
-  unread: {
-    backgroundColor: colors.grayLighter,
+    borderBottomWidth: 1,
   },
   body: {
     flex: 1,
@@ -75,17 +88,14 @@ const styles = StyleSheet.create({
   },
   message: {
     ...typography.body,
-    color: colors.black,
   },
   time: {
     ...typography.caption,
-    color: colors.gray,
     marginTop: 2,
   },
   dot: {
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: colors.black,
   },
 });

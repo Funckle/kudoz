@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Modal } from 'react-native';
 import { Button } from './Button';
-import { colors, typography, spacing, borderRadius, borders } from '../utils/theme';
+import { typography, spacing, borderRadius } from '../utils/theme';
+import { useTheme } from '../utils/ThemeContext';
 import { useAuth } from '../hooks/useAuth';
 import { reportContent } from '../services/reports';
 import type { ContentType, ReportReason } from '../types/database';
@@ -23,6 +24,7 @@ const REASONS: { value: ReportReason; label: string }[] = [
 
 export function ReportModal({ visible, contentType, contentId, onClose }: ReportModalProps) {
   const { user } = useAuth();
+  const { colors } = useTheme();
   const [selected, setSelected] = useState<ReportReason | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -50,29 +52,37 @@ export function ReportModal({ visible, contentType, contentId, onClose }: Report
   return (
     <Modal visible={visible} transparent animationType="slide">
       <View style={styles.overlay}>
-        <View style={styles.modal}>
+        <View style={[styles.modal, { backgroundColor: colors.surface }]}>
           {submitted ? (
             <>
-              <Text style={styles.title}>Thanks for reporting</Text>
-              <Text style={styles.subtitle}>We'll review this and take action if needed.</Text>
+              <Text style={[styles.title, { color: colors.text }]}>Thanks for reporting</Text>
+              <Text style={[styles.subtitle, { color: colors.textSecondary }]}>We'll review this and take action if needed.</Text>
               <Button title="Done" onPress={handleClose} />
             </>
           ) : (
             <>
-              <Text style={styles.title}>Report</Text>
-              <Text style={styles.subtitle}>Why are you reporting this?</Text>
+              <Text style={[styles.title, { color: colors.text }]}>Report</Text>
+              <Text style={[styles.subtitle, { color: colors.textSecondary }]}>Why are you reporting this?</Text>
               {REASONS.map((reason) => (
                 <TouchableOpacity
                   key={reason.value}
-                  style={[styles.option, selected === reason.value && styles.optionSelected]}
+                  style={[
+                    styles.option,
+                    { borderColor: colors.border },
+                    selected === reason.value && { borderColor: colors.text, backgroundColor: colors.borderLight },
+                  ]}
                   onPress={() => setSelected(reason.value)}
                 >
-                  <Text style={[styles.optionText, selected === reason.value && styles.optionTextSelected]}>
+                  <Text style={[
+                    styles.optionText,
+                    { color: colors.text },
+                    selected === reason.value && { fontWeight: '600' },
+                  ]}>
                     {reason.label}
                   </Text>
                 </TouchableOpacity>
               ))}
-              {error ? <Text style={styles.error}>{error}</Text> : null}
+              {error ? <Text style={[styles.error, { color: colors.error }]}>{error}</Text> : null}
               <View style={styles.buttons}>
                 <Button title="Cancel" onPress={handleClose} variant="secondary" style={styles.cancelBtn} />
                 <Button
@@ -98,42 +108,29 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   modal: {
-    backgroundColor: colors.white,
     borderTopLeftRadius: spacing.md,
     borderTopRightRadius: spacing.md,
     padding: spacing.lg,
   },
   title: {
     ...typography.sectionHeader,
-    color: colors.black,
     marginBottom: spacing.xs,
   },
   subtitle: {
     ...typography.body,
-    color: colors.gray,
     marginBottom: spacing.md,
   },
   option: {
     padding: spacing.sm + 4,
-    borderWidth: borders.width,
-    borderColor: borders.color,
+    borderWidth: 1,
     borderRadius,
     marginBottom: spacing.sm,
   },
-  optionSelected: {
-    borderColor: colors.black,
-    backgroundColor: colors.grayLighter,
-  },
   optionText: {
     ...typography.body,
-    color: colors.black,
-  },
-  optionTextSelected: {
-    fontWeight: '600',
   },
   error: {
     ...typography.caption,
-    color: colors.red,
     marginBottom: spacing.sm,
   },
   buttons: {

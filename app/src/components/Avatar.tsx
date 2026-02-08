@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Image, Text, StyleSheet } from 'react-native';
-import { colors, typography } from '../utils/theme';
+import { typography } from '../utils/theme';
+import { useTheme } from '../utils/ThemeContext';
 
 interface AvatarProps {
   uri?: string | null;
@@ -9,6 +10,7 @@ interface AvatarProps {
 }
 
 export function Avatar({ uri, name, size = 48 }: AvatarProps) {
+  const { colors } = useTheme();
   const initials = name
     ? name
         .split(' ')
@@ -21,28 +23,24 @@ export function Avatar({ uri, name, size = 48 }: AvatarProps) {
   const fontSize = size === 80 ? 28 : size === 48 ? 18 : 12;
 
   if (uri) {
-    return <Image source={{ uri }} style={[styles.image, { width: size, height: size, borderRadius: size / 2 }]} />;
+    return <Image source={{ uri }} style={[styles.image, { width: size, height: size, borderRadius: size / 2, backgroundColor: colors.border }]} />;
   }
 
   return (
-    <View style={[styles.fallback, { width: size, height: size, borderRadius: size / 2 }]}>
-      <Text style={[styles.initials, { fontSize }]}>{initials}</Text>
+    <View style={[styles.fallback, { width: size, height: size, borderRadius: size / 2, backgroundColor: colors.border }]}>
+      <Text style={[styles.initials, { fontSize, color: colors.textSecondary }]}>{initials}</Text>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  image: {
-    backgroundColor: colors.grayLight,
-  },
+  image: {},
   fallback: {
-    backgroundColor: colors.grayLight,
     alignItems: 'center',
     justifyContent: 'center',
   },
   initials: {
     ...typography.body,
     fontWeight: '600',
-    color: colors.gray,
   },
 });

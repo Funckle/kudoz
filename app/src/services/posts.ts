@@ -19,7 +19,12 @@ export async function createPost(data: {
     .select()
     .single();
 
-  if (error) return { error: error.message };
+  if (error) {
+    if (error.message.includes('inappropriate language')) {
+      return { error: 'Please keep your post content friendly' };
+    }
+    return { error: error.message };
+  }
 
   // Update goal progress if progress_value provided
   if (data.progress_value && data.progress_value > 0) {
@@ -49,7 +54,12 @@ export async function updatePost(
     .from('posts')
     .update({ ...data, edited_at: new Date().toISOString(), updated_at: new Date().toISOString() })
     .eq('id', postId);
-  if (error) return { error: error.message };
+  if (error) {
+    if (error.message.includes('inappropriate language')) {
+      return { error: 'Please keep your post content friendly' };
+    }
+    return { error: error.message };
+  }
   return {};
 }
 
@@ -145,6 +155,42 @@ export async function getPostsByGoal(
 
   if (error) return { posts: [], error: error.message };
   return { posts: (data || []) as Post[] };
+}
+
+export async function getPostsByGoalWithAuthors(
+  goalId: string,
+  limit = 20,
+  offset = 0
+): Promise<{ posts: PostWithAuthor[]; error?: string }> {
+  const { data, error } = await supabase
+    .from('posts')
+    .select(`
+      *,
+      user:users!posts_user_id_fkey(id, name, username, avatar_url),
+      goal:goals!posts_goal_id_fkey(id, title, goal_type, target_value, current_value, status)
+    `)
+    .eq('goal_id', goalId)
+    .order('created_at', { ascending: false })
+    .range(offset, offset + limit - 1);
+
+  if (error) return { posts: [], error: error.message };
+
+  const posts: PostWithAuthor[] = await Promise.all(
+    (data || []).map(async (p: Record<string, unknown>) => {
+      const [{ count: kudozCount }, { count: commentCount }] = await Promise.all([
+        supabase.from('reactions').select('id', { count: 'exact', head: true }).eq('post_id', p.id as string),
+        supabase.from('comments').select('id', { count: 'exact', head: true }).eq('post_id', p.id as string),
+      ]);
+      return {
+        ...p,
+        kudoz_count: kudozCount ?? 0,
+        comment_count: commentCount ?? 0,
+        has_kudozd: false,
+      } as PostWithAuthor;
+    })
+  );
+
+  return { posts };
 }
 
 export async function getPost(postId: string): Promise<{ post?: PostWithAuthor; error?: string }> {

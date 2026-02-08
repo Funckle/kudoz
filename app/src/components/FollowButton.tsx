@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { TouchableOpacity, Text, StyleSheet } from 'react-native';
-import { colors, typography, spacing, borderRadius } from '../utils/theme';
+import { typography, spacing, borderRadius } from '../utils/theme';
+import { useTheme } from '../utils/ThemeContext';
 import { useAuth } from '../hooks/useAuth';
 import { followUser, unfollowUser, checkFollowStatus } from '../services/follows';
 
@@ -10,6 +11,7 @@ interface FollowButtonProps {
 }
 
 export function FollowButton({ userId, compact }: FollowButtonProps) {
+  const { colors } = useTheme();
   const { user } = useAuth();
   const [isFollowing, setIsFollowing] = useState(false);
   const [isMutual, setIsMutual] = useState(false);
@@ -52,11 +54,11 @@ export function FollowButton({ userId, compact }: FollowButtonProps) {
 
   return (
     <TouchableOpacity
-      style={[styles.button, isFollowing ? styles.following : styles.notFollowing, compact && styles.compact]}
+      style={[styles.button, isFollowing ? [styles.following, { backgroundColor: colors.background, borderColor: colors.border }] : { backgroundColor: colors.text }, compact && styles.compact]}
       onPress={handlePress}
       activeOpacity={0.7}
     >
-      <Text style={[styles.text, isFollowing ? styles.followingText : styles.notFollowingText]}>
+      <Text style={[styles.text, { color: isFollowing ? colors.text : colors.background }]}>
         {label}
       </Text>
     </TouchableOpacity>
@@ -73,22 +75,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.sm,
     paddingVertical: spacing.xs,
   },
-  notFollowing: {
-    backgroundColor: colors.black,
-  },
   following: {
-    backgroundColor: colors.white,
     borderWidth: 1,
-    borderColor: colors.grayLight,
   },
   text: {
     ...typography.caption,
     fontWeight: '600',
-  },
-  notFollowingText: {
-    color: colors.white,
-  },
-  followingText: {
-    color: colors.black,
   },
 });

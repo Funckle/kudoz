@@ -2,7 +2,8 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { ProgressBar } from './ProgressBar';
 import { CategoryBadge } from './CategoryBadge';
-import { colors, typography, spacing, borderRadius, borders } from '../utils/theme';
+import { typography, spacing, borderRadius } from '../utils/theme';
+import { useTheme } from '../utils/ThemeContext';
 import type { GoalWithCategories } from '../types/database';
 
 interface GoalCardProps {
@@ -11,26 +12,28 @@ interface GoalCardProps {
 }
 
 export function GoalCard({ goal, onPress }: GoalCardProps) {
+  const { colors } = useTheme();
+
   const formatValue = (value: number) => {
     if (goal.goal_type === 'currency') return `$${value.toLocaleString()}`;
     return value.toLocaleString();
   };
 
-  const primaryColor = goal.categories?.[0]?.color ?? colors.black;
+  const primaryColor = goal.categories?.[0]?.color ?? colors.text;
 
   return (
-    <TouchableOpacity style={styles.card} onPress={onPress} activeOpacity={0.7}>
+    <TouchableOpacity style={[styles.card, { borderColor: colors.border, backgroundColor: colors.background }]} onPress={onPress} activeOpacity={0.7}>
       <View style={styles.header}>
-        <Text style={styles.title} numberOfLines={1}>{goal.title}</Text>
-        {goal.status === 'completed' && <Text style={styles.completed}>Completed</Text>}
+        <Text style={[styles.title, { color: colors.text }]} numberOfLines={1}>{goal.title}</Text>
+        {goal.status === 'completed' && <Text style={[styles.completed, { color: colors.textSecondary }]}>Completed</Text>}
       </View>
-      <Text style={styles.type}>
+      <Text style={[styles.type, { color: colors.textSecondary }]}>
         {goal.goal_type === 'currency' ? 'Savings' : goal.goal_type === 'count' ? 'Counter' : 'Milestone'}
       </Text>
       {goal.target_value && goal.goal_type !== 'milestone' ? (
         <View style={styles.progressSection}>
           <ProgressBar current={goal.current_value} target={goal.target_value} color={primaryColor} />
-          <Text style={styles.progressText}>
+          <Text style={[styles.progressText, { color: colors.textSecondary }]}>
             {formatValue(goal.current_value)} / {formatValue(goal.target_value)}
           </Text>
         </View>
@@ -49,11 +52,9 @@ export function GoalCard({ goal, onPress }: GoalCardProps) {
 const styles = StyleSheet.create({
   card: {
     padding: spacing.md,
-    borderWidth: borders.width,
-    borderColor: borders.color,
+    borderWidth: 1,
     borderRadius,
     marginBottom: spacing.sm,
-    backgroundColor: colors.white,
   },
   header: {
     flexDirection: 'row',
@@ -63,17 +64,14 @@ const styles = StyleSheet.create({
   },
   title: {
     ...typography.goalTitle,
-    color: colors.black,
     flex: 1,
   },
   completed: {
     ...typography.caption,
-    color: colors.gray,
     marginLeft: spacing.sm,
   },
   type: {
     ...typography.caption,
-    color: colors.gray,
     marginBottom: spacing.sm,
   },
   progressSection: {
@@ -81,7 +79,6 @@ const styles = StyleSheet.create({
   },
   progressText: {
     ...typography.caption,
-    color: colors.gray,
     marginTop: spacing.xs,
   },
   categories: {

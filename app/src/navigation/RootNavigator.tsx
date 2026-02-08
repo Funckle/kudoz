@@ -1,7 +1,8 @@
 import React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, NavigationContainerRef, DefaultTheme, DarkTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useAuth } from '../hooks/useAuth';
+import { useTheme } from '../utils/ThemeContext';
 import { LoadingSpinner } from '../components/LoadingSpinner';
 import { AuthNavigator } from './AuthNavigator';
 import { OnboardingNavigator } from './OnboardingNavigator';
@@ -27,15 +28,28 @@ function CreateModalNavigator() {
   );
 }
 
-export function RootNavigator() {
+interface RootNavigatorProps {
+  navigationRef?: React.RefObject<NavigationContainerRef<Record<string, unknown>> | null>;
+}
+
+export function RootNavigator({ navigationRef }: RootNavigatorProps) {
   const { loading, isAuthenticated, isNewUser } = useAuth();
+  const { isDark, colors } = useTheme();
+
+  const navTheme = isDark ? {
+    ...DarkTheme,
+    colors: { ...DarkTheme.colors, background: colors.background, card: colors.surface, text: colors.text, border: colors.border },
+  } : {
+    ...DefaultTheme,
+    colors: { ...DefaultTheme.colors, background: colors.background, card: colors.surface, text: colors.text, border: colors.border },
+  };
 
   if (loading) {
     return <LoadingSpinner />;
   }
 
   return (
-    <NavigationContainer linking={linking}>
+    <NavigationContainer linking={linking} ref={navigationRef} theme={navTheme}>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         {!isAuthenticated ? (
           <Stack.Screen name="Auth" component={AuthNavigator} />

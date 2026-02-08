@@ -4,7 +4,8 @@ import { Avatar } from '../../components/Avatar';
 import { GoalCard } from '../../components/GoalCard';
 import { EmptyState } from '../../components/EmptyState';
 import { LoadingSpinner } from '../../components/LoadingSpinner';
-import { colors, typography, spacing, borders } from '../../utils/theme';
+import { typography, spacing, borders } from '../../utils/theme';
+import { useTheme } from '../../utils/ThemeContext';
 import { useAuth } from '../../hooks/useAuth';
 import { getUserGoals } from '../../services/goals';
 import { getFollowerCount, getFollowingCount } from '../../services/follows';
@@ -12,6 +13,7 @@ import type { GoalWithCategories } from '../../types/database';
 import type { ProfileScreenProps } from '../../types/navigation';
 
 export function ProfileScreen({ navigation }: ProfileScreenProps<'Profile'>) {
+  const { colors } = useTheme();
   const { user } = useAuth();
   const [activeGoals, setActiveGoals] = useState<GoalWithCategories[]>([]);
   const [completedGoals, setCompletedGoals] = useState<GoalWithCategories[]>([]);
@@ -47,36 +49,36 @@ export function ProfileScreen({ navigation }: ProfileScreenProps<'Profile'>) {
         <Avatar uri={user.avatar_url} name={user.name} size={80} />
         <View style={styles.stats}>
           <TouchableOpacity style={styles.stat} onPress={() => navigation.navigate('FollowList', { userId: user.id, type: 'followers' })}>
-            <Text style={styles.statNum}>{followers}</Text>
-            <Text style={styles.statLabel}>Followers</Text>
+            <Text style={[styles.statNum, { color: colors.text }]}>{followers}</Text>
+            <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Followers</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.stat} onPress={() => navigation.navigate('FollowList', { userId: user.id, type: 'following' })}>
-            <Text style={styles.statNum}>{following}</Text>
-            <Text style={styles.statLabel}>Following</Text>
+            <Text style={[styles.statNum, { color: colors.text }]}>{following}</Text>
+            <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Following</Text>
           </TouchableOpacity>
           <View style={styles.stat}>
-            <Text style={styles.statNum}>{completedGoals.length}</Text>
-            <Text style={styles.statLabel}>Achieved</Text>
+            <Text style={[styles.statNum, { color: colors.text }]}>{completedGoals.length}</Text>
+            <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Achieved</Text>
           </View>
         </View>
       </View>
-      <Text style={styles.name}>{user.name}</Text>
-      <Text style={styles.username}>@{user.username}</Text>
-      {user.bio ? <Text style={styles.bio}>{user.bio}</Text> : null}
+      <Text style={[styles.name, { color: colors.text }]}>{user.name}</Text>
+      <Text style={[styles.username, { color: colors.textSecondary }]}>@{user.username}</Text>
+      {user.bio ? <Text style={[styles.bio, { color: colors.text }]}>{user.bio}</Text> : null}
       <View style={styles.actionRow}>
-        <TouchableOpacity style={styles.editBtn} onPress={() => navigation.navigate('EditProfile')}>
-          <Text style={styles.editBtnText}>Edit profile</Text>
+        <TouchableOpacity style={[styles.editBtn, { borderColor: colors.border }]} onPress={() => navigation.navigate('EditProfile')}>
+          <Text style={[styles.editBtnText, { color: colors.text }]}>Edit profile</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.editBtn} onPress={() => navigation.navigate('Settings')}>
-          <Text style={styles.editBtnText}>Settings</Text>
+        <TouchableOpacity style={[styles.editBtn, { borderColor: colors.border }]} onPress={() => navigation.navigate('Settings')}>
+          <Text style={[styles.editBtnText, { color: colors.text }]}>Settings</Text>
         </TouchableOpacity>
       </View>
-      <View style={styles.tabs}>
-        <TouchableOpacity style={[styles.tab, tab === 'active' && styles.tabActive]} onPress={() => setTab('active')}>
-          <Text style={[styles.tabText, tab === 'active' && styles.tabTextActive]}>Active ({activeGoals.length})</Text>
+      <View style={[styles.tabs, { borderBottomColor: colors.border }]}>
+        <TouchableOpacity style={[styles.tab, tab === 'active' && { borderBottomWidth: 2, borderBottomColor: colors.text }]} onPress={() => setTab('active')}>
+          <Text style={[styles.tabText, { color: colors.textSecondary }, tab === 'active' && { fontWeight: '600', color: colors.text }]}>Active ({activeGoals.length})</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={[styles.tab, tab === 'completed' && styles.tabActive]} onPress={() => setTab('completed')}>
-          <Text style={[styles.tabText, tab === 'completed' && styles.tabTextActive]}>Completed ({completedGoals.length})</Text>
+        <TouchableOpacity style={[styles.tab, tab === 'completed' && { borderBottomWidth: 2, borderBottomColor: colors.text }]} onPress={() => setTab('completed')}>
+          <Text style={[styles.tabText, { color: colors.textSecondary }, tab === 'completed' && { fontWeight: '600', color: colors.text }]}>Completed ({completedGoals.length})</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -97,29 +99,27 @@ export function ProfileScreen({ navigation }: ProfileScreenProps<'Profile'>) {
       ListEmptyComponent={
         <EmptyState title={tab === 'active' ? 'No active goals' : 'No completed goals'} />
       }
-      style={styles.list}
+      style={[styles.list, { backgroundColor: colors.background }]}
     />
   );
 }
 
 const styles = StyleSheet.create({
-  list: { flex: 1, backgroundColor: colors.white },
+  list: { flex: 1 },
   header: { padding: spacing.md },
   profileRow: { flexDirection: 'row', alignItems: 'center' },
   stats: { flex: 1, flexDirection: 'row', justifyContent: 'space-around', marginLeft: spacing.md },
   stat: { alignItems: 'center' },
-  statNum: { ...typography.goalTitle, color: colors.black },
-  statLabel: { ...typography.caption, color: colors.gray },
-  name: { ...typography.sectionHeader, color: colors.black, marginTop: spacing.sm },
-  username: { ...typography.body, color: colors.gray },
-  bio: { ...typography.body, color: colors.black, marginTop: spacing.xs },
+  statNum: { ...typography.goalTitle },
+  statLabel: { ...typography.caption },
+  name: { ...typography.sectionHeader, marginTop: spacing.sm },
+  username: { ...typography.body },
+  bio: { ...typography.body, marginTop: spacing.xs },
   actionRow: { flexDirection: 'row', marginTop: spacing.md },
-  editBtn: { flex: 1, marginRight: spacing.sm, borderWidth: 1, borderColor: borders.color, borderRadius: 8, paddingVertical: spacing.xs + 2, alignItems: 'center' },
-  editBtnText: { ...typography.body, fontWeight: '600', color: colors.black },
-  tabs: { flexDirection: 'row', marginTop: spacing.md, borderBottomWidth: borders.width, borderBottomColor: borders.color },
+  editBtn: { flex: 1, marginRight: spacing.sm, borderWidth: 1, borderRadius: 8, paddingVertical: spacing.xs + 2, alignItems: 'center' },
+  editBtnText: { ...typography.body, fontWeight: '600' },
+  tabs: { flexDirection: 'row', marginTop: spacing.md, borderBottomWidth: borders.width },
   tab: { flex: 1, paddingVertical: spacing.sm, alignItems: 'center' },
-  tabActive: { borderBottomWidth: 2, borderBottomColor: colors.black },
-  tabText: { ...typography.body, color: colors.gray },
-  tabTextActive: { fontWeight: '600', color: colors.black },
+  tabText: { ...typography.body },
   goalContainer: { paddingHorizontal: spacing.md },
 });

@@ -3,13 +3,15 @@ import { View, Text, StyleSheet } from 'react-native';
 import { ScreenContainer } from '../../components/ScreenContainer';
 import { TextInput } from '../../components/TextInput';
 import { Button } from '../../components/Button';
-import { colors, typography, spacing } from '../../utils/theme';
+import { typography, spacing } from '../../utils/theme';
+import { useTheme } from '../../utils/ThemeContext';
 import { LIMITS, validateUsername } from '../../utils/validation';
 import { checkUsernameAvailable, updateUserProfile } from '../../services/auth';
 import { useAuth } from '../../hooks/useAuth';
 import type { OnboardingScreenProps } from '../../types/navigation';
 
 export function UsernameSetupScreen({ navigation }: OnboardingScreenProps<'UsernameSetup'>) {
+  const { colors } = useTheme();
   const { user, refreshUser } = useAuth();
   const [username, setUsername] = useState('');
   const [error, setError] = useState('');
@@ -67,8 +69,8 @@ export function UsernameSetupScreen({ navigation }: OnboardingScreenProps<'Usern
   return (
     <ScreenContainer>
       <View style={styles.container}>
-        <Text style={styles.title}>Choose your username</Text>
-        <Text style={styles.subtitle}>This is how others will find you.</Text>
+        <Text style={[styles.title, { color: colors.text }]}>Choose your username</Text>
+        <Text style={[styles.subtitle, { color: colors.textSecondary }]}>This is how others will find you.</Text>
         <TextInput
           label="Username"
           placeholder="your_username"
@@ -79,7 +81,7 @@ export function UsernameSetupScreen({ navigation }: OnboardingScreenProps<'Usern
           autoCapitalize="none"
           autoCorrect={false}
         />
-        <Text style={styles.rules}>
+        <Text style={[styles.rules, { color: colors.textSecondary }]}>
           Lowercase letters, numbers, and underscores.{'\n'}
           {LIMITS.USERNAME_MIN}-{LIMITS.USERNAME_MAX} characters.
         </Text>
@@ -102,17 +104,14 @@ const styles = StyleSheet.create({
   },
   title: {
     ...typography.title,
-    color: colors.black,
     marginBottom: spacing.sm,
   },
   subtitle: {
     ...typography.body,
-    color: colors.gray,
     marginBottom: spacing.xl,
   },
   rules: {
     ...typography.caption,
-    color: colors.gray,
     marginBottom: spacing.md,
     marginTop: -spacing.sm,
   },

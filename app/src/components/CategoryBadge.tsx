@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { colors, typography, spacing, borderRadius } from '../utils/theme';
+import { typography, spacing, borderRadius } from '../utils/theme';
+import { useTheme } from '../utils/ThemeContext';
 import { Category } from '../types/database';
 
 interface CategoryBadgeProps {
@@ -8,10 +9,12 @@ interface CategoryBadgeProps {
 }
 
 export function CategoryBadge({ category }: CategoryBadgeProps) {
+  const { colors } = useTheme();
+
   return (
-    <View style={styles.badge}>
+    <View style={[styles.badge, { backgroundColor: colors.borderLight }]}>
       <View style={[styles.dot, { backgroundColor: category.color }]} />
-      <Text style={styles.text}>{category.name}</Text>
+      <Text style={[styles.text, { color: colors.text }]}>{category.name}</Text>
     </View>
   );
 }
@@ -20,7 +23,6 @@ const styles = StyleSheet.create({
   badge: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: colors.grayLighter,
     paddingHorizontal: spacing.sm,
     paddingVertical: spacing.xs,
     borderRadius,
@@ -35,6 +37,5 @@ const styles = StyleSheet.create({
   },
   text: {
     ...typography.caption,
-    color: colors.black,
   },
 });

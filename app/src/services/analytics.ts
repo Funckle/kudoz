@@ -54,6 +54,58 @@ export async function getFollowerGrowth(userId: string): Promise<{ count: number
   return { count: count ?? 0 };
 }
 
+export async function getGoalsByCategory(userId: string): Promise<Array<{ name: string; count: number; color: string }>> {
+  const { data: goals } = await supabase
+    .from('goals')
+    .select('id, goal_categories(category_id, categories(name, color))')
+    .eq('user_id', userId);
+
+  if (!goals || goals.length === 0) return [];
+
+  const categoryMap = new Map<string, { name: string; count: number; color: string }>();
+
+  for (const goal of goals) {
+    const categories = (goal.goal_categories as Array<{ categories: { name: string; color: string } }>) || [];
+    for (const gc of categories) {
+      const cat = gc.categories;
+      if (!cat) continue;
+      const existing = categoryMap.get(cat.name) || { name: cat.name, count: 0, color: cat.color };
+      existing.count++;
+      categoryMap.set(cat.name, existing);
+    }
+  }
+
+  return Array.from(categoryMap.values()).sort((a, b) => b.count - a.count);
+}
+
+export async function getCompletionRateOverTime(userId: string): Promise<Array<{ month: string; rate: number }>> {
+  const { data: goals } = await supabase
+    .from('goals')
+    .select('status, created_at, completed_at')
+    .eq('user_id', userId)
+    .order('created_at', { ascending: true });
+
+  if (!goals || goals.length === 0) return [];
+
+  // Group by month
+  const monthMap = new Map<string, { total: number; completed: number }>();
+
+  for (const goal of goals) {
+    const month = goal.created_at.substring(0, 7); // YYYY-MM
+    const existing = monthMap.get(month) || { total: 0, completed: 0 };
+    existing.total++;
+    if (goal.status === 'completed') existing.completed++;
+    monthMap.set(month, existing);
+  }
+
+  return Array.from(monthMap.entries())
+    .map(([month, data]) => ({
+      month,
+      rate: data.total > 0 ? Math.round((data.completed / data.total) * 100) : 0,
+    }))
+    .slice(-6); // Last 6 months
+}
+
 export async function getMostKudozdPosts(userId: string, limit = 5): Promise<Array<{ id: string; content: string; kudoz_count: number }>> {
   const { data: posts } = await supabase
     .from('posts')

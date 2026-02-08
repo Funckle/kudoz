@@ -3,7 +3,8 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert } from 'rea
 import { ScreenContainer } from '../../components/ScreenContainer';
 import { TextInput } from '../../components/TextInput';
 import { Button } from '../../components/Button';
-import { colors, typography, spacing, borderRadius, borders } from '../../utils/theme';
+import { typography, spacing, borderRadius, borders } from '../../utils/theme';
+import { useTheme } from '../../utils/ThemeContext';
 import { LIMITS } from '../../utils/validation';
 import { CATEGORIES } from '../../utils/categories';
 import { useAuth } from '../../hooks/useAuth';
@@ -25,6 +26,7 @@ const VISIBILITY_OPTIONS: { value: Visibility; label: string }[] = [
 ];
 
 export function CreateGoalScreen({ navigation }: CreateScreenProps<'CreateGoal'>) {
+  const { colors } = useTheme();
   const { user } = useAuth();
   const { canCreateGoal } = useSubscription();
   const [goalType, setGoalType] = useState<GoalType | null>(null);
@@ -91,16 +93,16 @@ export function CreateGoalScreen({ navigation }: CreateScreenProps<'CreateGoal'>
     return (
       <ScreenContainer>
         <View style={styles.container}>
-          <Text style={styles.title}>New Goal</Text>
-          <Text style={styles.subtitle}>What type of goal?</Text>
+          <Text style={[styles.title, { color: colors.text }]}>New Goal</Text>
+          <Text style={[styles.subtitle, { color: colors.textSecondary }]}>What type of goal?</Text>
           {GOAL_TYPES.map((type) => (
             <TouchableOpacity
               key={type.value}
-              style={styles.typeCard}
+              style={[styles.typeCard, { borderColor: colors.border }]}
               onPress={() => setGoalType(type.value)}
             >
-              <Text style={styles.typeLabel}>{type.label}</Text>
-              <Text style={styles.typeDesc}>{type.description}</Text>
+              <Text style={[styles.typeLabel, { color: colors.text }]}>{type.label}</Text>
+              <Text style={[styles.typeDesc, { color: colors.textSecondary }]}>{type.description}</Text>
             </TouchableOpacity>
           ))}
         </View>
@@ -112,7 +114,7 @@ export function CreateGoalScreen({ navigation }: CreateScreenProps<'CreateGoal'>
     <ScreenContainer>
       <ScrollView style={styles.container} keyboardShouldPersistTaps="handled">
         <TouchableOpacity onPress={() => setGoalType(null)}>
-          <Text style={styles.changeType}>
+          <Text style={[styles.changeType, { color: colors.textSecondary }]}>
             {GOAL_TYPES.find((t) => t.value === goalType)?.label} (change)
           </Text>
         </TouchableOpacity>
@@ -135,29 +137,29 @@ export function CreateGoalScreen({ navigation }: CreateScreenProps<'CreateGoal'>
 
         <TextInput label="Stakes (optional)" value={stakes} onChangeText={setStakes} maxLength={LIMITS.STAKES} placeholder="What happens if you succeed or fail?" multiline />
 
-        <Text style={styles.sectionTitle}>Categories (1-3)</Text>
+        <Text style={[styles.sectionTitle, { color: colors.text }]}>Categories (1-3)</Text>
         <View style={styles.categoryGrid}>
           {CATEGORIES.map((cat) => (
             <TouchableOpacity
               key={cat.id}
-              style={[styles.categoryChip, selectedCategories.includes(cat.id) && { borderColor: cat.color, backgroundColor: cat.color + '15' }]}
+              style={[styles.categoryChip, { borderColor: colors.border }, selectedCategories.includes(cat.id) && { borderColor: cat.color, backgroundColor: cat.color + '15' }]}
               onPress={() => toggleCategory(cat.id)}
             >
               <View style={[styles.catDot, { backgroundColor: cat.color }]} />
-              <Text style={styles.catName}>{cat.name}</Text>
+              <Text style={[styles.catName, { color: colors.text }]}>{cat.name}</Text>
             </TouchableOpacity>
           ))}
         </View>
 
-        <Text style={styles.sectionTitle}>Visibility</Text>
+        <Text style={[styles.sectionTitle, { color: colors.text }]}>Visibility</Text>
         <View style={styles.visibilityRow}>
           {VISIBILITY_OPTIONS.map((opt) => (
             <TouchableOpacity
               key={opt.value}
-              style={[styles.visChip, visibility === opt.value && styles.visChipActive]}
+              style={[styles.visChip, { borderColor: colors.border }, visibility === opt.value && { backgroundColor: colors.text, borderColor: colors.text }]}
               onPress={() => setVisibility(opt.value)}
             >
-              <Text style={[styles.visText, visibility === opt.value && styles.visTextActive]}>{opt.label}</Text>
+              <Text style={[styles.visText, { color: colors.text }, visibility === opt.value && { color: colors.background }]}>{opt.label}</Text>
             </TouchableOpacity>
           ))}
         </View>
@@ -170,21 +172,19 @@ export function CreateGoalScreen({ navigation }: CreateScreenProps<'CreateGoal'>
 
 const styles = StyleSheet.create({
   container: { flex: 1, padding: spacing.md },
-  title: { ...typography.title, color: colors.black, marginBottom: spacing.sm },
-  subtitle: { ...typography.body, color: colors.gray, marginBottom: spacing.lg },
-  typeCard: { padding: spacing.md, borderWidth: borders.width, borderColor: borders.color, borderRadius, marginBottom: spacing.sm },
-  typeLabel: { ...typography.goalTitle, color: colors.black },
-  typeDesc: { ...typography.caption, color: colors.gray, marginTop: spacing.xs },
-  changeType: { ...typography.caption, color: colors.gray, fontWeight: '600', marginBottom: spacing.md },
-  sectionTitle: { ...typography.body, fontWeight: '600', color: colors.black, marginBottom: spacing.sm, marginTop: spacing.sm },
+  title: { ...typography.title, marginBottom: spacing.sm },
+  subtitle: { ...typography.body, marginBottom: spacing.lg },
+  typeCard: { padding: spacing.md, borderWidth: borders.width, borderRadius, marginBottom: spacing.sm },
+  typeLabel: { ...typography.goalTitle },
+  typeDesc: { ...typography.caption, marginTop: spacing.xs },
+  changeType: { ...typography.caption, fontWeight: '600', marginBottom: spacing.md },
+  sectionTitle: { ...typography.body, fontWeight: '600', marginBottom: spacing.sm, marginTop: spacing.sm },
   categoryGrid: { flexDirection: 'row', flexWrap: 'wrap', marginBottom: spacing.md },
-  categoryChip: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: spacing.sm, paddingVertical: spacing.xs + 2, borderWidth: 1, borderColor: borders.color, borderRadius, marginRight: spacing.xs, marginBottom: spacing.xs },
+  categoryChip: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: spacing.sm, paddingVertical: spacing.xs + 2, borderWidth: 1, borderRadius, marginRight: spacing.xs, marginBottom: spacing.xs },
   catDot: { width: 8, height: 8, borderRadius: 4, marginRight: spacing.xs },
-  catName: { ...typography.caption, color: colors.black },
+  catName: { ...typography.caption },
   visibilityRow: { flexDirection: 'row', marginBottom: spacing.lg },
-  visChip: { paddingHorizontal: spacing.md, paddingVertical: spacing.xs + 2, borderWidth: 1, borderColor: borders.color, borderRadius, marginRight: spacing.sm },
-  visChipActive: { backgroundColor: colors.black, borderColor: colors.black },
-  visText: { ...typography.caption, color: colors.black },
-  visTextActive: { color: colors.white },
+  visChip: { paddingHorizontal: spacing.md, paddingVertical: spacing.xs + 2, borderWidth: 1, borderRadius, marginRight: spacing.sm },
+  visText: { ...typography.caption },
   createBtn: { marginTop: spacing.sm, marginBottom: spacing.xl },
 });

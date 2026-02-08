@@ -3,7 +3,8 @@ import { View, Text, StyleSheet, FlatList, TextInput as RNTextInput, TouchableOp
 import { UserSearchResult } from '../../components/UserSearchResult';
 import { GoalSearchResult } from '../../components/GoalSearchResult';
 import { LoadingSpinner } from '../../components/LoadingSpinner';
-import { colors, typography, spacing, borderRadius, borders } from '../../utils/theme';
+import { typography, spacing, borderRadius, borders } from '../../utils/theme';
+import { useTheme } from '../../utils/ThemeContext';
 import { CATEGORIES } from '../../utils/categories';
 import { useAuth } from '../../hooks/useAuth';
 import { searchAll } from '../../services/search';
@@ -19,6 +20,7 @@ interface SearchResult {
 }
 
 export function SearchScreen({ navigation }: SearchScreenProps<'Search'>) {
+  const { colors } = useTheme();
   const { user } = useAuth();
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<SearchResult[]>([]);
@@ -43,13 +45,13 @@ export function SearchScreen({ navigation }: SearchScreenProps<'Search'>) {
 
   const renderCategory = ({ item }: { item: Category }) => (
     <TouchableOpacity
-      style={styles.categoryCard}
+      style={[styles.categoryCard, { borderColor: colors.border }]}
       onPress={() => navigation.navigate('CategoryFeed', { categoryId: item.id, categoryName: item.name })}
     >
       <View style={[styles.catIcon, { backgroundColor: item.color + '20' }]}>
         <View style={[styles.catDot, { backgroundColor: item.color }]} />
       </View>
-      <Text style={styles.catName}>{item.name}</Text>
+      <Text style={[styles.catName, { color: colors.text }]}>{item.name}</Text>
     </TouchableOpacity>
   );
 
@@ -76,22 +78,22 @@ export function SearchScreen({ navigation }: SearchScreenProps<'Search'>) {
     }
     return (
       <TouchableOpacity
-        style={styles.postResult}
+        style={[styles.postResult, { borderBottomColor: colors.border }]}
         onPress={() => navigation.navigate('PostDetail', { postId: item.result_id })}
       >
-        <Text style={styles.postContent} numberOfLines={2}>{item.title}</Text>
+        <Text style={[styles.postContent, { color: colors.text }]} numberOfLines={2}>{item.title}</Text>
       </TouchableOpacity>
     );
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
       <RNTextInput
-        style={styles.searchInput}
+        style={[styles.searchInput, { color: colors.text, borderColor: colors.border }]}
         placeholder="Search users, goals, posts..."
         value={query}
         onChangeText={handleSearch}
-        placeholderTextColor={colors.gray}
+        placeholderTextColor={colors.textSecondary}
         autoCapitalize="none"
         autoCorrect={false}
       />
@@ -105,7 +107,7 @@ export function SearchScreen({ navigation }: SearchScreenProps<'Search'>) {
             renderItem={renderResult}
             ListEmptyComponent={
               <View style={styles.emptySearch}>
-                <Text style={styles.emptyText}>No results found</Text>
+                <Text style={[styles.emptyText, { color: colors.textSecondary }]}>No results found</Text>
               </View>
             }
           />
@@ -118,7 +120,7 @@ export function SearchScreen({ navigation }: SearchScreenProps<'Search'>) {
           numColumns={2}
           columnWrapperStyle={styles.categoryRow}
           contentContainerStyle={styles.categoryGrid}
-          ListHeaderComponent={<Text style={styles.browseTitle}>Browse categories</Text>}
+          ListHeaderComponent={<Text style={[styles.browseTitle, { color: colors.text }]}>Browse categories</Text>}
         />
       )}
     </View>
@@ -126,25 +128,23 @@ export function SearchScreen({ navigation }: SearchScreenProps<'Search'>) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.white },
+  container: { flex: 1 },
   searchInput: {
     ...typography.body,
     margin: spacing.md,
     padding: spacing.sm + 2,
     borderWidth: borders.width,
-    borderColor: borders.color,
     borderRadius,
-    color: colors.black,
   },
-  browseTitle: { ...typography.sectionHeader, color: colors.black, paddingHorizontal: spacing.md, marginBottom: spacing.sm },
+  browseTitle: { ...typography.sectionHeader, paddingHorizontal: spacing.md, marginBottom: spacing.sm },
   categoryGrid: { paddingHorizontal: spacing.md },
   categoryRow: { justifyContent: 'space-between', marginBottom: spacing.sm },
-  categoryCard: { flex: 1, marginHorizontal: spacing.xs, padding: spacing.md, borderWidth: borders.width, borderColor: borders.color, borderRadius, alignItems: 'center' },
+  categoryCard: { flex: 1, marginHorizontal: spacing.xs, padding: spacing.md, borderWidth: borders.width, borderRadius, alignItems: 'center' },
   catIcon: { width: 40, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center', marginBottom: spacing.xs },
   catDot: { width: 16, height: 16, borderRadius: 8 },
-  catName: { ...typography.body, fontWeight: '600', color: colors.black },
-  postResult: { padding: spacing.md, borderBottomWidth: borders.width, borderBottomColor: borders.color },
-  postContent: { ...typography.body, color: colors.black },
+  catName: { ...typography.body, fontWeight: '600' },
+  postResult: { padding: spacing.md, borderBottomWidth: borders.width },
+  postContent: { ...typography.body },
   emptySearch: { padding: spacing.xl, alignItems: 'center' },
-  emptyText: { ...typography.body, color: colors.gray },
+  emptyText: { ...typography.body },
 });

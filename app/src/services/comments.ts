@@ -24,6 +24,9 @@ export async function createComment(data: {
     if (error.message.includes('subscription_status')) {
       return { error: 'Commenting is a paid feature. Upgrade to join the conversation!' };
     }
+    if (error.message.includes('inappropriate language')) {
+      return { error: 'Please keep your comment friendly' };
+    }
     return { error: error.message };
   }
   return { comment: comment as Comment };
@@ -70,7 +73,12 @@ export async function updateComment(
     .update({ content, updated_at: new Date().toISOString() })
     .eq('id', commentId);
 
-  if (error) return { error: error.message };
+  if (error) {
+    if (error.message.includes('inappropriate language')) {
+      return { error: 'Please keep your comment friendly' };
+    }
+    return { error: error.message };
+  }
   return {};
 }
 

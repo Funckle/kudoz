@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { colors, typography, spacing } from '../utils/theme';
+import { typography, spacing } from '../utils/theme';
+import { useTheme } from '../utils/ThemeContext';
 import { Button } from './Button';
 
 interface ErrorStateProps {
@@ -12,9 +13,11 @@ export function ErrorState({
   message = 'Something went wrong',
   onRetry,
 }: ErrorStateProps) {
+  const { colors } = useTheme();
+
   return (
     <View style={styles.container}>
-      <Text style={styles.message}>{message}</Text>
+      <Text style={[styles.message, { color: colors.textSecondary }]}>{message}</Text>
       {onRetry && <Button title="Try again" onPress={onRetry} variant="secondary" />}
     </View>
   );
@@ -29,7 +32,6 @@ const styles = StyleSheet.create({
   },
   message: {
     ...typography.body,
-    color: colors.gray,
     textAlign: 'center',
     marginBottom: spacing.md,
   },

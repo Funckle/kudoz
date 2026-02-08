@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, FlatList, Modal, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, FlatList, Modal } from 'react-native';
 import { PostCard } from '../../components/PostCard';
 import { Button } from '../../components/Button';
 import { LoadingSpinner } from '../../components/LoadingSpinner';
-import { colors, typography, spacing, borderRadius } from '../../utils/theme';
+import { typography, spacing } from '../../utils/theme';
+import { useTheme } from '../../utils/ThemeContext';
 import { supabase } from '../../services/supabase';
 import type { PostWithAuthor } from '../../types/database';
 
@@ -14,6 +15,7 @@ interface PublicFeedScreenProps {
 }
 
 export function PublicFeedScreen({ onSignIn, onWaitlist, onRedeemInvite }: PublicFeedScreenProps) {
+  const { colors } = useTheme();
   const [posts, setPosts] = useState<PostWithAuthor[]>([]);
   const [loading, setLoading] = useState(true);
   const [showGate, setShowGate] = useState(false);
@@ -38,7 +40,7 @@ export function PublicFeedScreen({ onSignIn, onWaitlist, onRedeemInvite }: Publi
   }, []);
 
   const handleScroll = (e: { nativeEvent: { contentOffset: { y: number } } }) => {
-    if (e.nativeEvent.contentOffset.y > 300 && !showGate) {
+    if (e.nativeEvent.contentOffset.y > 500 && !showGate) {
       setShowGate(true);
     }
   };
@@ -46,7 +48,7 @@ export function PublicFeedScreen({ onSignIn, onWaitlist, onRedeemInvite }: Publi
   if (loading) return <LoadingSpinner />;
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
       <FlatList
         data={posts}
         keyExtractor={(item) => item.id}
@@ -54,17 +56,14 @@ export function PublicFeedScreen({ onSignIn, onWaitlist, onRedeemInvite }: Publi
         onScroll={handleScroll}
         scrollEventThrottle={100}
       />
-      <Modal visible={showGate} transparent animationType="slide">
+      <Modal visible={showGate} transparent animationType="fade">
         <View style={styles.overlay}>
-          <View style={styles.gate}>
-            <Text style={styles.gateTitle}>Join Kudoz</Text>
-            <Text style={styles.gateSubtitle}>Create goals, share progress, and celebrate with friends.</Text>
+          <View style={[styles.gate, { backgroundColor: colors.background }]}>
+            <Text style={[styles.gateTitle, { color: colors.text }]}>Join Kudoz</Text>
+            <Text style={[styles.gateSubtitle, { color: colors.textSecondary }]}>Create goals, share progress, and celebrate with friends.</Text>
             <Button title="Sign in" onPress={onSignIn} style={styles.gateBtn} />
             <Button title="Redeem invite" onPress={onRedeemInvite} variant="secondary" style={styles.gateBtn} />
             <Button title="Join waitlist" onPress={onWaitlist} variant="secondary" style={styles.gateBtn} />
-            <TouchableOpacity onPress={() => setShowGate(false)} style={styles.dismissBtn}>
-              <Text style={styles.dismissText}>Maybe later</Text>
-            </TouchableOpacity>
           </View>
         </View>
       </Modal>
@@ -73,12 +72,10 @@ export function PublicFeedScreen({ onSignIn, onWaitlist, onRedeemInvite }: Publi
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.white },
-  overlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'flex-end' },
-  gate: { backgroundColor: colors.white, borderTopLeftRadius: spacing.md, borderTopRightRadius: spacing.md, padding: spacing.lg },
-  gateTitle: { ...typography.title, color: colors.black, textAlign: 'center', marginBottom: spacing.xs },
-  gateSubtitle: { ...typography.body, color: colors.gray, textAlign: 'center', marginBottom: spacing.lg },
+  container: { flex: 1 },
+  overlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.7)', justifyContent: 'center', alignItems: 'center', padding: spacing.lg },
+  gate: { borderRadius: spacing.md, padding: spacing.lg, width: '100%', maxWidth: 360 },
+  gateTitle: { ...typography.title, textAlign: 'center', marginBottom: spacing.xs },
+  gateSubtitle: { ...typography.body, textAlign: 'center', marginBottom: spacing.lg },
   gateBtn: { marginBottom: spacing.sm },
-  dismissBtn: { alignItems: 'center', marginTop: spacing.sm },
-  dismissText: { ...typography.caption, color: colors.gray },
 });

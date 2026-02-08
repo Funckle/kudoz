@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import { Avatar } from './Avatar';
-import { colors, typography, spacing } from '../utils/theme';
+import { typography, spacing } from '../utils/theme';
+import { useTheme } from '../utils/ThemeContext';
 import { useAuth } from '../hooks/useAuth';
 import { deleteComment } from '../services/comments';
 import type { CommentWithAuthor } from '../types/database';
@@ -17,6 +18,7 @@ interface CommentItemProps {
 
 export function CommentItem({ comment, depth = 0, onReply, onEdit, onReport, onDeleted }: CommentItemProps) {
   const { user } = useAuth();
+  const { colors } = useTheme();
   const isOwner = user?.id === comment.user_id;
   const indent = Math.min(depth, 3) * 24;
 
@@ -56,28 +58,28 @@ export function CommentItem({ comment, depth = 0, onReply, onEdit, onReport, onD
         <Avatar uri={comment.user?.avatar_url} name={comment.user?.name} size={32} />
         <View style={styles.body}>
           <View style={styles.header}>
-            <Text style={styles.name}>{comment.user?.name}</Text>
-            <Text style={styles.time}>{formatDate(comment.created_at)}</Text>
-            {comment.updated_at && <Text style={styles.edited}>(edited)</Text>}
+            <Text style={[styles.name, { color: colors.text }]}>{comment.user?.name}</Text>
+            <Text style={[styles.time, { color: colors.textSecondary }]}>{formatDate(comment.created_at)}</Text>
+            {comment.updated_at && <Text style={[styles.edited, { color: colors.textSecondary }]}>(edited)</Text>}
           </View>
-          <Text style={styles.content}>{comment.content}</Text>
+          <Text style={[styles.content, { color: colors.text }]}>{comment.content}</Text>
           <View style={styles.actions}>
             <TouchableOpacity onPress={() => onReply?.(comment.id, comment.user?.username || '')}>
-              <Text style={styles.action}>Reply</Text>
+              <Text style={[styles.action, { color: colors.textSecondary }]}>Reply</Text>
             </TouchableOpacity>
             {canEdit() && (
               <TouchableOpacity onPress={() => onEdit?.(comment)}>
-                <Text style={styles.action}>Edit</Text>
+                <Text style={[styles.action, { color: colors.textSecondary }]}>Edit</Text>
               </TouchableOpacity>
             )}
             {isOwner && (
               <TouchableOpacity onPress={handleDelete}>
-                <Text style={[styles.action, styles.deleteAction]}>Delete</Text>
+                <Text style={[styles.action, { color: colors.error }]}>Delete</Text>
               </TouchableOpacity>
             )}
             {!isOwner && (
               <TouchableOpacity onPress={() => onReport?.(comment.id)}>
-                <Text style={styles.action}>Report</Text>
+                <Text style={[styles.action, { color: colors.textSecondary }]}>Report</Text>
               </TouchableOpacity>
             )}
           </View>
@@ -116,22 +118,18 @@ const styles = StyleSheet.create({
   name: {
     ...typography.caption,
     fontWeight: '600',
-    color: colors.black,
     marginRight: spacing.xs,
   },
   time: {
     ...typography.caption,
-    color: colors.gray,
   },
   edited: {
     ...typography.caption,
-    color: colors.gray,
     fontStyle: 'italic',
     marginLeft: spacing.xs,
   },
   content: {
     ...typography.body,
-    color: colors.black,
     marginTop: 2,
   },
   actions: {
@@ -140,10 +138,6 @@ const styles = StyleSheet.create({
   },
   action: {
     ...typography.caption,
-    color: colors.gray,
     marginRight: spacing.md,
-  },
-  deleteAction: {
-    color: colors.red,
   },
 });

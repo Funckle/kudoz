@@ -18,5 +18,7 @@ export function useSubscription() {
     return daysLeft <= 7 && daysLeft > 0;
   };
 
-  return { isPaid, canComment, canCreateGoal, isExpiring };
+  const isLapsed = user?.subscription_status === 'lapsed';
+
+  return { isPaid, isLapsed, canComment, canCreateGoal, isExpiring };
 }

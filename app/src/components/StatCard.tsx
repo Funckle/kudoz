@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { colors, typography, spacing, borderRadius, borders } from '../utils/theme';
+import { typography, spacing, borderRadius } from '../utils/theme';
+import { useTheme } from '../utils/ThemeContext';
 
 interface StatCardProps {
   label: string;
@@ -8,10 +9,12 @@ interface StatCardProps {
 }
 
 export function StatCard({ label, value }: StatCardProps) {
+  const { colors } = useTheme();
+
   return (
-    <View style={styles.card}>
-      <Text style={styles.value}>{value}</Text>
-      <Text style={styles.label}>{label}</Text>
+    <View style={[styles.card, { borderColor: colors.border }]}>
+      <Text style={[styles.value, { color: colors.text }]}>{value}</Text>
+      <Text style={[styles.label, { color: colors.textSecondary }]}>{label}</Text>
     </View>
   );
 }
@@ -21,8 +24,7 @@ const styles = StyleSheet.create({
     flex: 1,
     minWidth: 70,
     padding: spacing.sm,
-    borderWidth: borders.width,
-    borderColor: borders.color,
+    borderWidth: 1,
     borderRadius,
     alignItems: 'center',
     marginRight: spacing.xs,
@@ -31,11 +33,9 @@ const styles = StyleSheet.create({
   value: {
     fontSize: 20,
     fontWeight: '700',
-    color: colors.black,
   },
   label: {
     ...typography.caption,
-    color: colors.gray,
     marginTop: 2,
   },
 });

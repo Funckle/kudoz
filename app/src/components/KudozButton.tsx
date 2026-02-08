@@ -1,6 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { TouchableOpacity, Text, StyleSheet, View } from 'react-native';
-import { colors, typography, spacing, borderRadius } from '../utils/theme';
+import { typography, spacing } from '../utils/theme';
+import { useTheme } from '../utils/ThemeContext';
 import { useAuth } from '../hooks/useAuth';
 import { giveKudoz, removeKudoz } from '../services/reactions';
 import { checkRateLimit } from '../utils/rateLimit';
@@ -13,6 +14,7 @@ interface KudozButtonProps {
 
 export function KudozButton({ postId, initialCount, initialActive }: KudozButtonProps) {
   const { user } = useAuth();
+  const { colors } = useTheme();
   const [active, setActive] = useState(initialActive);
   const [count, setCount] = useState(initialCount);
 
@@ -40,11 +42,23 @@ export function KudozButton({ postId, initialCount, initialActive }: KudozButton
 
   return (
     <TouchableOpacity onPress={handlePress} style={styles.container} activeOpacity={0.6}>
-      <View style={[styles.icon, active && styles.iconActive]}>
-        <Text style={[styles.iconText, active && styles.iconTextActive]}>K</Text>
+      <View style={[
+        styles.icon,
+        { borderColor: colors.border },
+        active && { backgroundColor: colors.text, borderColor: colors.text },
+      ]}>
+        <Text style={[
+          styles.iconText,
+          { color: colors.textSecondary },
+          active && { color: colors.background },
+        ]}>K</Text>
       </View>
       {count > 0 && (
-        <Text style={[styles.count, active && styles.countActive]}>{count}</Text>
+        <Text style={[
+          styles.count,
+          { color: colors.textSecondary },
+          active && { color: colors.text },
+        ]}>{count}</Text>
       )}
     </TouchableOpacity>
   );
@@ -60,29 +74,16 @@ const styles = StyleSheet.create({
     height: 28,
     borderRadius: 14,
     borderWidth: 1.5,
-    borderColor: colors.grayLight,
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  iconActive: {
-    backgroundColor: colors.black,
-    borderColor: colors.black,
   },
   iconText: {
     fontSize: 13,
     fontWeight: '700',
-    color: colors.gray,
-  },
-  iconTextActive: {
-    color: colors.white,
   },
   count: {
     ...typography.caption,
     fontWeight: '600',
-    color: colors.gray,
     marginLeft: spacing.xs,
-  },
-  countActive: {
-    color: colors.black,
   },
 });

@@ -21,7 +21,12 @@ export async function createGoal(data: {
     .select()
     .single();
 
-  if (error) return { error: error.message };
+  if (error) {
+    if (error.message.includes('inappropriate language')) {
+      return { error: 'Please keep your goal content friendly' };
+    }
+    return { error: error.message };
+  }
 
   // Insert goal categories
   if (category_ids.length > 0) {
@@ -46,7 +51,12 @@ export async function updateGoal(
   data: Partial<Pick<Goal, 'title' | 'description' | 'target_value' | 'stakes' | 'effort_label' | 'effort_target' | 'visibility'>>
 ): Promise<{ error?: string }> {
   const { error } = await supabase.from('goals').update(data).eq('id', goalId);
-  if (error) return { error: error.message };
+  if (error) {
+    if (error.message.includes('inappropriate language')) {
+      return { error: 'Please keep your goal content friendly' };
+    }
+    return { error: error.message };
+  }
   return {};
 }
 

@@ -6,7 +6,8 @@ import { Button } from '../../components/Button';
 import { GoalCard } from '../../components/GoalCard';
 import { EmptyState } from '../../components/EmptyState';
 import { LoadingSpinner } from '../../components/LoadingSpinner';
-import { colors, typography, spacing, borderRadius, borders } from '../../utils/theme';
+import { typography, spacing, borderRadius, borders } from '../../utils/theme';
+import { useTheme } from '../../utils/ThemeContext';
 import { LIMITS } from '../../utils/validation';
 import { useAuth } from '../../hooks/useAuth';
 import { getUserGoals } from '../../services/goals';
@@ -18,6 +19,7 @@ import type { GoalWithCategories } from '../../types/database';
 import type { CreateScreenProps } from '../../types/navigation';
 
 export function CreatePostScreen({ route, navigation }: CreateScreenProps<'CreatePost'>) {
+  const { colors } = useTheme();
   const { user } = useAuth();
   const [goals, setGoals] = useState<GoalWithCategories[]>([]);
   const [selectedGoal, setSelectedGoal] = useState<GoalWithCategories | null>(null);
@@ -127,7 +129,7 @@ export function CreatePostScreen({ route, navigation }: CreateScreenProps<'Creat
     return (
       <ScreenContainer>
         <View style={styles.container}>
-          <Text style={styles.title}>Select a goal</Text>
+          <Text style={[styles.title, { color: colors.text }]}>Select a goal</Text>
           <ScrollView>
             {goals.map((goal) => (
               <GoalCard key={goal.id} goal={goal} onPress={() => setSelectedGoal(goal)} />
@@ -150,7 +152,7 @@ export function CreatePostScreen({ route, navigation }: CreateScreenProps<'Creat
     <ScreenContainer>
       <ScrollView style={styles.container} keyboardShouldPersistTaps="handled">
         <TouchableOpacity onPress={() => setSelectedGoal(null)}>
-          <Text style={styles.goalLabel}>Goal: {selectedGoal.title} (change)</Text>
+          <Text style={[styles.goalLabel, { color: colors.textSecondary }]}>Goal: {selectedGoal.title} (change)</Text>
         </TouchableOpacity>
 
         {showProgressInput && (
@@ -177,7 +179,7 @@ export function CreatePostScreen({ route, navigation }: CreateScreenProps<'Creat
           <View style={styles.imagePreview}>
             <Image source={{ uri: imageUri }} style={styles.image} resizeMode="cover" />
             <TouchableOpacity style={styles.removeImage} onPress={() => { setImageUri(null); setImageSize(null); }}>
-              <Text style={styles.removeImageText}>Remove</Text>
+              <Text style={[styles.removeImageText, { color: colors.error }]}>Remove</Text>
             </TouchableOpacity>
           </View>
         ) : (
@@ -197,13 +199,11 @@ const styles = StyleSheet.create({
   },
   title: {
     ...typography.title,
-    color: colors.black,
     marginBottom: spacing.md,
   },
   goalLabel: {
     ...typography.body,
     fontWeight: '600',
-    color: colors.gray,
     marginBottom: spacing.md,
   },
   imagePreview: {
@@ -220,7 +220,6 @@ const styles = StyleSheet.create({
   },
   removeImageText: {
     ...typography.caption,
-    color: colors.red,
   },
   photoBtn: {
     marginBottom: spacing.md,

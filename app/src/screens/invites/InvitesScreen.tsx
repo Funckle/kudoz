@@ -4,12 +4,14 @@ import { ScreenContainer } from '../../components/ScreenContainer';
 import { Button } from '../../components/Button';
 import { EmptyState } from '../../components/EmptyState';
 import { LoadingSpinner } from '../../components/LoadingSpinner';
-import { colors, typography, spacing, borders, borderRadius } from '../../utils/theme';
+import { typography, spacing, borders, borderRadius } from '../../utils/theme';
+import { useTheme } from '../../utils/ThemeContext';
 import { useAuth } from '../../hooks/useAuth';
 import { generateInviteCode, getMyInvites, getRemainingInvites } from '../../services/invites';
 import type { Invite } from '../../types/database';
 
 export function InvitesScreen() {
+  const { colors } = useTheme();
   const { user } = useAuth();
   const [invites, setInvites] = useState<Invite[]>([]);
   const [remaining, setRemaining] = useState(0);
@@ -49,8 +51,8 @@ export function InvitesScreen() {
   return (
     <ScreenContainer>
       <View style={styles.container}>
-        <Text style={styles.title}>Invites</Text>
-        <Text style={styles.remaining}>{remaining} invites remaining</Text>
+        <Text style={[styles.title, { color: colors.text }]}>Invites</Text>
+        <Text style={[styles.remaining, { color: colors.textSecondary }]}>{remaining} invites remaining</Text>
 
         <Button
           title="Generate invite"
@@ -64,10 +66,10 @@ export function InvitesScreen() {
           data={invites}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
-            <View style={styles.inviteRow}>
+            <View style={[styles.inviteRow, { borderBottomColor: colors.border }]}>
               <View style={styles.inviteInfo}>
-                <Text style={styles.code}>{item.invite_code}</Text>
-                <Text style={styles.status}>
+                <Text style={[styles.code, { color: colors.text }]}>{item.invite_code}</Text>
+                <Text style={[styles.status, { color: colors.textSecondary }]}>
                   {item.used_by ? 'Used' : 'Available'}
                 </Text>
               </View>
@@ -85,11 +87,11 @@ export function InvitesScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, padding: spacing.md },
-  title: { ...typography.title, color: colors.black, marginBottom: spacing.xs },
-  remaining: { ...typography.body, color: colors.gray, marginBottom: spacing.md },
+  title: { ...typography.title, marginBottom: spacing.xs },
+  remaining: { ...typography.body, marginBottom: spacing.md },
   generateBtn: { marginBottom: spacing.md },
-  inviteRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: spacing.sm, borderBottomWidth: borders.width, borderBottomColor: borders.color },
+  inviteRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: spacing.sm, borderBottomWidth: borders.width },
   inviteInfo: { flex: 1 },
-  code: { ...typography.goalTitle, color: colors.black, fontFamily: undefined, letterSpacing: 1 },
-  status: { ...typography.caption, color: colors.gray },
+  code: { ...typography.goalTitle, fontFamily: undefined, letterSpacing: 1 },
+  status: { ...typography.caption },
 });

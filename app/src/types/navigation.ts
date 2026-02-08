@@ -67,6 +67,8 @@ export type ProfileStackParamList = {
   FollowList: { userId: string; type: 'followers' | 'following' };
   BlockedUsers: undefined;
   MutedUsers: undefined;
+  About: undefined;
+  YourData: undefined;
 };
 
 // Create stack (modal)

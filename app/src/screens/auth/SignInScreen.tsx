@@ -3,12 +3,14 @@ import { View, Text, StyleSheet, KeyboardAvoidingView, Platform } from 'react-na
 import { ScreenContainer } from '../../components/ScreenContainer';
 import { TextInput } from '../../components/TextInput';
 import { Button } from '../../components/Button';
-import { colors, typography, spacing } from '../../utils/theme';
+import { typography, spacing } from '../../utils/theme';
+import { useTheme } from '../../utils/ThemeContext';
 import { validateEmail } from '../../utils/validation';
 import { sendMagicLink } from '../../services/auth';
 import type { AuthScreenProps } from '../../types/navigation';
 
 export function SignInScreen({ navigation }: AuthScreenProps<'SignIn'>) {
+  const { colors } = useTheme();
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -36,8 +38,8 @@ export function SignInScreen({ navigation }: AuthScreenProps<'SignIn'>) {
         style={styles.container}
       >
         <View style={styles.content}>
-          <Text style={styles.title}>Kudoz</Text>
-          <Text style={styles.subtitle}>Track goals. Share progress. Celebrate together.</Text>
+          <Text style={[styles.title, { color: colors.text }]}>Kudoz</Text>
+          <Text style={[styles.subtitle, { color: colors.textSecondary }]}>Track goals. Share progress. Celebrate together.</Text>
           <TextInput
             label="Email"
             placeholder="you@example.com"
@@ -73,11 +75,9 @@ const styles = StyleSheet.create({
     fontSize: 32,
     textAlign: 'center',
     marginBottom: spacing.sm,
-    color: colors.black,
   },
   subtitle: {
     ...typography.body,
-    color: colors.gray,
     textAlign: 'center',
     marginBottom: spacing.xl,
   },

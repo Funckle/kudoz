@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { FlatList, StyleSheet, RefreshControl } from 'react-native';
 import { PostCard } from '../../components/PostCard';
+import { ReportModal } from '../../components/ReportModal';
 import { LoadingSpinner } from '../../components/LoadingSpinner';
 import { EmptyState } from '../../components/EmptyState';
-import { colors } from '../../utils/theme';
+import { useTheme } from '../../utils/ThemeContext';
 import { getPostsByCategory } from '../../services/search';
 import type { PostWithAuthor } from '../../types/database';
 import type { SearchScreenProps } from '../../types/navigation';
@@ -13,6 +14,8 @@ export function CategoryFeedScreen({ route, navigation }: SearchScreenProps<'Cat
   const [posts, setPosts] = useState<PostWithAuthor[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [reportTarget, setReportTarget] = useState<{ visible: boolean; postId: string }>({ visible: false, postId: '' });
+  const { colors } = useTheme();
 
   const loadPosts = useCallback(async (refresh = false) => {
     const { posts: p } = await getPostsByCategory(categoryId);
@@ -26,25 +29,36 @@ export function CategoryFeedScreen({ route, navigation }: SearchScreenProps<'Cat
   if (loading) return <LoadingSpinner />;
 
   return (
-    <FlatList
-      data={posts}
-      keyExtractor={(item) => item.id}
-      renderItem={({ item }) => (
-        <PostCard
-          post={item}
-          onPressAuthor={() => navigation.navigate('UserProfile', { userId: item.user_id })}
-          onPressGoal={() => navigation.navigate('GoalDetail', { goalId: item.goal_id })}
-          onPressPost={() => navigation.navigate('PostDetail', { postId: item.id })}
-          onPressComments={() => navigation.navigate('PostDetail', { postId: item.id })}
-        />
-      )}
-      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => { setRefreshing(true); loadPosts(true); }} />}
-      ListEmptyComponent={<EmptyState title="No posts in this category yet" />}
-      style={styles.list}
-    />
+    <>
+      <FlatList
+        data={posts}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => (
+          <PostCard
+            post={item}
+            onPressAuthor={() => navigation.navigate('UserProfile', { userId: item.user_id })}
+            onPressGoal={() => navigation.navigate('GoalDetail', { goalId: item.goal_id })}
+            onPressPost={() => navigation.navigate('PostDetail', { postId: item.id })}
+            onPressComments={() => navigation.navigate('PostDetail', { postId: item.id })}
+            onEdit={() => navigation.getParent()?.navigate('CreateModal', { screen: 'EditPost', params: { postId: item.id } })}
+            onReport={() => setReportTarget({ visible: true, postId: item.id })}
+            onDeleted={() => loadPosts(true)}
+          />
+        )}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => { setRefreshing(true); loadPosts(true); }} />}
+        ListEmptyComponent={<EmptyState title="No posts in this category yet" />}
+        style={[styles.list, { backgroundColor: colors.background }]}
+      />
+      <ReportModal
+        visible={reportTarget.visible}
+        contentType="post"
+        contentId={reportTarget.postId}
+        onClose={() => setReportTarget({ visible: false, postId: '' })}
+      />
+    </>
   );
 }
 
 const styles = StyleSheet.create({
-  list: { flex: 1, backgroundColor: colors.white },
+  list: { flex: 1 },
 });

@@ -3,7 +3,8 @@ import { View, Text, StyleSheet } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Home, Search, PlusCircle, Bell, User } from 'lucide-react-native';
-import { colors, borders } from '../utils/theme';
+import { borders } from '../utils/theme';
+import { useTheme } from '../utils/ThemeContext';
 import { useAuth } from '../hooks/useAuth';
 import { getUnreadCount } from '../services/notifications';
 
@@ -21,6 +22,10 @@ import { GoalDetailScreen } from '../screens/goals/GoalDetailScreen';
 import { SettingsScreen } from '../screens/settings/SettingsScreen';
 import { SubscriptionScreen } from '../screens/settings/SubscriptionScreen';
 import { DeleteAccountScreen } from '../screens/settings/DeleteAccountScreen';
+import { BlockedUsersScreen } from '../screens/settings/BlockedUsersScreen';
+import { MutedUsersScreen } from '../screens/settings/MutedUsersScreen';
+import { AboutScreen } from '../screens/settings/AboutScreen';
+import { YourDataScreen } from '../screens/settings/YourDataScreen';
 import { InvitesScreen } from '../screens/invites/InvitesScreen';
 import { AnalyticsScreen } from '../screens/analytics/AnalyticsScreen';
 
@@ -89,6 +94,10 @@ function ProfileStackNavigator() {
       <ProfileStack.Screen name="DeleteAccount" component={DeleteAccountScreen} options={{ title: 'Delete Account' }} />
       <ProfileStack.Screen name="UserProfile" component={UserProfileScreen} options={{ title: 'Profile' }} />
       <ProfileStack.Screen name="FollowList" component={FollowListScreen} options={({ route }) => ({ title: route.params.type === 'followers' ? 'Followers' : 'Following' })} />
+      <ProfileStack.Screen name="BlockedUsers" component={BlockedUsersScreen} options={{ title: 'Blocked Users' }} />
+      <ProfileStack.Screen name="MutedUsers" component={MutedUsersScreen} options={{ title: 'Muted Users' }} />
+      <ProfileStack.Screen name="About" component={AboutScreen} options={{ title: 'About' }} />
+      <ProfileStack.Screen name="YourData" component={YourDataScreen} options={{ title: 'Your Data' }} />
     </ProfileStack.Navigator>
   );
 }
@@ -102,17 +111,19 @@ function CreatePlaceholder() {
 const Tab = createBottomTabNavigator<MainTabParamList>();
 
 export function MainTabNavigator() {
+  const { colors: themeColors } = useTheme();
+
   return (
     <Tab.Navigator
       screenOptions={{
         headerShown: false,
         tabBarStyle: {
-          backgroundColor: colors.white,
+          backgroundColor: themeColors.surface,
           borderTopWidth: borders.width,
-          borderTopColor: borders.color,
+          borderTopColor: themeColors.border,
         },
-        tabBarActiveTintColor: colors.black,
-        tabBarInactiveTintColor: colors.gray,
+        tabBarActiveTintColor: themeColors.text,
+        tabBarInactiveTintColor: themeColors.textSecondary,
       }}
     >
       <Tab.Screen

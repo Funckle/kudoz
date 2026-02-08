@@ -30,17 +30,41 @@ export async function registerForPushNotifications(userId: string): Promise<stri
   });
   const token = tokenData.data;
 
-  // Store token in user profile (would need a push_token column)
-  // For MVP, just return the token
+  // Upsert token to push_tokens table (supports multi-device)
+  await supabase.from('push_tokens').upsert(
+    {
+      user_id: userId,
+      token,
+      platform: Platform.OS,
+      updated_at: new Date().toISOString(),
+    },
+    { onConflict: 'token' }
+  );
+
   return token;
 }
 
-export function setupNotificationListeners(onNotification: (notification: Notifications.Notification) => void) {
-  const receivedSub = Notifications.addNotificationReceivedListener(onNotification);
+export async function unregisterPushToken(token: string): Promise<void> {
+  await supabase.from('push_tokens').delete().eq('token', token);
+}
+
+export type NotificationNavData = {
+  type?: string;
+  post_id?: string;
+  goal_id?: string;
+  actor_id?: string;
+};
+
+export function setupNotificationListeners(
+  onNavigate?: (data: NotificationNavData) => void
+) {
+  const receivedSub = Notifications.addNotificationReceivedListener(() => {
+    // Notification received while app is in foreground — no action needed
+  });
+
   const responseSub = Notifications.addNotificationResponseReceivedListener((response) => {
-    // Handle notification tap - navigate to relevant screen
-    const data = response.notification.request.content.data;
-    // Navigation will be handled by the component that sets this up
+    const data = response.notification.request.content.data as NotificationNavData;
+    onNavigate?.(data);
   });
 
   return () => {

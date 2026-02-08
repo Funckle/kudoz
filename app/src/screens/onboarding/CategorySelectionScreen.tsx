@@ -2,12 +2,14 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
 import { ScreenContainer } from '../../components/ScreenContainer';
 import { Button } from '../../components/Button';
-import { colors, typography, spacing, borderRadius, borders } from '../../utils/theme';
+import { typography, spacing, borderRadius, borders } from '../../utils/theme';
+import { useTheme } from '../../utils/ThemeContext';
 import { CATEGORIES } from '../../utils/categories';
 import type { OnboardingScreenProps } from '../../types/navigation';
 import type { Category } from '../../types/database';
 
 export function CategorySelectionScreen({ navigation }: OnboardingScreenProps<'CategorySelection'>) {
+  const { colors } = useTheme();
   const [selected, setSelected] = useState<string[]>([]);
 
   const toggleCategory = (id: string) => {
@@ -20,14 +22,14 @@ export function CategorySelectionScreen({ navigation }: OnboardingScreenProps<'C
     const isSelected = selected.includes(item.id);
     return (
       <TouchableOpacity
-        style={[styles.card, isSelected && { borderColor: item.color, borderWidth: 2 }]}
+        style={[styles.card, { borderColor: colors.border }, isSelected && { borderColor: item.color, borderWidth: 2 }]}
         onPress={() => toggleCategory(item.id)}
         activeOpacity={0.7}
       >
         <View style={[styles.iconCircle, { backgroundColor: item.color + '20' }]}>
           <View style={[styles.iconDot, { backgroundColor: item.color }]} />
         </View>
-        <Text style={styles.categoryName}>{item.name}</Text>
+        <Text style={[styles.categoryName, { color: colors.text }]}>{item.name}</Text>
       </TouchableOpacity>
     );
   };
@@ -35,8 +37,8 @@ export function CategorySelectionScreen({ navigation }: OnboardingScreenProps<'C
   return (
     <ScreenContainer>
       <View style={styles.container}>
-        <Text style={styles.title}>What are you working on?</Text>
-        <Text style={styles.subtitle}>Select categories that interest you. You can always change this later.</Text>
+        <Text style={[styles.title, { color: colors.text }]}>What are you working on?</Text>
+        <Text style={[styles.subtitle, { color: colors.textSecondary }]}>Select categories that interest you. You can always change this later.</Text>
         <FlatList
           data={CATEGORIES}
           renderItem={renderCategory}
@@ -63,12 +65,10 @@ const styles = StyleSheet.create({
   },
   title: {
     ...typography.title,
-    color: colors.black,
     marginBottom: spacing.sm,
   },
   subtitle: {
     ...typography.body,
-    color: colors.gray,
     marginBottom: spacing.lg,
   },
   grid: {
@@ -84,7 +84,6 @@ const styles = StyleSheet.create({
     padding: spacing.md,
     borderRadius,
     borderWidth: borders.width,
-    borderColor: borders.color,
     alignItems: 'center',
   },
   iconCircle: {
@@ -103,6 +102,5 @@ const styles = StyleSheet.create({
   categoryName: {
     ...typography.body,
     fontWeight: '600',
-    color: colors.black,
   },
 });

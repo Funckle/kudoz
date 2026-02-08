@@ -5,9 +5,9 @@ import {
   StyleSheet,
   ActivityIndicator,
   ViewStyle,
-  TextStyle,
 } from 'react-native';
-import { colors, borderRadius, typography, spacing } from '../utils/theme';
+import { borderRadius, typography, spacing } from '../utils/theme';
+import { useTheme } from '../utils/ThemeContext';
 
 interface ButtonProps {
   title: string;
@@ -26,22 +26,28 @@ export function Button({
   loading = false,
   style,
 }: ButtonProps) {
+  const { colors } = useTheme();
   const isDisabled = disabled || loading;
+
+  const variantStyle: ViewStyle =
+    variant === 'primary' ? { backgroundColor: colors.text } :
+    variant === 'destructive' ? { backgroundColor: colors.error } :
+    { backgroundColor: colors.background, borderWidth: 1, borderColor: colors.border };
+
+  const textColor =
+    variant === 'secondary' ? colors.text : colors.background;
 
   return (
     <TouchableOpacity
       onPress={onPress}
       disabled={isDisabled}
-      style={[styles.base, variantStyles[variant], isDisabled && styles.disabled, style]}
+      style={[styles.base, variantStyle, isDisabled && styles.disabled, style]}
       activeOpacity={0.7}
     >
       {loading ? (
-        <ActivityIndicator
-          color={variant === 'secondary' ? colors.black : colors.white}
-          size="small"
-        />
+        <ActivityIndicator color={textColor} size="small" />
       ) : (
-        <Text style={[styles.text, textVariantStyles[variant]]}>{title}</Text>
+        <Text style={[styles.text, { color: textColor }]}>{title}</Text>
       )}
     </TouchableOpacity>
   );
@@ -63,15 +69,3 @@ const styles = StyleSheet.create({
     ...typography.goalTitle,
   },
 });
-
-const variantStyles: Record<string, ViewStyle> = {
-  primary: { backgroundColor: colors.black },
-  secondary: { backgroundColor: colors.white, borderWidth: 1, borderColor: colors.grayLight },
-  destructive: { backgroundColor: colors.red },
-};
-
-const textVariantStyles: Record<string, TextStyle> = {
-  primary: { color: colors.white },
-  secondary: { color: colors.black },
-  destructive: { color: colors.white },
-};

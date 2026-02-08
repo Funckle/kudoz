@@ -4,7 +4,8 @@ import { ScreenContainer } from '../../components/ScreenContainer';
 import { Avatar } from '../../components/Avatar';
 import { Button } from '../../components/Button';
 import { LoadingSpinner } from '../../components/LoadingSpinner';
-import { colors, typography, spacing, borderRadius, borders } from '../../utils/theme';
+import { typography, spacing, borderRadius, borders } from '../../utils/theme';
+import { useTheme } from '../../utils/ThemeContext';
 import { supabase } from '../../services/supabase';
 import { updateUserProfile } from '../../services/auth';
 import { useAuth } from '../../hooks/useAuth';
@@ -12,6 +13,7 @@ import type { OnboardingScreenProps } from '../../types/navigation';
 import type { User } from '../../types/database';
 
 export function SuggestedFollowsScreen({ navigation }: OnboardingScreenProps<'SuggestedFollows'>) {
+  const { colors } = useTheme();
   const { user, refreshUser } = useAuth();
   const [suggestedUsers, setSuggestedUsers] = useState<User[]>([]);
   const [following, setFollowing] = useState<Set<string>>(new Set());
@@ -59,17 +61,17 @@ export function SuggestedFollowsScreen({ navigation }: OnboardingScreenProps<'Su
   const renderUser = ({ item }: { item: User }) => {
     const isFollowing = following.has(item.id);
     return (
-      <View style={styles.userRow}>
+      <View style={[styles.userRow, { borderBottomColor: colors.border }]}>
         <Avatar uri={item.avatar_url} name={item.name} size={48} />
         <View style={styles.userInfo}>
-          <Text style={styles.userName}>{item.name}</Text>
-          <Text style={styles.userHandle}>@{item.username}</Text>
+          <Text style={[styles.userName, { color: colors.text }]}>{item.name}</Text>
+          <Text style={[styles.userHandle, { color: colors.textSecondary }]}>@{item.username}</Text>
         </View>
         <TouchableOpacity
-          style={[styles.followBtn, isFollowing && styles.followingBtn]}
+          style={[styles.followBtn, { backgroundColor: colors.text }, isFollowing && styles.followingBtn, isFollowing && { backgroundColor: colors.background, borderColor: colors.border }]}
           onPress={() => toggleFollow(item.id)}
         >
-          <Text style={[styles.followText, isFollowing && styles.followingText]}>
+          <Text style={[styles.followText, { color: colors.background }, isFollowing && { color: colors.text }]}>
             {isFollowing ? 'Following' : 'Follow'}
           </Text>
         </TouchableOpacity>
@@ -80,8 +82,8 @@ export function SuggestedFollowsScreen({ navigation }: OnboardingScreenProps<'Su
   return (
     <ScreenContainer>
       <View style={styles.container}>
-        <Text style={styles.title}>Suggested people</Text>
-        <Text style={styles.subtitle}>Follow others to see their progress in your feed.</Text>
+        <Text style={[styles.title, { color: colors.text }]}>Suggested people</Text>
+        <Text style={[styles.subtitle, { color: colors.textSecondary }]}>Follow others to see their progress in your feed.</Text>
         {loading ? (
           <LoadingSpinner />
         ) : (
@@ -108,12 +110,10 @@ const styles = StyleSheet.create({
   },
   title: {
     ...typography.title,
-    color: colors.black,
     marginBottom: spacing.sm,
   },
   subtitle: {
     ...typography.body,
-    color: colors.gray,
     marginBottom: spacing.lg,
   },
   list: {
@@ -124,7 +124,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: spacing.sm,
     borderBottomWidth: borders.width,
-    borderBottomColor: borders.color,
   },
   userInfo: {
     flex: 1,
@@ -132,30 +131,21 @@ const styles = StyleSheet.create({
   },
   userName: {
     ...typography.goalTitle,
-    color: colors.black,
   },
   userHandle: {
     ...typography.caption,
-    color: colors.gray,
   },
   followBtn: {
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.xs + 2,
     borderRadius,
-    backgroundColor: colors.black,
   },
   followingBtn: {
-    backgroundColor: colors.white,
     borderWidth: 1,
-    borderColor: colors.grayLight,
   },
   followText: {
     ...typography.caption,
     fontWeight: '600',
-    color: colors.white,
-  },
-  followingText: {
-    color: colors.black,
   },
   buttons: {
     paddingVertical: spacing.md,

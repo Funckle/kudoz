@@ -3,11 +3,13 @@ import { View, Text, StyleSheet } from 'react-native';
 import { ScreenContainer } from '../../components/ScreenContainer';
 import { TextInput } from '../../components/TextInput';
 import { Button } from '../../components/Button';
-import { colors, typography, spacing } from '../../utils/theme';
+import { typography, spacing } from '../../utils/theme';
+import { useTheme } from '../../utils/ThemeContext';
 import { validateEmail } from '../../utils/validation';
 import { joinWaitlist } from '../../services/waitlist';
 
 export function WaitlistScreen() {
+  const { colors } = useTheme();
   const [email, setEmail] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -33,8 +35,8 @@ export function WaitlistScreen() {
     return (
       <ScreenContainer>
         <View style={styles.container}>
-          <Text style={styles.title}>You're on the list!</Text>
-          <Text style={styles.subtitle}>We'll email you when a spot opens up.</Text>
+          <Text style={[styles.title, { color: colors.text }]}>You're on the list!</Text>
+          <Text style={[styles.subtitle, { color: colors.textSecondary }]}>We'll email you when a spot opens up.</Text>
         </View>
       </ScreenContainer>
     );
@@ -43,8 +45,8 @@ export function WaitlistScreen() {
   return (
     <ScreenContainer>
       <View style={styles.container}>
-        <Text style={styles.title}>Join the Waitlist</Text>
-        <Text style={styles.subtitle}>Kudoz is currently invite-only. Join the waitlist to get early access.</Text>
+        <Text style={[styles.title, { color: colors.text }]}>Join the Waitlist</Text>
+        <Text style={[styles.subtitle, { color: colors.textSecondary }]}>Kudoz is currently invite-only. Join the waitlist to get early access.</Text>
         <TextInput
           label="Email"
           placeholder="you@example.com"
@@ -62,6 +64,6 @@ export function WaitlistScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, justifyContent: 'center', padding: spacing.md },
-  title: { ...typography.title, color: colors.black, marginBottom: spacing.sm },
-  subtitle: { ...typography.body, color: colors.gray, marginBottom: spacing.xl },
+  title: { ...typography.title, marginBottom: spacing.sm },
+  subtitle: { ...typography.body, marginBottom: spacing.xl },
 });

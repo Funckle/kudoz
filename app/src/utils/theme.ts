@@ -1,12 +1,16 @@
 import { StyleSheet } from 'react-native';
 
-export const colors = {
-  black: '#000000',
-  white: '#FFFFFF',
-  gray: '#6B7280',
-  grayLight: '#E5E5E5',
-  grayLighter: '#F5F5F5',
-  red: '#EF4444',
+export const lightColors = {
+  background: '#FFFFFF',
+  surface: '#FFFFFF',
+  text: '#000000',
+  textSecondary: '#6B7280',
+  border: '#E5E5E5',
+  borderLight: '#F5F5F5',
+  error: '#EF4444',
+  warning: '#FEF3C7',
+  warningText: '#92400E',
+  warningAccent: '#F59E0B',
   categories: {
     fitness: '#F97316',
     health: '#14B8A6',
@@ -17,6 +21,42 @@ export const colors = {
     creative: '#EC4899',
     life: '#F59E0B',
   },
+} as const;
+
+export const darkColors = {
+  background: '#000000',
+  surface: '#1A1A1A',
+  text: '#FFFFFF',
+  textSecondary: '#9CA3AF',
+  border: '#2D2D2D',
+  borderLight: '#1A1A1A',
+  error: '#EF4444',
+  warning: '#422006',
+  warningText: '#FDE68A',
+  warningAccent: '#F59E0B',
+  categories: {
+    fitness: '#F97316',
+    health: '#14B8A6',
+    learning: '#3B82F6',
+    finance: '#22C55E',
+    career: '#64748B',
+    habits: '#A855F7',
+    creative: '#EC4899',
+    life: '#F59E0B',
+  },
+} as const;
+
+export type ThemeColors = typeof lightColors;
+
+// Legacy exports for backward compatibility during migration
+export const colors = {
+  black: '#000000',
+  white: '#FFFFFF',
+  gray: '#6B7280',
+  grayLight: '#E5E5E5',
+  grayLighter: '#F5F5F5',
+  red: '#EF4444',
+  categories: lightColors.categories,
 } as const;
 
 export const typography = {

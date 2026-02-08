@@ -2,11 +2,13 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, Alert } from 'react-native';
 import { ScreenContainer } from '../../components/ScreenContainer';
 import { Button } from '../../components/Button';
-import { colors, typography, spacing } from '../../utils/theme';
+import { typography, spacing } from '../../utils/theme';
+import { useTheme } from '../../utils/ThemeContext';
 import { useAuth } from '../../hooks/useAuth';
 import { deleteAccount } from '../../services/auth';
 
 export function DeleteAccountScreen() {
+  const { colors } = useTheme();
   const { user } = useAuth();
   const [deleting, setDeleting] = useState(false);
 
@@ -36,9 +38,9 @@ export function DeleteAccountScreen() {
   return (
     <ScreenContainer>
       <View style={styles.container}>
-        <Text style={styles.title}>Delete Account</Text>
-        <Text style={styles.warning}>This action is permanent and cannot be undone.</Text>
-        <Text style={styles.details}>
+        <Text style={[styles.title, { color: colors.error }]}>Delete Account</Text>
+        <Text style={[styles.warning, { color: colors.error }]}>This action is permanent and cannot be undone.</Text>
+        <Text style={[styles.details, { color: colors.textSecondary }]}>
           Deleting your account will remove:{'\n\n'}
           • Your profile and avatar{'\n'}
           • All your goals{'\n'}
@@ -60,7 +62,7 @@ export function DeleteAccountScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, padding: spacing.md, justifyContent: 'center' },
-  title: { ...typography.title, color: colors.red, marginBottom: spacing.sm },
-  warning: { ...typography.body, fontWeight: '600', color: colors.red, marginBottom: spacing.md },
-  details: { ...typography.body, color: colors.gray, marginBottom: spacing.xl, lineHeight: 22 },
+  title: { ...typography.title, marginBottom: spacing.sm },
+  warning: { ...typography.body, fontWeight: '600', marginBottom: spacing.md },
+  details: { ...typography.body, marginBottom: spacing.xl, lineHeight: 22 },
 });

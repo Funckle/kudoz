@@ -1,11 +1,16 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Platform, View, StyleSheet } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { NavigationContainerRef } from '@react-navigation/native';
 import { AuthContext, useAuthProvider } from './src/hooks/useAuth';
 import { RootNavigator } from './src/navigation/RootNavigator';
 import { setupDeepLinkListener } from './src/services/linking';
+import { registerForPushNotifications, setupNotificationListeners } from './src/services/pushNotifications';
+import type { NotificationNavData } from './src/services/pushNotifications';
+import { NetworkBanner } from './src/components/NetworkBanner';
+import { ThemeProvider, useTheme } from './src/utils/ThemeContext';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -18,6 +23,7 @@ const queryClient = new QueryClient({
 
 function AppInner() {
   const auth = useAuthProvider();
+  const navigationRef = useRef<NavigationContainerRef<Record<string, unknown>>>(null);
 
   useEffect(() => {
     // On native, set up deep link listener for magic link callbacks
@@ -27,21 +33,52 @@ function AppInner() {
     }
   }, []);
 
+  // Register push notifications when authenticated
+  useEffect(() => {
+    if (auth.isAuthenticated && auth.user?.id) {
+      registerForPushNotifications(auth.user.id);
+    }
+  }, [auth.isAuthenticated, auth.user?.id]);
+
+  // Set up notification tap listeners
+  useEffect(() => {
+    const cleanup = setupNotificationListeners((data: NotificationNavData) => {
+      const nav = navigationRef.current;
+      if (!nav) return;
+
+      if (data.post_id) {
+        nav.navigate('Main', { screen: 'HomeTab', params: { screen: 'PostDetail', params: { postId: data.post_id } } });
+      } else if (data.goal_id) {
+        nav.navigate('Main', { screen: 'HomeTab', params: { screen: 'GoalDetail', params: { goalId: data.goal_id } } });
+      } else if (data.actor_id) {
+        nav.navigate('Main', { screen: 'HomeTab', params: { screen: 'UserProfile', params: { userId: data.actor_id } } });
+      }
+    });
+
+    return cleanup;
+  }, []);
+
   return (
     <AuthContext.Provider value={auth}>
-      <RootNavigator />
+      <NetworkBanner />
+      <RootNavigator navigationRef={navigationRef} />
     </AuthContext.Provider>
   );
 }
 
-export default function App() {
+function ThemedApp() {
+  const { colors, isDark } = useTheme();
+
   return (
-    <View style={styles.outer}>
-      <View style={styles.inner}>
+    <View style={[styles.outer, { backgroundColor: isDark ? '#000000' : '#F5F5F5' }]}>
+      <View style={[styles.inner, {
+        backgroundColor: colors.background,
+        ...(Platform.OS === 'web' ? { borderLeftWidth: 1, borderRightWidth: 1, borderColor: colors.border } : {}),
+      }]}>
         <QueryClientProvider client={queryClient}>
           <SafeAreaProvider>
             <AppInner />
-            <StatusBar style="auto" />
+            <StatusBar style={isDark ? 'light' : 'dark'} />
           </SafeAreaProvider>
         </QueryClientProvider>
       </View>
@@ -49,17 +86,22 @@ export default function App() {
   );
 }
 
+export default function App() {
+  return (
+    <ThemeProvider>
+      <ThemedApp />
+    </ThemeProvider>
+  );
+}
+
 const styles = StyleSheet.create({
   outer: {
     flex: 1,
-    backgroundColor: '#F5F5F5',
     alignItems: 'center',
   },
   inner: {
     flex: 1,
     width: '100%',
     maxWidth: 480,
-    backgroundColor: '#FFFFFF',
-    ...(Platform.OS === 'web' ? { borderLeftWidth: 1, borderRightWidth: 1, borderColor: '#E5E5E5' } : {}),
   },
 });

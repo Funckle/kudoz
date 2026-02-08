@@ -1,7 +1,8 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { ProgressBar } from './ProgressBar';
-import { colors, typography, spacing } from '../utils/theme';
+import { typography, spacing } from '../utils/theme';
+import { useTheme } from '../utils/ThemeContext';
 import type { GoalWithCategories } from '../types/database';
 
 interface GoalProgressHeaderProps {
@@ -9,7 +10,8 @@ interface GoalProgressHeaderProps {
 }
 
 export function GoalProgressHeader({ goal }: GoalProgressHeaderProps) {
-  const primaryColor = goal.categories?.[0]?.color ?? colors.black;
+  const { colors } = useTheme();
+  const primaryColor = goal.categories?.[0]?.color ?? colors.text;
 
   const formatValue = (value: number) => {
     if (goal.goal_type === 'currency') return `$${value.toLocaleString()}`;
@@ -25,14 +27,14 @@ export function GoalProgressHeader({ goal }: GoalProgressHeaderProps) {
     <View style={styles.container}>
       {goal.goal_type === 'milestone' ? (
         <View style={styles.milestoneContainer}>
-          <Text style={styles.milestoneLabel}>
+          <Text style={[styles.milestoneLabel, { color: colors.text }]}>
             {goal.status === 'completed' ? 'Achieved' : 'In Progress'}
           </Text>
           {goal.effort_label && goal.effort_target && (
             <View style={styles.effortSection}>
-              <Text style={styles.effortLabel}>{goal.effort_label}</Text>
+              <Text style={[styles.effortLabel, { color: colors.text }]}>{goal.effort_label}</Text>
               <ProgressBar current={goal.current_value} target={goal.effort_target} color={primaryColor} height={12} />
-              <Text style={styles.effortText}>
+              <Text style={[styles.effortText, { color: colors.textSecondary }]}>
                 {goal.current_value} / {goal.effort_target}
               </Text>
             </View>
@@ -40,12 +42,12 @@ export function GoalProgressHeader({ goal }: GoalProgressHeaderProps) {
         </View>
       ) : (
         <View>
-          <Text style={styles.bigNumber}>{formatValue(goal.current_value)}</Text>
+          <Text style={[styles.bigNumber, { color: colors.text }]}>{formatValue(goal.current_value)}</Text>
           {goal.target_value && (
             <>
-              <Text style={styles.targetText}>of {formatValue(goal.target_value)}</Text>
+              <Text style={[styles.targetText, { color: colors.textSecondary }]}>of {formatValue(goal.target_value)}</Text>
               <ProgressBar current={goal.current_value} target={goal.target_value} color={primaryColor} height={12} />
-              <Text style={styles.percentText}>{progressPercent}%</Text>
+              <Text style={[styles.percentText, { color: colors.textSecondary }]}>{progressPercent}%</Text>
             </>
           )}
         </View>
@@ -61,17 +63,14 @@ const styles = StyleSheet.create({
   bigNumber: {
     fontSize: 36,
     fontWeight: '700',
-    color: colors.black,
     marginBottom: spacing.xs,
   },
   targetText: {
     ...typography.body,
-    color: colors.gray,
     marginBottom: spacing.sm,
   },
   percentText: {
     ...typography.caption,
-    color: colors.gray,
     marginTop: spacing.xs,
     textAlign: 'right',
   },
@@ -80,7 +79,6 @@ const styles = StyleSheet.create({
   },
   milestoneLabel: {
     ...typography.sectionHeader,
-    color: colors.black,
   },
   effortSection: {
     width: '100%',
@@ -89,12 +87,10 @@ const styles = StyleSheet.create({
   effortLabel: {
     ...typography.body,
     fontWeight: '600',
-    color: colors.black,
     marginBottom: spacing.sm,
   },
   effortText: {
     ...typography.caption,
-    color: colors.gray,
     marginTop: spacing.xs,
   },
 });

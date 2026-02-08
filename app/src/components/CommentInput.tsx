@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, TextInput, TouchableOpacity, Text, StyleSheet } from 'react-native';
-import { colors, typography, spacing, borderRadius, borders } from '../utils/theme';
+import { typography, spacing, borderRadius } from '../utils/theme';
+import { useTheme } from '../utils/ThemeContext';
 import { LIMITS } from '../utils/validation';
 import { checkContent } from '../utils/moderation';
 
@@ -13,6 +14,7 @@ interface CommentInputProps {
 }
 
 export function CommentInput({ onSubmit, replyingTo, onCancelReply, disabled, disabledMessage }: CommentInputProps) {
+  const { colors } = useTheme();
   const [text, setText] = useState('');
   const [sending, setSending] = useState(false);
   const [warning, setWarning] = useState('');
@@ -33,39 +35,39 @@ export function CommentInput({ onSubmit, replyingTo, onCancelReply, disabled, di
 
   if (disabled) {
     return (
-      <View style={styles.disabledContainer}>
-        <Text style={styles.disabledText}>{disabledMessage || 'Comments unavailable'}</Text>
+      <View style={[styles.disabledContainer, { borderTopColor: colors.border, backgroundColor: colors.borderLight }]}>
+        <Text style={[styles.disabledText, { color: colors.textSecondary }]}>{disabledMessage || 'Comments unavailable'}</Text>
       </View>
     );
   }
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { borderTopColor: colors.border, backgroundColor: colors.surface }]}>
       {replyingTo && (
         <View style={styles.replyBar}>
-          <Text style={styles.replyText}>Replying to @{replyingTo}</Text>
+          <Text style={[styles.replyText, { color: colors.textSecondary }]}>Replying to @{replyingTo}</Text>
           <TouchableOpacity onPress={onCancelReply}>
-            <Text style={styles.cancelReply}>Cancel</Text>
+            <Text style={[styles.cancelReply, { color: colors.error }]}>Cancel</Text>
           </TouchableOpacity>
         </View>
       )}
-      {warning ? <Text style={styles.warning}>{warning}</Text> : null}
+      {warning ? <Text style={[styles.warning, { color: colors.error }]}>{warning}</Text> : null}
       <View style={styles.inputRow}>
         <TextInput
-          style={styles.input}
+          style={[styles.input, { borderColor: colors.border, color: colors.text }]}
           placeholder="Add a comment..."
           value={text}
           onChangeText={(t) => { setText(t); setWarning(''); }}
           maxLength={LIMITS.COMMENT}
           multiline
-          placeholderTextColor={colors.gray}
+          placeholderTextColor={colors.textSecondary}
         />
         <TouchableOpacity
           onPress={handleSubmit}
           disabled={!text.trim() || sending}
           style={[styles.sendBtn, (!text.trim() || sending) && styles.sendBtnDisabled]}
         >
-          <Text style={styles.sendText}>Post</Text>
+          <Text style={[styles.sendText, { color: colors.text }]}>Post</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -74,21 +76,16 @@ export function CommentInput({ onSubmit, replyingTo, onCancelReply, disabled, di
 
 const styles = StyleSheet.create({
   container: {
-    borderTopWidth: borders.width,
-    borderTopColor: borders.color,
+    borderTopWidth: 1,
     padding: spacing.sm,
-    backgroundColor: colors.white,
   },
   disabledContainer: {
-    borderTopWidth: borders.width,
-    borderTopColor: borders.color,
+    borderTopWidth: 1,
     padding: spacing.md,
-    backgroundColor: colors.grayLighter,
     alignItems: 'center',
   },
   disabledText: {
     ...typography.body,
-    color: colors.gray,
   },
   replyBar: {
     flexDirection: 'row',
@@ -97,15 +94,12 @@ const styles = StyleSheet.create({
   },
   replyText: {
     ...typography.caption,
-    color: colors.gray,
   },
   cancelReply: {
     ...typography.caption,
-    color: colors.red,
   },
   warning: {
     ...typography.caption,
-    color: colors.red,
     marginBottom: spacing.xs,
   },
   inputRow: {
@@ -115,13 +109,11 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     ...typography.body,
-    borderWidth: borders.width,
-    borderColor: borders.color,
+    borderWidth: 1,
     borderRadius,
     paddingHorizontal: spacing.sm,
     paddingVertical: spacing.xs + 2,
     maxHeight: 80,
-    color: colors.black,
   },
   sendBtn: {
     marginLeft: spacing.sm,
@@ -134,6 +126,5 @@ const styles = StyleSheet.create({
   sendText: {
     ...typography.body,
     fontWeight: '600',
-    color: colors.black,
   },
 });

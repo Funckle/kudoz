@@ -4,12 +4,14 @@ import { ScreenContainer } from '../../components/ScreenContainer';
 import { TextInput } from '../../components/TextInput';
 import { Button } from '../../components/Button';
 import { LoadingSpinner } from '../../components/LoadingSpinner';
-import { colors, typography, spacing } from '../../utils/theme';
+import { typography, spacing } from '../../utils/theme';
+import { useTheme } from '../../utils/ThemeContext';
 import { LIMITS } from '../../utils/validation';
 import { getPost, updatePost } from '../../services/posts';
 import type { CreateScreenProps } from '../../types/navigation';
 
 export function EditPostScreen({ route, navigation }: CreateScreenProps<'EditPost'>) {
+  const { colors } = useTheme();
   const { postId } = route.params;
   const [content, setContent] = useState('');
   const [loading, setLoading] = useState(true);
@@ -43,7 +45,7 @@ export function EditPostScreen({ route, navigation }: CreateScreenProps<'EditPos
     <ScreenContainer>
       <ScrollView style={styles.container} keyboardShouldPersistTaps="handled">
         {progressValue != null && (
-          <Text style={styles.progressNote}>Progress value: {progressValue} (not editable)</Text>
+          <Text style={[styles.progressNote, { color: colors.textSecondary }]}>Progress value: {progressValue} (not editable)</Text>
         )}
         <TextInput
           label="Update"
@@ -66,7 +68,6 @@ const styles = StyleSheet.create({
   },
   progressNote: {
     ...typography.caption,
-    color: colors.gray,
     marginBottom: spacing.md,
   },
 });

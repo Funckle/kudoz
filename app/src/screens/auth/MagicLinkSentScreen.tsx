@@ -2,11 +2,13 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { ScreenContainer } from '../../components/ScreenContainer';
 import { Button } from '../../components/Button';
-import { colors, typography, spacing } from '../../utils/theme';
+import { typography, spacing } from '../../utils/theme';
+import { useTheme } from '../../utils/ThemeContext';
 import { sendMagicLink } from '../../services/auth';
 import type { AuthScreenProps } from '../../types/navigation';
 
 export function MagicLinkSentScreen({ route, navigation }: AuthScreenProps<'MagicLinkSent'>) {
+  const { colors } = useTheme();
   const { email } = route.params;
   const [resending, setResending] = useState(false);
   const [resent, setResent] = useState(false);
@@ -21,12 +23,12 @@ export function MagicLinkSentScreen({ route, navigation }: AuthScreenProps<'Magi
   return (
     <ScreenContainer>
       <View style={styles.container}>
-        <Text style={styles.title}>Check your email</Text>
-        <Text style={styles.message}>
+        <Text style={[styles.title, { color: colors.text }]}>Check your email</Text>
+        <Text style={[styles.message, { color: colors.textSecondary }]}>
           We sent a magic link to{'\n'}
-          <Text style={styles.email}>{email}</Text>
+          <Text style={[styles.email, { color: colors.text }]}>{email}</Text>
         </Text>
-        <Text style={styles.hint}>Tap the link in the email to sign in.</Text>
+        <Text style={[styles.hint, { color: colors.textSecondary }]}>Tap the link in the email to sign in.</Text>
         <Button
           title={resent ? 'Sent!' : 'Resend link'}
           onPress={handleResend}
@@ -55,22 +57,18 @@ const styles = StyleSheet.create({
   },
   title: {
     ...typography.title,
-    color: colors.black,
     marginBottom: spacing.md,
   },
   message: {
     ...typography.body,
-    color: colors.gray,
     textAlign: 'center',
     marginBottom: spacing.sm,
   },
   email: {
     fontWeight: '600',
-    color: colors.black,
   },
   hint: {
     ...typography.caption,
-    color: colors.gray,
     marginBottom: spacing.xl,
   },
   button: {

@@ -1,8 +1,9 @@
-import React, { useState, useCallback } from 'react';
+import React, { useCallback } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image, Alert } from 'react-native';
 import { Avatar } from './Avatar';
 import { KudozButton } from './KudozButton';
-import { colors, typography, spacing, borderRadius, borders } from '../utils/theme';
+import { typography, spacing, borderRadius } from '../utils/theme';
+import { useTheme } from '../utils/ThemeContext';
 import type { PostWithAuthor } from '../types/database';
 import { useAuth } from '../hooks/useAuth';
 import { deletePost } from '../services/posts';
@@ -29,8 +30,8 @@ export function PostCard({
   onDeleted,
 }: PostCardProps) {
   const { user } = useAuth();
+  const { colors } = useTheme();
   const isOwner = user?.id === post.user_id;
-  const [showMenu, setShowMenu] = useState(false);
 
   const formatDate = (dateStr: string) => {
     const date = new Date(dateStr);
@@ -81,31 +82,35 @@ export function PostCard({
     : 'posted an update';
 
   return (
-    <TouchableOpacity style={styles.card} onPress={onPressPost} activeOpacity={0.8}>
+    <TouchableOpacity
+      style={[styles.card, { backgroundColor: colors.surface, borderBottomColor: colors.border }]}
+      onPress={onPressPost}
+      activeOpacity={0.8}
+    >
       <View style={styles.header}>
         <TouchableOpacity onPress={onPressAuthor} style={styles.authorRow}>
           <Avatar uri={post.user?.avatar_url} name={post.user?.name} size={32} />
           <View style={styles.authorInfo}>
-            <Text style={styles.authorName}>{post.user?.name}</Text>
-            <Text style={styles.meta}>
+            <Text style={[styles.authorName, { color: colors.text }]}>{post.user?.name}</Text>
+            <Text style={[styles.meta, { color: colors.textSecondary }]}>
               @{post.user?.username} · {postTypeLabel} · {formatDate(post.created_at)}
             </Text>
           </View>
         </TouchableOpacity>
         <TouchableOpacity onPress={handleMenu} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
-          <Text style={styles.menuDots}>···</Text>
+          <Text style={[styles.menuDots, { color: colors.textSecondary }]}>···</Text>
         </TouchableOpacity>
       </View>
 
       <TouchableOpacity onPress={onPressGoal}>
-        <Text style={styles.goalLink}>{post.goal?.title}</Text>
+        <Text style={[styles.goalLink, { color: colors.textSecondary }]}>{post.goal?.title}</Text>
       </TouchableOpacity>
 
-      {post.content && <Text style={styles.content}>{post.content}</Text>}
+      {post.content && <Text style={[styles.content, { color: colors.text }]}>{post.content}</Text>}
 
       {post.progress_value != null && post.progress_value > 0 && (
-        <View style={styles.progressChip}>
-          <Text style={styles.progressText}>
+        <View style={[styles.progressChip, { backgroundColor: colors.borderLight }]}>
+          <Text style={[styles.progressText, { color: colors.text }]}>
             +{post.goal?.goal_type === 'currency' ? `$${post.progress_value}` : post.progress_value}
           </Text>
         </View>
@@ -119,12 +124,12 @@ export function PostCard({
         />
       )}
 
-      {post.edited_at && <Text style={styles.edited}>edited</Text>}
+      {post.edited_at && <Text style={[styles.edited, { color: colors.textSecondary }]}>edited</Text>}
 
       <View style={styles.actions}>
         <KudozButton postId={post.id} initialCount={post.kudoz_count} initialActive={post.has_kudozd} />
         <TouchableOpacity onPress={onPressComments} style={styles.commentBtn}>
-          <Text style={styles.commentText}>
+          <Text style={[styles.commentText, { color: colors.textSecondary }]}>
             {post.comment_count > 0 ? `${post.comment_count} comments` : 'Comment'}
           </Text>
         </TouchableOpacity>
@@ -136,9 +141,7 @@ export function PostCard({
 const styles = StyleSheet.create({
   card: {
     padding: spacing.md,
-    borderBottomWidth: borders.width,
-    borderBottomColor: borders.color,
-    backgroundColor: colors.white,
+    borderBottomWidth: 1,
   },
   header: {
     flexDirection: 'row',
@@ -157,31 +160,25 @@ const styles = StyleSheet.create({
   authorName: {
     ...typography.body,
     fontWeight: '600',
-    color: colors.black,
   },
   meta: {
     ...typography.caption,
-    color: colors.gray,
   },
   menuDots: {
     fontSize: 18,
-    color: colors.gray,
     paddingLeft: spacing.sm,
   },
   goalLink: {
     ...typography.caption,
     fontWeight: '600',
-    color: colors.gray,
     marginBottom: spacing.sm,
   },
   content: {
     ...typography.body,
-    color: colors.black,
     marginBottom: spacing.sm,
   },
   progressChip: {
     alignSelf: 'flex-start',
-    backgroundColor: colors.grayLighter,
     paddingHorizontal: spacing.sm,
     paddingVertical: spacing.xs,
     borderRadius,
@@ -190,7 +187,6 @@ const styles = StyleSheet.create({
   progressText: {
     ...typography.body,
     fontWeight: '600',
-    color: colors.black,
   },
   image: {
     width: '100%',
@@ -199,7 +195,6 @@ const styles = StyleSheet.create({
   },
   edited: {
     ...typography.caption,
-    color: colors.gray,
     fontStyle: 'italic',
     marginBottom: spacing.sm,
   },
@@ -213,6 +208,5 @@ const styles = StyleSheet.create({
   },
   commentText: {
     ...typography.caption,
-    color: colors.gray,
   },
 });

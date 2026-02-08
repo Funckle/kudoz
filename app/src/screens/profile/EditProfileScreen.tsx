@@ -4,7 +4,8 @@ import { ScreenContainer } from '../../components/ScreenContainer';
 import { Avatar } from '../../components/Avatar';
 import { TextInput } from '../../components/TextInput';
 import { Button } from '../../components/Button';
-import { colors, spacing } from '../../utils/theme';
+import { spacing } from '../../utils/theme';
+import { useTheme } from '../../utils/ThemeContext';
 import { LIMITS, validateUsername, validateUrl } from '../../utils/validation';
 import { useAuth } from '../../hooks/useAuth';
 import { updateUserProfile, checkUsernameAvailable } from '../../services/auth';
@@ -12,6 +13,7 @@ import { pickImage, optimizeImage, uploadImage } from '../../services/media';
 import type { ProfileScreenProps } from '../../types/navigation';
 
 export function EditProfileScreen({ navigation }: ProfileScreenProps<'EditProfile'>) {
+  const { colors } = useTheme();
   const { user, refreshUser } = useAuth();
   const [name, setName] = useState(user?.name || '');
   const [username, setUsername] = useState(user?.username || '');

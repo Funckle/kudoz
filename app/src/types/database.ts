@@ -11,7 +11,12 @@ export type NotificationType =
   | 'mutual_follow'
   | 'goal_completed'
   | 'subscription_expiring'
-  | 'subscription_expired';
+  | 'subscription_expired'
+  | 'weekly_summary'
+  | 'social_digest'
+  | 'quarterly_reflection'
+  | 'milestone_reached'
+  | 'target_date_reached';
 export type ContentType = 'post' | 'comment' | 'user' | 'goal';
 export type ReportReason =
   | 'spam'

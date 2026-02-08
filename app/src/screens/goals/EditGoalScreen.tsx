@@ -4,12 +4,14 @@ import { ScreenContainer } from '../../components/ScreenContainer';
 import { TextInput } from '../../components/TextInput';
 import { Button } from '../../components/Button';
 import { LoadingSpinner } from '../../components/LoadingSpinner';
-import { colors, typography, spacing } from '../../utils/theme';
+import { typography, spacing } from '../../utils/theme';
+import { useTheme } from '../../utils/ThemeContext';
 import { LIMITS } from '../../utils/validation';
 import { getGoal, updateGoal, deleteGoal } from '../../services/goals';
 import type { CreateScreenProps } from '../../types/navigation';
 
 export function EditGoalScreen({ route, navigation }: CreateScreenProps<'EditGoal'>) {
+  const { colors } = useTheme();
   const { goalId } = route.params;
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');

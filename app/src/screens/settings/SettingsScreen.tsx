@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Switch, Alert } from 'react-native';
 import { ScreenContainer } from '../../components/ScreenContainer';
 import { LoadingSpinner } from '../../components/LoadingSpinner';
-import { colors, typography, spacing, borders, borderRadius } from '../../utils/theme';
+import { typography, spacing, borderRadius } from '../../utils/theme';
+import { useTheme } from '../../utils/ThemeContext';
 import { useAuth } from '../../hooks/useAuth';
 import { useSubscription } from '../../hooks/useSubscription';
 import { updateUserProfile, signOut } from '../../services/auth';
@@ -11,6 +12,7 @@ import type { ProfileScreenProps } from '../../types/navigation';
 import type { Visibility } from '../../types/database';
 
 export function SettingsScreen({ navigation }: ProfileScreenProps<'Settings'>) {
+  const { colors } = useTheme();
   const { user, refreshUser } = useAuth();
   const { isPaid } = useSubscription();
   const [defaultVisibility, setDefaultVisibility] = useState<Visibility>(user?.default_visibility ?? 'public');
@@ -43,45 +45,53 @@ export function SettingsScreen({ navigation }: ProfileScreenProps<'Settings'>) {
   return (
     <ScreenContainer>
       <ScrollView style={styles.container}>
-        <Text style={styles.section}>Subscription</Text>
-        <TouchableOpacity style={styles.row} onPress={() => navigation.navigate('Subscription')}>
-          <Text style={styles.rowText}>Plan</Text>
-          <Text style={styles.rowValue}>{isPaid ? 'Premium' : 'Free'}</Text>
+        <Text style={[styles.section, { color: colors.textSecondary }]}>Subscription</Text>
+        <TouchableOpacity style={[styles.row, { borderBottomColor: colors.border }]} onPress={() => navigation.navigate('Subscription')}>
+          <Text style={[styles.rowText, { color: colors.text }]}>Plan</Text>
+          <Text style={[styles.rowValue, { color: colors.textSecondary }]}>{isPaid ? 'Premium' : 'Free'}</Text>
         </TouchableOpacity>
 
-        <Text style={styles.section}>Privacy</Text>
-        <View style={styles.row}>
-          <Text style={styles.rowText}>Default visibility</Text>
+        <Text style={[styles.section, { color: colors.textSecondary }]}>Privacy</Text>
+        <View style={[styles.row, { borderBottomColor: colors.border }]}>
+          <Text style={[styles.rowText, { color: colors.text }]}>Default visibility</Text>
         </View>
         {(['public', 'friends', 'private'] as Visibility[]).map((v) => (
           <TouchableOpacity
             key={v}
-            style={[styles.optionRow, defaultVisibility === v && styles.optionActive]}
+            style={[styles.optionRow, { borderColor: colors.border }, defaultVisibility === v && { backgroundColor: colors.borderLight, borderColor: colors.text }]}
             onPress={() => handleVisibilityChange(v)}
           >
-            <Text style={styles.optionText}>{v === 'friends' ? 'Mutual followers' : v.charAt(0).toUpperCase() + v.slice(1)}</Text>
+            <Text style={[styles.optionText, { color: colors.text }]}>{v === 'friends' ? 'Mutual followers' : v.charAt(0).toUpperCase() + v.slice(1)}</Text>
           </TouchableOpacity>
         ))}
 
-        <Text style={styles.section}>Social</Text>
-        <TouchableOpacity style={styles.row} onPress={() => navigation.navigate('BlockedUsers')}>
-          <Text style={styles.rowText}>Blocked users</Text>
+        <Text style={[styles.section, { color: colors.textSecondary }]}>Social</Text>
+        <TouchableOpacity style={[styles.row, { borderBottomColor: colors.border }]} onPress={() => navigation.navigate('BlockedUsers')}>
+          <Text style={[styles.rowText, { color: colors.text }]}>Blocked users</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.row} onPress={() => navigation.navigate('MutedUsers')}>
-          <Text style={styles.rowText}>Muted users</Text>
-        </TouchableOpacity>
-
-        <Text style={styles.section}>Data</Text>
-        <TouchableOpacity style={styles.row} onPress={handleExport}>
-          <Text style={styles.rowText}>{exporting ? 'Exporting...' : 'Export your data'}</Text>
+        <TouchableOpacity style={[styles.row, { borderBottomColor: colors.border }]} onPress={() => navigation.navigate('MutedUsers')}>
+          <Text style={[styles.rowText, { color: colors.text }]}>Muted users</Text>
         </TouchableOpacity>
 
-        <Text style={styles.section}>Account</Text>
-        <TouchableOpacity style={styles.row} onPress={handleSignOut}>
-          <Text style={styles.rowText}>Sign out</Text>
+        <Text style={[styles.section, { color: colors.textSecondary }]}>Data</Text>
+        <TouchableOpacity style={[styles.row, { borderBottomColor: colors.border }]} onPress={handleExport}>
+          <Text style={[styles.rowText, { color: colors.text }]}>{exporting ? 'Exporting...' : 'Export your data'}</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.row} onPress={() => navigation.navigate('DeleteAccount')}>
-          <Text style={[styles.rowText, styles.destructive]}>Delete account</Text>
+
+        <Text style={[styles.section, { color: colors.textSecondary }]}>About</Text>
+        <TouchableOpacity style={[styles.row, { borderBottomColor: colors.border }]} onPress={() => navigation.navigate('About')}>
+          <Text style={[styles.rowText, { color: colors.text }]}>About Kudoz</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={[styles.row, { borderBottomColor: colors.border }]} onPress={() => navigation.navigate('YourData')}>
+          <Text style={[styles.rowText, { color: colors.text }]}>Your data</Text>
+        </TouchableOpacity>
+
+        <Text style={[styles.section, { color: colors.textSecondary }]}>Account</Text>
+        <TouchableOpacity style={[styles.row, { borderBottomColor: colors.border }]} onPress={handleSignOut}>
+          <Text style={[styles.rowText, { color: colors.text }]}>Sign out</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={[styles.row, { borderBottomColor: colors.border }]} onPress={() => navigation.navigate('DeleteAccount')}>
+          <Text style={[styles.rowText, { color: colors.error }]}>Delete account</Text>
         </TouchableOpacity>
       </ScrollView>
     </ScreenContainer>
@@ -90,12 +100,10 @@ export function SettingsScreen({ navigation }: ProfileScreenProps<'Settings'>) {
 
 const styles = StyleSheet.create({
   container: { flex: 1, padding: spacing.md },
-  section: { ...typography.caption, fontWeight: '600', color: colors.gray, marginTop: spacing.lg, marginBottom: spacing.sm, textTransform: 'uppercase' },
-  row: { paddingVertical: spacing.sm + 4, borderBottomWidth: borders.width, borderBottomColor: borders.color, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  rowText: { ...typography.body, color: colors.black },
-  rowValue: { ...typography.body, color: colors.gray },
-  optionRow: { paddingVertical: spacing.sm, paddingHorizontal: spacing.md, borderWidth: borders.width, borderColor: borders.color, borderRadius, marginBottom: spacing.xs },
-  optionActive: { backgroundColor: colors.grayLighter, borderColor: colors.black },
-  optionText: { ...typography.body, color: colors.black },
-  destructive: { color: colors.red },
+  section: { ...typography.caption, fontWeight: '600', marginTop: spacing.lg, marginBottom: spacing.sm, textTransform: 'uppercase' },
+  row: { paddingVertical: spacing.sm + 4, borderBottomWidth: 1, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  rowText: { ...typography.body },
+  rowValue: { ...typography.body },
+  optionRow: { paddingVertical: spacing.sm, paddingHorizontal: spacing.md, borderWidth: 1, borderRadius, marginBottom: spacing.xs },
+  optionText: { ...typography.body },
 });

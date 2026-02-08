@@ -3,13 +3,15 @@ import { FlatList, StyleSheet, RefreshControl, TouchableOpacity, Text, View } fr
 import { NotificationItem } from '../../components/NotificationItem';
 import { LoadingSpinner } from '../../components/LoadingSpinner';
 import { EmptyState } from '../../components/EmptyState';
-import { colors, typography, spacing } from '../../utils/theme';
+import { typography, spacing } from '../../utils/theme';
+import { useTheme } from '../../utils/ThemeContext';
 import { useAuth } from '../../hooks/useAuth';
 import { getNotifications, markAsRead, markAllRead } from '../../services/notifications';
 import type { NotificationWithData } from '../../types/database';
 import type { NotificationsScreenProps } from '../../types/navigation';
 
 export function NotificationsScreen({ navigation }: NotificationsScreenProps<'Notifications'>) {
+  const { colors } = useTheme();
   const { user } = useAuth();
   const [notifications, setNotifications] = useState<NotificationWithData[]>([]);
   const [loading, setLoading] = useState(true);
@@ -58,10 +60,10 @@ export function NotificationsScreen({ navigation }: NotificationsScreenProps<'No
   const hasUnread = notifications.some((n) => !n.read);
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
       {hasUnread && (
         <TouchableOpacity style={styles.markAllBtn} onPress={handleMarkAllRead}>
-          <Text style={styles.markAllText}>Mark all as read</Text>
+          <Text style={[styles.markAllText, { color: colors.text }]}>Mark all as read</Text>
         </TouchableOpacity>
       )}
       <FlatList
@@ -78,7 +80,7 @@ export function NotificationsScreen({ navigation }: NotificationsScreenProps<'No
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.white },
+  container: { flex: 1 },
   markAllBtn: { padding: spacing.md, alignItems: 'flex-end' },
-  markAllText: { ...typography.caption, fontWeight: '600', color: colors.black },
+  markAllText: { ...typography.caption, fontWeight: '600' },
 });

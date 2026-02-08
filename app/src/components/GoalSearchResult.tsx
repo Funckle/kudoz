@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { colors, typography, spacing, borders, borderRadius } from '../utils/theme';
+import { typography, spacing } from '../utils/theme';
+import { useTheme } from '../utils/ThemeContext';
 
 interface GoalSearchResultProps {
   title: string;
@@ -9,10 +10,12 @@ interface GoalSearchResultProps {
 }
 
 export function GoalSearchResult({ title, description, onPress }: GoalSearchResultProps) {
+  const { colors } = useTheme();
+
   return (
-    <TouchableOpacity style={styles.container} onPress={onPress} activeOpacity={0.7}>
-      <Text style={styles.title} numberOfLines={1}>{title}</Text>
-      {description && <Text style={styles.description} numberOfLines={2}>{description}</Text>}
+    <TouchableOpacity style={[styles.container, { borderBottomColor: colors.border }]} onPress={onPress} activeOpacity={0.7}>
+      <Text style={[styles.title, { color: colors.text }]} numberOfLines={1}>{title}</Text>
+      {description && <Text style={[styles.description, { color: colors.textSecondary }]} numberOfLines={2}>{description}</Text>}
     </TouchableOpacity>
   );
 }
@@ -20,16 +23,13 @@ export function GoalSearchResult({ title, description, onPress }: GoalSearchResu
 const styles = StyleSheet.create({
   container: {
     padding: spacing.md,
-    borderBottomWidth: borders.width,
-    borderBottomColor: borders.color,
+    borderBottomWidth: 1,
   },
   title: {
     ...typography.goalTitle,
-    color: colors.black,
   },
   description: {
     ...typography.caption,
-    color: colors.gray,
     marginTop: spacing.xs,
   },
 });
