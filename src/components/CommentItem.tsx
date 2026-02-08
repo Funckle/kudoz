@@ -17,9 +17,10 @@ interface CommentItemProps {
   onEdit?: (comment: CommentWithAuthor) => void;
   onReport?: (commentId: string) => void;
   onDeleted?: () => void;
+  noBorder?: boolean;
 }
 
-export function CommentItem({ comment, depth = 0, parentUsername, onReply, onEdit, onReport, onDeleted }: CommentItemProps) {
+export function CommentItem({ comment, depth = 0, parentUsername, onReply, onEdit, onReport, onDeleted, noBorder }: CommentItemProps) {
   const { user } = useAuth();
   const { colors } = useTheme();
   const isOwner = user?.id === comment.user_id;
@@ -58,7 +59,7 @@ export function CommentItem({ comment, depth = 0, parentUsername, onReply, onEdi
 
   return (
     <View style={[
-      depth === 0 && { borderBottomWidth: 1, borderBottomColor: colors.border, paddingBottom: spacing.sm, marginBottom: spacing.sm },
+      depth === 0 && !noBorder && { borderBottomWidth: 1, borderBottomColor: colors.border, paddingBottom: spacing.sm, marginBottom: spacing.sm },
     ]}>
       {/* Comment content */}
       <View style={styles.row}>

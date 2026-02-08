@@ -48,14 +48,14 @@ export const CommentInput = forwardRef<CommentInputHandle, CommentInputProps>(fu
 
   if (disabled) {
     return (
-      <View style={[styles.disabledContainer, { borderTopColor: colors.border, backgroundColor: colors.borderLight }]}>
+      <View style={[styles.disabledContainer, { borderTopColor: colors.border, backgroundColor: colors.borderLight }, noBorder && { borderTopWidth: 0 }]}>
         <Text style={[styles.disabledText, { color: colors.textSecondary }]}>{disabledMessage || 'Comments unavailable'}</Text>
       </View>
     );
   }
 
   return (
-    <View style={[styles.container, { borderTopColor: colors.border, backgroundColor: colors.surface }]}>
+    <View style={[styles.container, { borderTopColor: colors.border, backgroundColor: colors.surface }, noBorder && { borderTopWidth: 0 }]}>
       {replyingTo && (
         <View style={styles.replyBar}>
           <Text style={[styles.replyText, { color: colors.textSecondary }]}>Replying to @{replyingTo}</Text>

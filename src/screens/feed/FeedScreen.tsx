@@ -1,5 +1,5 @@
-import React, { useState, useCallback, useRef, useEffect } from 'react';
-import { View, Text, FlatList, StyleSheet, RefreshControl, KeyboardAvoidingView, Platform, Keyboard, TouchableOpacity, TextInput, ActivityIndicator } from 'react-native';
+import React, { useState, useCallback, useRef } from 'react';
+import { View, Text, FlatList, StyleSheet, RefreshControl, KeyboardAvoidingView, Platform, TouchableOpacity, TextInput, ActivityIndicator } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { PostCard } from '../../components/PostCard';
 import { CommentItem } from '../../components/CommentItem';
@@ -44,17 +44,7 @@ export function FeedScreen({ navigation }: HomeScreenProps<'Feed'>) {
   const flatListRef = useRef<FlatList>(null);
   const commentInputRef = useRef<CommentInputHandle>(null);
 
-  // Scroll to bottom of expanded post when keyboard opens so CommentInput is visible
-  useEffect(() => {
-    const sub = Keyboard.addListener('keyboardDidShow', () => {
-      if (!expandedPostId) return;
-      const index = posts.findIndex((p) => p.id === expandedPostId);
-      if (index >= 0) {
-        flatListRef.current?.scrollToIndex({ index, viewPosition: 1, animated: true });
-      }
-    });
-    return () => sub.remove();
-  }, [expandedPostId, posts]);
+
 
   const loadPosts = useCallback(async (offset = 0, refresh = false) => {
     if (!user) return;
@@ -201,7 +191,7 @@ export function FeedScreen({ navigation }: HomeScreenProps<'Feed'>) {
               onDeleted={handleRefresh}
             />
             {expandedPostId === item.id && (
-              <View style={[styles.commentsSection, { backgroundColor: colors.surface, borderBottomColor: colors.border }]}>
+              <View style={[styles.commentsSection, { backgroundColor: colors.surface }]}>
                 {editingComment ? (
                   <View style={styles.editBar}>
                     <TextInput
@@ -231,18 +221,21 @@ export function FeedScreen({ navigation }: HomeScreenProps<'Feed'>) {
                     onCancelReply={() => setReplyTo(null)}
                     disabled={!canComment}
                     disabledMessage="Commenting is a paid feature. Upgrade to join the conversation!"
+                    noBorder
                   />
                 )}
+                <View style={[styles.commentsSeparator, { backgroundColor: colors.border }]} />
                 {commentsLoading ? (
                   <ActivityIndicator style={styles.commentsLoader} color={colors.textSecondary} />
                 ) : comments.length === 0 ? (
                   <Text style={[styles.noComments, { color: colors.textSecondary }]}>No comments yet</Text>
                 ) : (
                   <>
-                    {visibleComments.map((comment) => (
+                    {visibleComments.map((comment, idx) => (
                       <View key={comment.id} style={styles.commentContainer}>
                         <CommentItem
                           comment={comment}
+                          noBorder={idx === visibleComments.length - 1}
                           onReply={(id, username) => { setReplyTo({ id, username }); commentInputRef.current?.focus(); }}
                           onEdit={handleEditComment}
                           onReport={(commentId) => setReportTarget({ visible: true, contentType: 'comment', contentId: commentId })}
@@ -262,6 +255,7 @@ export function FeedScreen({ navigation }: HomeScreenProps<'Feed'>) {
                     )}
                   </>
                 )}
+                <View style={[styles.commentsSeparator, { backgroundColor: colors.border }]} />
               </View>
             )}
           </View>
@@ -298,7 +292,10 @@ const styles = StyleSheet.create({
   commentsSection: {
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
-    borderBottomWidth: 1,
+  },
+  commentsSeparator: {
+    height: 1,
+    marginHorizontal: -spacing.md,
   },
   commentsLoader: {
     paddingVertical: spacing.md,
