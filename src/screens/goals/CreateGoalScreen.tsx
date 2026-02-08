@@ -95,7 +95,7 @@ export function CreateGoalScreen({ navigation }: CreateScreenProps<'CreateGoal'>
 
   if (!goalType) {
     return (
-      <ScreenContainer>
+      <ScreenContainer noTopInset>
         <View style={styles.container}>
           <Text style={[styles.title, { color: colors.text }]}>New Goal</Text>
           <Text style={[styles.subtitle, { color: colors.textSecondary }]}>What type of goal?</Text>
@@ -115,7 +115,7 @@ export function CreateGoalScreen({ navigation }: CreateScreenProps<'CreateGoal'>
   }
 
   return (
-    <ScreenContainer>
+    <ScreenContainer noTopInset>
       <ScrollView style={styles.container} keyboardShouldPersistTaps="handled">
         <TouchableOpacity onPress={() => setGoalType(null)}>
           <Text style={[styles.changeType, { color: colors.textSecondary }]}>

@@ -119,7 +119,7 @@ export function CreatePostScreen({ route, navigation }: CreateScreenProps<'Creat
 
   if (goals.length === 0) {
     return (
-      <ScreenContainer>
+      <ScreenContainer noTopInset>
         <EmptyState
           title="Create a goal first"
           message="Every post is linked to a goal. Create your first goal to start posting."
@@ -132,7 +132,7 @@ export function CreatePostScreen({ route, navigation }: CreateScreenProps<'Creat
 
   if (!selectedGoal) {
     return (
-      <ScreenContainer>
+      <ScreenContainer noTopInset>
         <ScrollView style={styles.container} contentContainerStyle={styles.scrollContent}>
           <Text style={[styles.title, { color: colors.text }]}>Select a goal</Text>
           {goals.map((goal) => (
@@ -152,7 +152,7 @@ export function CreatePostScreen({ route, navigation }: CreateScreenProps<'Creat
   const showProgressInput = selectedGoal.goal_type !== 'milestone';
 
   return (
-    <ScreenContainer>
+    <ScreenContainer noTopInset>
       <ScrollView style={styles.container} keyboardShouldPersistTaps="handled">
         <TouchableOpacity onPress={() => setSelectedGoal(null)}>
           <Text style={[styles.goalLabel, { color: colors.textSecondary }]}>Goal: {selectedGoal.title} (change)</Text>

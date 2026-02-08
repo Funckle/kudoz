@@ -8,9 +8,10 @@ interface ScreenContainerProps {
   children: React.ReactNode;
   style?: ViewStyle;
   noPadding?: boolean;
+  noTopInset?: boolean;
 }
 
-export function ScreenContainer({ children, style, noPadding }: ScreenContainerProps) {
+export function ScreenContainer({ children, style, noPadding, noTopInset }: ScreenContainerProps) {
   const insets = useSafeAreaInsets();
   const { colors } = useTheme();
 
@@ -18,7 +19,7 @@ export function ScreenContainer({ children, style, noPadding }: ScreenContainerP
     <View
       style={[
         styles.container,
-        { backgroundColor: colors.background, paddingTop: insets.top },
+        { backgroundColor: colors.background, paddingTop: noTopInset ? 0 : insets.top },
         !noPadding && styles.padding,
         style,
       ]}
