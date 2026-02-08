@@ -5,7 +5,7 @@ import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { NavigationContainerRef } from '@react-navigation/native';
-import { TamaguiProvider, Theme, YStack } from 'tamagui';
+import { TamaguiProvider, YStack } from 'tamagui';
 import config from './tamagui.config';
 import { AuthContext, useAuthProvider } from './src/hooks/useAuth';
 import { RootNavigator } from './src/navigation/RootNavigator';
@@ -78,25 +78,23 @@ export default function App() {
   const themeName = colorScheme === 'dark' ? 'dark' : 'light';
 
   return (
-    <TamaguiProvider config={config} defaultTheme="light">
-      <Theme name={themeName}>
-        <YStack flex={1} alignItems="center" backgroundColor={themeName === 'dark' ? '#000000' : '#F5F5F5'}>
-          <YStack
-            flex={1}
-            width="100%"
-            maxWidth={480}
-            backgroundColor="$background"
-            {...(Platform.OS === 'web' ? { borderLeftWidth: 1, borderRightWidth: 1, borderColor: '$borderColor' } : {})}
-          >
-            <QueryClientProvider client={queryClient}>
-              <SafeAreaProvider>
-                <AppInner />
-                <StatusBar style={themeName === 'dark' ? 'light' : 'dark'} />
-              </SafeAreaProvider>
-            </QueryClientProvider>
-          </YStack>
+    <TamaguiProvider config={config} defaultTheme={themeName}>
+      <YStack flex={1} alignItems="center" backgroundColor={themeName === 'dark' ? '#000000' : '#F5F5F5'}>
+        <YStack
+          flex={1}
+          width="100%"
+          maxWidth={480}
+          backgroundColor="$background"
+          {...(Platform.OS === 'web' ? { borderLeftWidth: 1, borderRightWidth: 1, borderColor: '$borderColor' } : {})}
+        >
+          <QueryClientProvider client={queryClient}>
+            <SafeAreaProvider>
+              <AppInner />
+              <StatusBar style={themeName === 'dark' ? 'light' : 'dark'} />
+            </SafeAreaProvider>
+          </QueryClientProvider>
         </YStack>
-      </Theme>
+      </YStack>
     </TamaguiProvider>
   );
 }
