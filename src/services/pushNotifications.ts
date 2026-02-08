@@ -3,6 +3,13 @@ import Constants from 'expo-constants';
 import { Platform } from 'react-native';
 import { supabase } from './supabase';
 
+// In-memory cache of the current push token for cleanup on sign-out
+let currentPushToken: string | null = null;
+
+export function getCurrentPushToken(): string | null {
+  return currentPushToken;
+}
+
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldShowAlert: true,
@@ -27,6 +34,7 @@ export async function registerForPushNotifications(userId: string): Promise<stri
     projectId,
   });
   const token = tokenData.data;
+  currentPushToken = token;
 
   // Upsert token to push_tokens table (supports multi-device)
   await supabase.from('push_tokens').upsert(

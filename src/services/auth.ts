@@ -1,5 +1,6 @@
 import { supabase } from './supabase';
 import { getAuthRedirectUrl } from './linking';
+import { getCurrentPushToken, unregisterPushToken } from './pushNotifications';
 import type { User } from '../types/database';
 
 export async function signInWithPassword(email: string, password: string): Promise<{ error?: string }> {
@@ -69,10 +70,16 @@ export async function checkUsernameAvailable(username: string): Promise<boolean>
 }
 
 export async function signOut(): Promise<void> {
+  const token = getCurrentPushToken();
+  if (token) await unregisterPushToken(token);
   await supabase.auth.signOut();
 }
 
 export async function deleteAccount(userId: string): Promise<{ error?: string }> {
+  // Unregister push token before deleting user data
+  const token = getCurrentPushToken();
+  if (token) await unregisterPushToken(token);
+
   // Delete user profile (cascades to all related data)
   const { error } = await supabase.from('users').delete().eq('id', userId);
   if (error) return { error: error.message };

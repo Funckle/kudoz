@@ -14,7 +14,7 @@ export async function generateInviteCode(inviterId: string): Promise<{ invite?: 
     return { error: 'No invites remaining' };
   }
 
-  const code = Crypto.randomUUID().slice(0, 8).toUpperCase();
+  const code = Crypto.randomUUID().replace(/-/g, '').slice(0, 16).toUpperCase();
 
   const { data: invite, error } = await supabase
     .from('invites')

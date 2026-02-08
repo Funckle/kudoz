@@ -52,6 +52,11 @@ export async function uploadImage(
   const response = await fetch(uri);
   const blob = await response.blob();
 
+  const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+  if (!allowedTypes.includes(blob.type)) {
+    return { error: 'Only JPEG, PNG, WebP, and GIF images are allowed' };
+  }
+
   if (blob.size > LIMITS.IMAGE_MAX_SIZE) {
     return { error: 'Image must be under 2MB' };
   }
