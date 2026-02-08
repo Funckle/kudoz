@@ -88,7 +88,7 @@ export async function deleteComment(commentId: string): Promise<{ error?: string
   return {};
 }
 
-export async function getCommentsForPost(postId: string): Promise<{ comments: CommentWithAuthor[]; error?: string }> {
+export async function getCommentsForPost(postId: string, currentUserId?: string): Promise<{ comments: CommentWithAuthor[]; error?: string }> {
   const { data, error } = await supabase
     .from('comments')
     .select('*, user:users!comments_user_id_fkey(id, name, username, avatar_url)')
@@ -97,8 +97,33 @@ export async function getCommentsForPost(postId: string): Promise<{ comments: Co
 
   if (error) return { comments: [], error: error.message };
 
-  // Organize into tree
   const flat = (data || []) as CommentWithAuthor[];
+  if (flat.length === 0) return { comments: [] };
+
+  // Batch-fetch all comment reactions in one query
+  const commentIds = flat.map((c) => c.id);
+  const { data: reactions } = await supabase
+    .from('comment_reactions')
+    .select('comment_id, user_id')
+    .in('comment_id', commentIds);
+
+  // Build count map and user-has-kudozd set
+  const countMap = new Map<string, number>();
+  const userKudozdSet = new Set<string>();
+  for (const r of reactions || []) {
+    countMap.set(r.comment_id, (countMap.get(r.comment_id) || 0) + 1);
+    if (currentUserId && r.user_id === currentUserId) {
+      userKudozdSet.add(r.comment_id);
+    }
+  }
+
+  // Enrich comments with kudoz data
+  for (const comment of flat) {
+    comment.kudoz_count = countMap.get(comment.id) || 0;
+    comment.has_kudozd = userKudozdSet.has(comment.id);
+  }
+
+  // Organize into tree
   const rootComments: CommentWithAuthor[] = [];
   const childMap = new Map<string, CommentWithAuthor[]>();
 

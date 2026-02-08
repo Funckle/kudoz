@@ -37,6 +37,7 @@ export function NotificationsScreen({ navigation }: NotificationsScreenProps<'No
     switch (notification.type) {
       case 'kudoz':
       case 'comment':
+      case 'comment_kudoz':
         if (data.post_id) navigation.navigate('PostDetail', { postId: data.post_id });
         break;
       case 'follow':

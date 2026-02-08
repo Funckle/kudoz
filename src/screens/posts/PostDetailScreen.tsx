@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { View, Text, FlatList, StyleSheet, KeyboardAvoidingView, Platform, TouchableOpacity, TextInput } from 'react-native';
 import { PostCard } from '../../components/PostCard';
 import { CommentItem } from '../../components/CommentItem';
-import { CommentInput } from '../../components/CommentInput';
+import { CommentInput, CommentInputHandle } from '../../components/CommentInput';
 import { ReportModal } from '../../components/ReportModal';
 import { LoadingSpinner } from '../../components/LoadingSpinner';
 import { ErrorState } from '../../components/ErrorState';
@@ -28,19 +28,20 @@ export function PostDetailScreen({ route, navigation }: HomeScreenProps<'PostDet
   const [reportTarget, setReportTarget] = useState<{ visible: boolean; contentType: ContentType; contentId: string }>({ visible: false, contentType: 'post', contentId: '' });
   const [editingComment, setEditingComment] = useState<CommentWithAuthor | null>(null);
   const [editText, setEditText] = useState('');
+  const commentInputRef = useRef<CommentInputHandle>(null);
 
   const loadData = useCallback(async () => {
     const [postResult, commentsResult] = await Promise.all([
       getPost(postId),
-      getCommentsForPost(postId),
+      getCommentsForPost(postId, user?.id),
     ]);
     if (postResult.error) setError(postResult.error);
     if (postResult.post) setPost(postResult.post);
     if (commentsResult.comments) setComments(commentsResult.comments);
     setLoading(false);
-  }, [postId]);
+  }, [postId, user?.id]);
 
-  useEffect(() => { loadData(); }, [loadData]);
+  useEffect(() => { if (user) loadData(); }, [loadData, user]);
 
   const handleSubmitComment = async (content: string) => {
     if (!user) return;
@@ -103,7 +104,7 @@ export function PostDetailScreen({ route, navigation }: HomeScreenProps<'PostDet
           <View style={styles.commentContainer}>
             <CommentItem
               comment={item}
-              onReply={(id, username) => setReplyTo({ id, username })}
+              onReply={(id, username) => { setReplyTo({ id, username }); commentInputRef.current?.focus(); }}
               onEdit={handleEditComment}
               onReport={(commentId) => setReportTarget({ visible: true, contentType: 'comment', contentId: commentId })}
               onDeleted={loadData}
@@ -135,6 +136,7 @@ export function PostDetailScreen({ route, navigation }: HomeScreenProps<'PostDet
         </View>
       ) : (
         <CommentInput
+          ref={commentInputRef}
           onSubmit={handleSubmitComment}
           replyingTo={replyTo?.username}
           onCancelReply={() => setReplyTo(null)}

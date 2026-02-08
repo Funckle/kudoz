@@ -122,6 +122,7 @@ export function MainTabNavigator() {
           borderTopWidth: borders.width,
           borderTopColor: themeColors.border,
         },
+        tabBarShowLabel: false,
         tabBarActiveTintColor: themeColors.text,
         tabBarInactiveTintColor: themeColors.textSecondary,
       }}

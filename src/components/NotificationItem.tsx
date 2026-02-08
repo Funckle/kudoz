@@ -18,6 +18,8 @@ export function NotificationItem({ notification, onPress }: NotificationItemProp
     switch (notification.type) {
       case 'kudoz':
         return `${name} gave you Kudoz`;
+      case 'comment_kudoz':
+        return `${name} gave Kudoz to your comment`;
       case 'comment':
         return `${name} commented on your post`;
       case 'follow':

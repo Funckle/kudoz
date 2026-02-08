@@ -8,7 +8,7 @@ import { LoadingSpinner } from '../../components/LoadingSpinner';
 import { typography, spacing } from '../../utils/theme';
 import { useTheme } from '../../utils/ThemeContext';
 import { useAuth } from '../../hooks/useAuth';
-import { getGoalStats, getActiveGoalProgress, getFollowerGrowth, getMostKudozdPosts, getMostKudozdGoals, getGoalsByCategory, getCompletionRateOverTime } from '../../services/analytics';
+import { getGoalStats, getActiveGoalProgress, getFollowerGrowth, getMostKudozdPosts, getMostKudozdGoals, getMostKudozdComments, getGoalsByCategory, getCompletionRateOverTime } from '../../services/analytics';
 
 export function AnalyticsScreen() {
   const { colors } = useTheme();
@@ -19,6 +19,7 @@ export function AnalyticsScreen() {
   const [topPosts, setTopPosts] = useState<Array<{ id: string; content: string; kudoz_count: number }>>([]);
   const [categoryData, setCategoryData] = useState<Array<{ name: string; count: number; color: string }>>([]);
   const [topGoals, setTopGoals] = useState<Array<{ id: string; title: string; kudoz_count: number }>>([]);
+  const [topComments, setTopComments] = useState<Array<{ id: string; content: string; kudoz_count: number }>>([]);
   const [completionTrend, setCompletionTrend] = useState<Array<{ month: string; rate: number }>>([]);
   const [loading, setLoading] = useState(true);
 
@@ -30,14 +31,16 @@ export function AnalyticsScreen() {
       getFollowerGrowth(user.id),
       getMostKudozdPosts(user.id),
       getMostKudozdGoals(user.id),
+      getMostKudozdComments(user.id),
       getGoalsByCategory(user.id),
       getCompletionRateOverTime(user.id),
-    ]).then(([s, g, f, p, tg, cats, trend]) => {
+    ]).then(([s, g, f, p, tg, tc, cats, trend]) => {
       setStats(s);
       setActiveGoals(g);
       setFollowerCount(f.count);
       setTopPosts(p);
       setTopGoals(tg);
+      setTopComments(tc);
       setCategoryData(cats);
       setCompletionTrend(trend);
       setLoading(false);
@@ -110,6 +113,18 @@ export function AnalyticsScreen() {
               <View key={p.id} style={[styles.postRow, { borderBottomColor: colors.border }]}>
                 <Text style={[styles.postContent, { color: colors.text }]} numberOfLines={1}>{p.content || '(no text)'}</Text>
                 <Text style={[styles.kudozCount, { color: colors.text }]}>{p.kudoz_count} Kudoz</Text>
+              </View>
+            ))}
+          </View>
+        )}
+
+        {topComments.length > 0 && (
+          <View style={styles.section}>
+            <Text style={[styles.sectionTitle, { color: colors.text }]}>Most Kudoz'd Comments</Text>
+            {topComments.map((c) => (
+              <View key={c.id} style={[styles.postRow, { borderBottomColor: colors.border }]}>
+                <Text style={[styles.postContent, { color: colors.text }]} numberOfLines={1}>{c.content}</Text>
+                <Text style={[styles.kudozCount, { color: colors.text }]}>{c.kudoz_count} Kudoz</Text>
               </View>
             ))}
           </View>

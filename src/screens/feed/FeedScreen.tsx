@@ -3,7 +3,7 @@ import { View, Text, FlatList, StyleSheet, RefreshControl, KeyboardAvoidingView,
 import { useFocusEffect } from '@react-navigation/native';
 import { PostCard } from '../../components/PostCard';
 import { CommentItem } from '../../components/CommentItem';
-import { CommentInput } from '../../components/CommentInput';
+import { CommentInput, CommentInputHandle } from '../../components/CommentInput';
 import { ReportModal } from '../../components/ReportModal';
 import { SubscriptionBanner } from '../../components/SubscriptionBanner';
 import { LoadingSpinner } from '../../components/LoadingSpinner';
@@ -42,6 +42,7 @@ export function FeedScreen({ navigation }: HomeScreenProps<'Feed'>) {
   const [editingComment, setEditingComment] = useState<CommentWithAuthor | null>(null);
   const [editText, setEditText] = useState('');
   const flatListRef = useRef<FlatList>(null);
+  const commentInputRef = useRef<CommentInputHandle>(null);
 
   // Scroll to bottom of expanded post when keyboard opens so CommentInput is visible
   useEffect(() => {
@@ -201,35 +202,6 @@ export function FeedScreen({ navigation }: HomeScreenProps<'Feed'>) {
             />
             {expandedPostId === item.id && (
               <View style={[styles.commentsSection, { backgroundColor: colors.surface, borderBottomColor: colors.border }]}>
-                {commentsLoading ? (
-                  <ActivityIndicator style={styles.commentsLoader} color={colors.textSecondary} />
-                ) : comments.length === 0 ? (
-                  <Text style={[styles.noComments, { color: colors.textSecondary }]}>No comments yet</Text>
-                ) : (
-                  <>
-                    {visibleComments.map((comment) => (
-                      <View key={comment.id} style={styles.commentContainer}>
-                        <CommentItem
-                          comment={comment}
-                          onReply={(id, username) => setReplyTo({ id, username })}
-                          onEdit={handleEditComment}
-                          onReport={(commentId) => setReportTarget({ visible: true, contentType: 'comment', contentId: commentId })}
-                          onDeleted={handleCommentDeleted}
-                        />
-                      </View>
-                    ))}
-                    {hasMoreComments && (
-                      <TouchableOpacity
-                        style={styles.loadMoreBtn}
-                        onPress={() => setVisibleCount((c) => c + COMMENTS_PAGE_SIZE)}
-                      >
-                        <Text style={[styles.loadMoreText, { color: colors.textSecondary }]}>
-                          Show more comments ({comments.length - visibleCount} remaining)
-                        </Text>
-                      </TouchableOpacity>
-                    )}
-                  </>
-                )}
                 {editingComment ? (
                   <View style={styles.editBar}>
                     <TextInput
@@ -253,12 +225,42 @@ export function FeedScreen({ navigation }: HomeScreenProps<'Feed'>) {
                   </View>
                 ) : (
                   <CommentInput
+                    ref={commentInputRef}
                     onSubmit={handleSubmitComment}
                     replyingTo={replyTo?.username}
                     onCancelReply={() => setReplyTo(null)}
                     disabled={!canComment}
                     disabledMessage="Commenting is a paid feature. Upgrade to join the conversation!"
                   />
+                )}
+                {commentsLoading ? (
+                  <ActivityIndicator style={styles.commentsLoader} color={colors.textSecondary} />
+                ) : comments.length === 0 ? (
+                  <Text style={[styles.noComments, { color: colors.textSecondary }]}>No comments yet</Text>
+                ) : (
+                  <>
+                    {visibleComments.map((comment) => (
+                      <View key={comment.id} style={styles.commentContainer}>
+                        <CommentItem
+                          comment={comment}
+                          onReply={(id, username) => { setReplyTo({ id, username }); commentInputRef.current?.focus(); }}
+                          onEdit={handleEditComment}
+                          onReport={(commentId) => setReportTarget({ visible: true, contentType: 'comment', contentId: commentId })}
+                          onDeleted={handleCommentDeleted}
+                        />
+                      </View>
+                    ))}
+                    {hasMoreComments && (
+                      <TouchableOpacity
+                        style={styles.loadMoreBtn}
+                        onPress={() => setVisibleCount((c) => c + COMMENTS_PAGE_SIZE)}
+                      >
+                        <Text style={[styles.loadMoreText, { color: colors.textSecondary }]}>
+                          Show more comments ({comments.length - visibleCount} remaining)
+                        </Text>
+                      </TouchableOpacity>
+                    )}
+                  </>
                 )}
               </View>
             )}
@@ -317,7 +319,7 @@ const styles = StyleSheet.create({
     ...typography.caption,
   },
   editBar: {
-    marginTop: spacing.sm,
+    marginBottom: spacing.sm,
   },
   editInput: {
     ...typography.body,

@@ -132,6 +132,29 @@ export async function getMostKudozdGoals(userId: string, limit = 5): Promise<Arr
   return results.filter((g) => g.kudoz_count > 0).sort((a, b) => b.kudoz_count - a.kudoz_count).slice(0, limit);
 }
 
+export async function getMostKudozdComments(userId: string, limit = 5): Promise<Array<{ id: string; content: string; kudoz_count: number }>> {
+  const { data: comments } = await supabase
+    .from('comments')
+    .select('id, content')
+    .eq('user_id', userId)
+    .order('created_at', { ascending: false })
+    .limit(50);
+
+  if (!comments || comments.length === 0) return [];
+
+  const results = await Promise.all(
+    comments.map(async (c) => {
+      const { count } = await supabase
+        .from('comment_reactions')
+        .select('id', { count: 'exact', head: true })
+        .eq('comment_id', c.id);
+      return { ...c, kudoz_count: count ?? 0 };
+    })
+  );
+
+  return results.filter((c) => c.kudoz_count > 0).sort((a, b) => b.kudoz_count - a.kudoz_count).slice(0, limit);
+}
+
 export async function getMostKudozdPosts(userId: string, limit = 5): Promise<Array<{ id: string; content: string; kudoz_count: number }>> {
   const { data: posts } = await supabase
     .from('posts')

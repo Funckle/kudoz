@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useImperativeHandle, forwardRef } from 'react';
 import { View, TextInput, TouchableOpacity, Text, StyleSheet } from 'react-native';
 import { typography, spacing, borderRadius } from '../utils/theme';
 import { useTheme } from '../utils/ThemeContext';
@@ -11,13 +11,26 @@ interface CommentInputProps {
   onCancelReply?: () => void;
   disabled?: boolean;
   disabledMessage?: string;
+  noBorder?: boolean;
 }
 
-export function CommentInput({ onSubmit, replyingTo, onCancelReply, disabled, disabledMessage }: CommentInputProps) {
+export interface CommentInputHandle {
+  focus: () => void;
+}
+
+export const CommentInput = forwardRef<CommentInputHandle, CommentInputProps>(function CommentInput(
+  { onSubmit, replyingTo, onCancelReply, disabled, disabledMessage, noBorder },
+  ref,
+) {
   const { colors } = useTheme();
+  const inputRef = useRef<TextInput>(null);
   const [text, setText] = useState('');
   const [sending, setSending] = useState(false);
   const [warning, setWarning] = useState('');
+
+  useImperativeHandle(ref, () => ({
+    focus: () => inputRef.current?.focus(),
+  }));
 
   const handleSubmit = async () => {
     if (!text.trim() || disabled) return;
@@ -54,6 +67,7 @@ export function CommentInput({ onSubmit, replyingTo, onCancelReply, disabled, di
       {warning ? <Text style={[styles.warning, { color: colors.error }]}>{warning}</Text> : null}
       <View style={styles.inputRow}>
         <TextInput
+          ref={inputRef}
           style={[styles.input, { borderColor: colors.border, color: colors.text }]}
           placeholder="Add a comment..."
           value={text}
@@ -74,7 +88,7 @@ export function CommentInput({ onSubmit, replyingTo, onCancelReply, disabled, di
       </View>
     </View>
   );
-}
+});
 
 const styles = StyleSheet.create({
   container: {

@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import { Reply, Pencil, Trash2, Flag } from 'lucide-react-native';
 import { Avatar } from './Avatar';
+import { CommentKudozButton } from './CommentKudozButton';
 import { typography, spacing } from '../utils/theme';
 import { useTheme } from '../utils/ThemeContext';
 import { useAuth } from '../hooks/useAuth';
@@ -73,6 +74,11 @@ export function CommentItem({ comment, depth = 0, parentUsername, onReply, onEdi
           )}
           <Text style={[styles.content, { color: colors.text }]}>{comment.content}</Text>
           <View style={styles.actions}>
+            <CommentKudozButton
+              commentId={comment.id}
+              initialCount={comment.kudoz_count}
+              initialActive={comment.has_kudozd}
+            />
             <TouchableOpacity style={styles.actionBtn} onPress={() => onReply?.(comment.id, comment.user?.username || '')}>
               <Reply size={13} color={colors.textSecondary} />
               <Text style={[styles.actionText, { color: colors.textSecondary }]}>Reply</Text>

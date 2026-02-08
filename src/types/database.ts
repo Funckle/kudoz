@@ -7,6 +7,7 @@ export type SubscriptionStatus = 'active' | 'lapsed' | 'none';
 export type NotificationType =
   | 'kudoz'
   | 'comment'
+  | 'comment_kudoz'
   | 'follow'
   | 'mutual_follow'
   | 'goal_completed'
@@ -115,6 +116,13 @@ export interface Reaction {
   created_at: string;
 }
 
+export interface CommentReaction {
+  id: string;
+  user_id: string;
+  comment_id: string;
+  created_at: string;
+}
+
 export interface Report {
   id: string;
   reporter_id: string;
@@ -178,6 +186,8 @@ export interface PostWithAuthor extends Post {
 export interface CommentWithAuthor extends Comment {
   user: Pick<User, 'id' | 'name' | 'username' | 'avatar_url'>;
   replies?: CommentWithAuthor[];
+  kudoz_count: number;
+  has_kudozd: boolean;
 }
 
 export interface GoalWithCategories extends Goal {
