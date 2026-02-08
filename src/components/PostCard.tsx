@@ -110,12 +110,6 @@ export function PostCard({
         <Text style={[styles.goalLink, { color: colors.textSecondary }]}>{post.goal?.title}</Text>
       </TouchableOpacity>
 
-      {post.categories && post.categories.length > 0 && (
-        <View style={styles.categories}>
-          {post.categories.map((c) => <CategoryBadge key={c.id} category={c} />)}
-        </View>
-      )}
-
       {post.content && <Text style={[styles.content, { color: colors.text }]}>{post.content}</Text>}
 
       {post.progress_value != null && post.progress_value > 0 && (
@@ -135,6 +129,12 @@ export function PostCard({
       )}
 
       {post.edited_at && <Text style={[styles.edited, { color: colors.textSecondary }]}>edited</Text>}
+
+      {post.categories && post.categories.length > 0 && (
+        <View style={styles.categories}>
+          {post.categories.map((c) => <CategoryBadge key={c.id} category={c} />)}
+        </View>
+      )}
 
       <View style={styles.actions}>
         <KudozButton postId={post.id} initialCount={post.kudoz_count} initialActive={post.has_kudozd} />

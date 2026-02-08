@@ -14,7 +14,7 @@ export function CategoryBadge({ category }: CategoryBadgeProps) {
   return (
     <View style={[styles.badge, { backgroundColor: colors.borderLight }]}>
       <View style={[styles.dot, { backgroundColor: category.color }]} />
-      <Text style={[styles.text, { color: colors.text }]}>{category.name}</Text>
+      <Text style={[styles.text, { color: colors.textSecondary }]}>{category.name}</Text>
     </View>
   );
 }
