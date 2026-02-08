@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { View, Text, FlatList, StyleSheet, KeyboardAvoidingView, Platform, TouchableOpacity, TextInput } from 'react-native';
+import { useHeaderHeight } from '@react-navigation/elements';
 import { PostCard } from '../../components/PostCard';
 import { CommentItem } from '../../components/CommentItem';
 import { CommentInput, CommentInputHandle } from '../../components/CommentInput';
@@ -29,6 +30,7 @@ export function PostDetailScreen({ route, navigation }: HomeScreenProps<'PostDet
   const [editingComment, setEditingComment] = useState<CommentWithAuthor | null>(null);
   const [editText, setEditText] = useState('');
   const commentInputRef = useRef<CommentInputHandle>(null);
+  const headerHeight = useHeaderHeight();
 
   const loadData = useCallback(async () => {
     const [postResult, commentsResult] = await Promise.all([
@@ -85,7 +87,7 @@ export function PostDetailScreen({ route, navigation }: HomeScreenProps<'PostDet
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={[styles.container, { backgroundColor: colors.background }]}
-      keyboardVerticalOffset={88}
+      keyboardVerticalOffset={headerHeight}
     >
       <FlatList
         data={comments}

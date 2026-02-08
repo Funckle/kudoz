@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useRef } from 'react';
-import { View, Text, FlatList, StyleSheet, RefreshControl, KeyboardAvoidingView, Platform, TouchableOpacity, TextInput, ActivityIndicator } from 'react-native';
+import { View, Text, FlatList, StyleSheet, RefreshControl, TouchableOpacity, TextInput, ActivityIndicator } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { PostCard } from '../../components/PostCard';
 import { CommentItem } from '../../components/CommentItem';
@@ -160,15 +160,12 @@ export function FeedScreen({ navigation }: HomeScreenProps<'Feed'>) {
   if (error && posts.length === 0) return <ErrorState message={error} onRetry={() => loadPosts(0, true)} />;
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      style={styles.container}
-      keyboardVerticalOffset={88}
-    >
+    <View style={styles.container}>
       <FlatList
         ref={flatListRef}
         data={posts}
         keyExtractor={(item) => item.id}
+        automaticallyAdjustKeyboardInsets
         ListHeaderComponent={
           isLapsed && !bannerDismissed ? (
             <SubscriptionBanner
@@ -278,7 +275,7 @@ export function FeedScreen({ navigation }: HomeScreenProps<'Feed'>) {
         contentId={reportTarget.contentId}
         onClose={() => setReportTarget({ visible: false, contentType: 'post', contentId: '' })}
       />
-    </KeyboardAvoidingView>
+    </View>
   );
 }
 
