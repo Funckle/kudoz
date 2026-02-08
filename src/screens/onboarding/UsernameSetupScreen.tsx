@@ -1,17 +1,16 @@
 import React, { useState, useCallback } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { TouchableOpacity } from 'react-native';
+import { YStack, XStack, Text, useTheme } from 'tamagui';
 import { ScreenContainer } from '../../components/ScreenContainer';
 import { TextInput } from '../../components/TextInput';
 import { Button } from '../../components/Button';
-import { typography, spacing } from '../../utils/theme';
-import { useTheme } from '../../utils/ThemeContext';
 import { LIMITS, validateUsername } from '../../utils/validation';
 import { checkUsernameAvailable, updateUserProfile } from '../../services/auth';
 import { useAuth } from '../../hooks/useAuth';
 import type { OnboardingScreenProps } from '../../types/navigation';
 
 export function UsernameSetupScreen({ navigation }: OnboardingScreenProps<'UsernameSetup'>) {
-  const { colors } = useTheme();
+  const theme = useTheme();
   const { user, refreshUser } = useAuth();
   const [username, setUsername] = useState('');
   const [error, setError] = useState('');
@@ -68,9 +67,13 @@ export function UsernameSetupScreen({ navigation }: OnboardingScreenProps<'Usern
 
   return (
     <ScreenContainer>
-      <View style={styles.container}>
-        <Text style={[styles.title, { color: colors.text }]}>Choose your username</Text>
-        <Text style={[styles.subtitle, { color: colors.textSecondary }]}>This is how others will find you.</Text>
+      <YStack flex={1} justifyContent="center" paddingHorizontal="$md">
+        <Text fontSize="$5" fontWeight="700" marginBottom="$sm" color="$color">
+          Choose your username
+        </Text>
+        <Text fontSize="$2" marginBottom="$xl" color="$colorSecondary">
+          This is how others will find you.
+        </Text>
         <TextInput
           label="Username"
           placeholder="your_username"
@@ -81,7 +84,12 @@ export function UsernameSetupScreen({ navigation }: OnboardingScreenProps<'Usern
           autoCapitalize="none"
           autoCorrect={false}
         />
-        <Text style={[styles.rules, { color: colors.textSecondary }]}>
+        <Text
+          fontSize="$1"
+          marginBottom="$md"
+          marginTop={-8}
+          color="$colorSecondary"
+        >
           Lowercase letters, numbers, and underscores.{'\n'}
           {LIMITS.USERNAME_MIN}-{LIMITS.USERNAME_MAX} characters.
         </Text>
@@ -91,46 +99,17 @@ export function UsernameSetupScreen({ navigation }: OnboardingScreenProps<'Usern
           loading={loading}
           disabled={!isValid}
         />
-        <View style={styles.legalRow}>
-          <Text style={[styles.legalText, { color: colors.textSecondary }]}>By continuing, you agree to our </Text>
+        <XStack flexWrap="wrap" justifyContent="center" marginTop="$lg">
+          <Text fontSize="$1" color="$colorSecondary">By continuing, you agree to our </Text>
           <TouchableOpacity onPress={() => navigation.navigate('Terms')}>
-            <Text style={[styles.legalLink, { color: colors.text }]}>Terms</Text>
+            <Text fontSize="$1" fontWeight="600" color="$color">Terms</Text>
           </TouchableOpacity>
-          <Text style={[styles.legalText, { color: colors.textSecondary }]}> and </Text>
+          <Text fontSize="$1" color="$colorSecondary"> and </Text>
           <TouchableOpacity onPress={() => navigation.navigate('PrivacyPolicy')}>
-            <Text style={[styles.legalLink, { color: colors.text }]}>Privacy Policy</Text>
+            <Text fontSize="$1" fontWeight="600" color="$color">Privacy Policy</Text>
           </TouchableOpacity>
-        </View>
-      </View>
+        </XStack>
+      </YStack>
     </ScreenContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    paddingHorizontal: spacing.md,
-  },
-  title: {
-    ...typography.title,
-    marginBottom: spacing.sm,
-  },
-  subtitle: {
-    ...typography.body,
-    marginBottom: spacing.xl,
-  },
-  rules: {
-    ...typography.caption,
-    marginBottom: spacing.md,
-    marginTop: -spacing.sm,
-  },
-  legalRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'center',
-    marginTop: spacing.lg,
-  },
-  legalText: { ...typography.caption },
-  legalLink: { ...typography.caption, fontWeight: '600' },
-});

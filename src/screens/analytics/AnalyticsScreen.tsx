@@ -1,17 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { ScrollView } from 'react-native';
+import { YStack, XStack, Text, useTheme } from 'tamagui';
 import { ScreenContainer } from '../../components/ScreenContainer';
 import { StatCard } from '../../components/StatCard';
 import { BarChart } from '../../components/BarChart';
 import { ProgressBar } from '../../components/ProgressBar';
 import { LoadingSpinner } from '../../components/LoadingSpinner';
-import { typography, spacing } from '../../utils/theme';
-import { useTheme } from '../../utils/ThemeContext';
 import { useAuth } from '../../hooks/useAuth';
 import { getGoalStats, getActiveGoalProgress, getFollowerGrowth, getMostKudozdPosts, getMostKudozdGoals, getMostKudozdComments, getGoalsByCategory, getCompletionRateOverTime } from '../../services/analytics';
 
 export function AnalyticsScreen() {
-  const { colors } = useTheme();
+  const theme = useTheme();
   const { user } = useAuth();
   const [stats, setStats] = useState({ total: 0, active: 0, completed: 0, completionRate: 0 });
   const [activeGoals, setActiveGoals] = useState<Array<{ id: string; title: string; progress: number }>>([]);
@@ -51,99 +50,85 @@ export function AnalyticsScreen() {
 
   return (
     <ScreenContainer>
-      <ScrollView style={styles.container}>
-        <Text style={[styles.title, { color: colors.text }]}>Your Stats</Text>
+      <ScrollView style={{ flex: 1, padding: 16 }}>
+        <Text fontSize="$5" fontWeight="700" marginBottom="$md" color="$color">Your Stats</Text>
 
-        <View style={styles.statRow}>
+        <XStack flexWrap="wrap" marginBottom="$md">
           <StatCard label="Total Goals" value={stats.total} />
           <StatCard label="Active" value={stats.active} />
           <StatCard label="Completed" value={stats.completed} />
           <StatCard label="Rate" value={`${stats.completionRate}%`} />
-        </View>
+        </XStack>
 
         <StatCard label="Followers" value={followerCount} />
 
         {categoryData.length > 0 && (
-          <View style={styles.section}>
-            <Text style={[styles.sectionTitle, { color: colors.text }]}>Goals by Category</Text>
+          <YStack marginTop="$md">
+            <Text fontSize="$4" fontWeight="600" marginBottom="$sm" color="$color">Goals by Category</Text>
             <BarChart
               data={categoryData.map((c) => ({ label: c.name, value: c.count, color: c.color }))}
             />
-          </View>
+          </YStack>
         )}
 
         {completionTrend.length > 0 && (
-          <View style={styles.section}>
-            <Text style={[styles.sectionTitle, { color: colors.text }]}>Completion Rate</Text>
+          <YStack marginTop="$md">
+            <Text fontSize="$4" fontWeight="600" marginBottom="$sm" color="$color">Completion Rate</Text>
             <BarChart
-              data={completionTrend.map((c) => ({ label: c.month.substring(5), value: c.rate, color: colors.text }))}
+              data={completionTrend.map((c) => ({ label: c.month.substring(5), value: c.rate, color: theme.color.val }))}
             />
-          </View>
+          </YStack>
         )}
 
         {activeGoals.length > 0 && (
-          <View style={styles.section}>
-            <Text style={[styles.sectionTitle, { color: colors.text }]}>Active Goals</Text>
+          <YStack marginTop="$md">
+            <Text fontSize="$4" fontWeight="600" marginBottom="$sm" color="$color">Active Goals</Text>
             {activeGoals.map((g) => (
-              <View key={g.id} style={styles.goalRow}>
-                <Text style={[styles.goalTitle, { color: colors.text }]} numberOfLines={1}>{g.title}</Text>
+              <YStack key={g.id} marginBottom="$md">
+                <Text fontSize="$2" fontWeight="600" marginBottom="$xs" color="$color" numberOfLines={1}>{g.title}</Text>
                 <ProgressBar current={g.progress} target={100} height={6} />
-                <Text style={[styles.progressText, { color: colors.textSecondary }]}>{g.progress}%</Text>
-              </View>
+                <Text fontSize="$1" marginTop="$xs" color="$colorSecondary">{g.progress}%</Text>
+              </YStack>
             ))}
-          </View>
+          </YStack>
         )}
 
         {topGoals.length > 0 && (
-          <View style={styles.section}>
-            <Text style={[styles.sectionTitle, { color: colors.text }]}>Most Kudoz'd Goals</Text>
+          <YStack marginTop="$md">
+            <Text fontSize="$4" fontWeight="600" marginBottom="$sm" color="$color">Most Kudoz'd Goals</Text>
             {topGoals.map((g) => (
-              <View key={g.id} style={[styles.postRow, { borderBottomColor: colors.border }]}>
-                <Text style={[styles.postContent, { color: colors.text }]} numberOfLines={1}>{g.title}</Text>
-                <Text style={[styles.kudozCount, { color: colors.text }]}>{g.kudoz_count} Kudoz</Text>
-              </View>
+              <XStack key={g.id} justifyContent="space-between" alignItems="center" paddingVertical="$sm" borderBottomWidth={1} borderBottomColor="$borderColor">
+                <Text fontSize="$2" color="$color" flex={1} numberOfLines={1}>{g.title}</Text>
+                <Text fontSize="$1" fontWeight="600" marginLeft="$sm" color="$color">{g.kudoz_count} Kudoz</Text>
+              </XStack>
             ))}
-          </View>
+          </YStack>
         )}
 
         {topPosts.length > 0 && (
-          <View style={styles.section}>
-            <Text style={[styles.sectionTitle, { color: colors.text }]}>Most Kudoz'd Posts</Text>
+          <YStack marginTop="$md">
+            <Text fontSize="$4" fontWeight="600" marginBottom="$sm" color="$color">Most Kudoz'd Posts</Text>
             {topPosts.map((p) => (
-              <View key={p.id} style={[styles.postRow, { borderBottomColor: colors.border }]}>
-                <Text style={[styles.postContent, { color: colors.text }]} numberOfLines={1}>{p.content || '(no text)'}</Text>
-                <Text style={[styles.kudozCount, { color: colors.text }]}>{p.kudoz_count} Kudoz</Text>
-              </View>
+              <XStack key={p.id} justifyContent="space-between" alignItems="center" paddingVertical="$sm" borderBottomWidth={1} borderBottomColor="$borderColor">
+                <Text fontSize="$2" color="$color" flex={1} numberOfLines={1}>{p.content || '(no text)'}</Text>
+                <Text fontSize="$1" fontWeight="600" marginLeft="$sm" color="$color">{p.kudoz_count} Kudoz</Text>
+              </XStack>
             ))}
-          </View>
+          </YStack>
         )}
 
         {topComments.length > 0 && (
-          <View style={styles.section}>
-            <Text style={[styles.sectionTitle, { color: colors.text }]}>Most Kudoz'd Comments</Text>
+          <YStack marginTop="$md" marginBottom="$lg">
+            <Text fontSize="$4" fontWeight="600" marginBottom="$sm" color="$color">Most Kudoz'd Comments</Text>
             {topComments.map((c) => (
-              <View key={c.id} style={[styles.postRow, { borderBottomColor: colors.border }]}>
-                <Text style={[styles.postContent, { color: colors.text }]} numberOfLines={1}>{c.content}</Text>
-                <Text style={[styles.kudozCount, { color: colors.text }]}>{c.kudoz_count} Kudoz</Text>
-              </View>
+              <XStack key={c.id} justifyContent="space-between" alignItems="center" paddingVertical="$sm" borderBottomWidth={1} borderBottomColor="$borderColor">
+                <Text fontSize="$2" color="$color" flex={1} numberOfLines={1}>{c.content}</Text>
+                <Text fontSize="$1" fontWeight="600" marginLeft="$sm" color="$color">{c.kudoz_count} Kudoz</Text>
+              </XStack>
             ))}
-          </View>
+          </YStack>
         )}
       </ScrollView>
     </ScreenContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { flex: 1, padding: spacing.md },
-  title: { ...typography.title, marginBottom: spacing.md },
-  statRow: { flexDirection: 'row', flexWrap: 'wrap', marginBottom: spacing.md },
-  section: { marginTop: spacing.md },
-  sectionTitle: { ...typography.sectionHeader, marginBottom: spacing.sm },
-  goalRow: { marginBottom: spacing.md },
-  goalTitle: { ...typography.body, fontWeight: '600', marginBottom: spacing.xs },
-  progressText: { ...typography.caption, marginTop: spacing.xs },
-  postRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: spacing.sm, borderBottomWidth: 1 },
-  postContent: { ...typography.body, flex: 1 },
-  kudozCount: { ...typography.caption, fontWeight: '600', marginLeft: spacing.sm },
-});

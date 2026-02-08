@@ -1,25 +1,17 @@
 import React from 'react';
-import { View, ActivityIndicator, StyleSheet } from 'react-native';
-import { useTheme } from '../utils/ThemeContext';
+import { ActivityIndicator } from 'react-native';
+import { YStack, useTheme } from 'tamagui';
 
 interface LoadingSpinnerProps {
   size?: 'small' | 'large';
 }
 
 export function LoadingSpinner({ size = 'large' }: LoadingSpinnerProps) {
-  const { colors } = useTheme();
+  const theme = useTheme();
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <ActivityIndicator size={size} color={colors.text} />
-    </View>
+    <YStack flex={1} justifyContent="center" alignItems="center" backgroundColor="$background">
+      <ActivityIndicator size={size} color={theme.color.val} />
+    </YStack>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-});

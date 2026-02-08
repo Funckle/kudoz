@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Modal } from 'react-native';
+import { TouchableOpacity, Modal } from 'react-native';
+import { YStack, XStack, Text, useTheme } from 'tamagui';
 import { Button } from './Button';
-import { typography, spacing, borderRadius } from '../utils/theme';
-import { useTheme } from '../utils/ThemeContext';
 import { useAuth } from '../hooks/useAuth';
 import { reportContent } from '../services/reports';
 import type { ContentType, ReportReason } from '../types/database';
@@ -24,7 +23,7 @@ const REASONS: { value: ReportReason; label: string }[] = [
 
 export function ReportModal({ visible, contentType, contentId, onClose }: ReportModalProps) {
   const { user } = useAuth();
-  const { colors } = useTheme();
+  const theme = useTheme();
   const [selected, setSelected] = useState<ReportReason | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -51,97 +50,66 @@ export function ReportModal({ visible, contentType, contentId, onClose }: Report
 
   return (
     <Modal visible={visible} transparent animationType="slide">
-      <View style={styles.overlay}>
-        <View style={[styles.modal, { backgroundColor: colors.surface }]}>
+      <YStack flex={1} backgroundColor="rgba(0,0,0,0.5)" justifyContent="flex-end">
+        <YStack
+          borderTopLeftRadius="$md"
+          borderTopRightRadius="$md"
+          padding="$lg"
+          backgroundColor="$surface"
+        >
           {submitted ? (
             <>
-              <Text style={[styles.title, { color: colors.text }]}>Thanks for reporting</Text>
-              <Text style={[styles.subtitle, { color: colors.textSecondary }]}>We'll review this and take action if needed.</Text>
+              <Text fontSize="$4" fontWeight="600" color="$color" marginBottom="$xs">
+                Thanks for reporting
+              </Text>
+              <Text fontSize="$2" color="$colorSecondary" marginBottom="$md">
+                We'll review this and take action if needed.
+              </Text>
               <Button title="Done" onPress={handleClose} />
             </>
           ) : (
             <>
-              <Text style={[styles.title, { color: colors.text }]}>Report</Text>
-              <Text style={[styles.subtitle, { color: colors.textSecondary }]}>Why are you reporting this?</Text>
+              <Text fontSize="$4" fontWeight="600" color="$color" marginBottom="$xs">Report</Text>
+              <Text fontSize="$2" color="$colorSecondary" marginBottom="$md">
+                Why are you reporting this?
+              </Text>
               {REASONS.map((reason) => (
                 <TouchableOpacity
                   key={reason.value}
-                  style={[
-                    styles.option,
-                    { borderColor: colors.border },
-                    selected === reason.value && { borderColor: colors.text, backgroundColor: colors.borderLight },
-                  ]}
                   onPress={() => setSelected(reason.value)}
+                  style={{
+                    padding: 12,
+                    borderWidth: 1,
+                    borderRadius: 8,
+                    marginBottom: 8,
+                    borderColor: selected === reason.value ? theme.color.val : theme.borderColor.val,
+                    backgroundColor: selected === reason.value ? theme.borderColorLight.val : 'transparent',
+                  }}
                 >
-                  <Text style={[
-                    styles.optionText,
-                    { color: colors.text },
-                    selected === reason.value && { fontWeight: '600' },
-                  ]}>
+                  <Text
+                    fontSize="$2"
+                    color="$color"
+                    fontWeight={selected === reason.value ? '600' : '400'}
+                  >
                     {reason.label}
                   </Text>
                 </TouchableOpacity>
               ))}
-              {error ? <Text style={[styles.error, { color: colors.error }]}>{error}</Text> : null}
-              <View style={styles.buttons}>
-                <Button title="Cancel" onPress={handleClose} variant="secondary" style={styles.cancelBtn} />
+              {error ? <Text fontSize="$1" color="$error" marginBottom="$sm">{error}</Text> : null}
+              <XStack marginTop="$sm">
+                <Button title="Cancel" onPress={handleClose} variant="secondary" style={{ flex: 1, marginRight: 8 }} />
                 <Button
                   title="Submit"
                   onPress={handleSubmit}
                   loading={submitting}
                   disabled={!selected}
-                  style={styles.submitBtn}
+                  style={{ flex: 1 }}
                 />
-              </View>
+              </XStack>
             </>
           )}
-        </View>
-      </View>
+        </YStack>
+      </YStack>
     </Modal>
   );
 }
-
-const styles = StyleSheet.create({
-  overlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    justifyContent: 'flex-end',
-  },
-  modal: {
-    borderTopLeftRadius: spacing.md,
-    borderTopRightRadius: spacing.md,
-    padding: spacing.lg,
-  },
-  title: {
-    ...typography.sectionHeader,
-    marginBottom: spacing.xs,
-  },
-  subtitle: {
-    ...typography.body,
-    marginBottom: spacing.md,
-  },
-  option: {
-    padding: spacing.sm + 4,
-    borderWidth: 1,
-    borderRadius,
-    marginBottom: spacing.sm,
-  },
-  optionText: {
-    ...typography.body,
-  },
-  error: {
-    ...typography.caption,
-    marginBottom: spacing.sm,
-  },
-  buttons: {
-    flexDirection: 'row',
-    marginTop: spacing.sm,
-  },
-  cancelBtn: {
-    flex: 1,
-    marginRight: spacing.sm,
-  },
-  submitBtn: {
-    flex: 1,
-  },
-});

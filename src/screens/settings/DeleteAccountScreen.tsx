@@ -1,14 +1,12 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Alert } from 'react-native';
+import { Alert } from 'react-native';
+import { YStack, Text } from 'tamagui';
 import { ScreenContainer } from '../../components/ScreenContainer';
 import { Button } from '../../components/Button';
-import { typography, spacing } from '../../utils/theme';
-import { useTheme } from '../../utils/ThemeContext';
 import { useAuth } from '../../hooks/useAuth';
 import { deleteAccount } from '../../services/auth';
 
 export function DeleteAccountScreen() {
-  const { colors } = useTheme();
   const { user } = useAuth();
   const [deleting, setDeleting] = useState(false);
 
@@ -37,10 +35,10 @@ export function DeleteAccountScreen() {
 
   return (
     <ScreenContainer>
-      <View style={styles.container}>
-        <Text style={[styles.title, { color: colors.error }]}>Delete Account</Text>
-        <Text style={[styles.warning, { color: colors.error }]}>This action is permanent and cannot be undone.</Text>
-        <Text style={[styles.details, { color: colors.textSecondary }]}>
+      <YStack flex={1} padding="$md" justifyContent="center">
+        <Text fontSize="$5" fontWeight="700" color="$error" marginBottom="$sm">Delete Account</Text>
+        <Text fontSize="$2" fontWeight="600" color="$error" marginBottom="$md">This action is permanent and cannot be undone.</Text>
+        <Text fontSize="$2" color="$colorSecondary" marginBottom="$xl" lineHeight={22}>
           Deleting your account will remove:{'\n\n'}
           • Your profile and avatar{'\n'}
           • All your goals{'\n'}
@@ -55,14 +53,7 @@ export function DeleteAccountScreen() {
           variant="destructive"
           loading={deleting}
         />
-      </View>
+      </YStack>
     </ScreenContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { flex: 1, padding: spacing.md, justifyContent: 'center' },
-  title: { ...typography.title, marginBottom: spacing.sm },
-  warning: { ...typography.body, fontWeight: '600', marginBottom: spacing.md },
-  details: { ...typography.body, marginBottom: spacing.xl, lineHeight: 22 },
-});

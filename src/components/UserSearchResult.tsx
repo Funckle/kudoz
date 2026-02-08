@@ -1,9 +1,8 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { TouchableOpacity } from 'react-native';
+import { XStack, YStack, Text } from 'tamagui';
 import { Avatar } from './Avatar';
 import { FollowButton } from './FollowButton';
-import { typography, spacing } from '../utils/theme';
-import { useTheme } from '../utils/ThemeContext';
 
 interface UserSearchResultProps {
   id: string;
@@ -14,35 +13,16 @@ interface UserSearchResultProps {
 }
 
 export function UserSearchResult({ id, name, username, avatarUrl, onPress }: UserSearchResultProps) {
-  const { colors } = useTheme();
-
   return (
-    <TouchableOpacity style={[styles.container, { borderBottomColor: colors.border }]} onPress={onPress} activeOpacity={0.7}>
-      <Avatar uri={avatarUrl} name={name} size={48} />
-      <View style={styles.info}>
-        <Text style={[styles.name, { color: colors.text }]}>{name}</Text>
-        {username && <Text style={[styles.username, { color: colors.textSecondary }]}>@{username}</Text>}
-      </View>
-      <FollowButton userId={id} compact />
+    <TouchableOpacity onPress={onPress} activeOpacity={0.7}>
+      <XStack alignItems="center" padding="$md" borderBottomWidth={1} borderBottomColor="$borderColor">
+        <Avatar uri={avatarUrl} name={name} size={48} />
+        <YStack flex={1} marginLeft="$sm">
+          <Text fontSize="$3" fontWeight="600" color="$color">{name}</Text>
+          {username && <Text fontSize="$1" color="$colorSecondary">@{username}</Text>}
+        </YStack>
+        <FollowButton userId={id} compact />
+      </XStack>
     </TouchableOpacity>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: spacing.md,
-    borderBottomWidth: 1,
-  },
-  info: {
-    flex: 1,
-    marginLeft: spacing.sm,
-  },
-  name: {
-    ...typography.goalTitle,
-  },
-  username: {
-    ...typography.caption,
-  },
-});

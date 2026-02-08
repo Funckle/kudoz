@@ -1,16 +1,15 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Alert } from 'react-native';
+import { Alert } from 'react-native';
+import { YStack, Text, useTheme } from 'tamagui';
 import { ScreenContainer } from '../../components/ScreenContainer';
 import { TextInput } from '../../components/TextInput';
 import { Button } from '../../components/Button';
-import { typography, spacing } from '../../utils/theme';
-import { useTheme } from '../../utils/ThemeContext';
 import { useAuth } from '../../hooks/useAuth';
 import { redeemInvite } from '../../services/invites';
 import type { AuthScreenProps } from '../../types/navigation';
 
 export function RedeemInviteScreen({ route, navigation }: AuthScreenProps<'RedeemInvite'>) {
-  const { colors } = useTheme();
+  const theme = useTheme();
   const { user } = useAuth();
   const [code, setCode] = useState(route.params?.code || '');
   const [redeeming, setRedeeming] = useState(false);
@@ -33,9 +32,13 @@ export function RedeemInviteScreen({ route, navigation }: AuthScreenProps<'Redee
 
   return (
     <ScreenContainer>
-      <View style={styles.container}>
-        <Text style={[styles.title, { color: colors.text }]}>Redeem Invite</Text>
-        <Text style={[styles.subtitle, { color: colors.textSecondary }]}>Enter your invite code to join Kudoz.</Text>
+      <YStack flex={1} justifyContent="center" padding="$md">
+        <Text fontSize="$5" fontWeight="700" marginBottom="$sm" color="$color">
+          Redeem Invite
+        </Text>
+        <Text fontSize="$2" marginBottom="$xl" color="$colorSecondary">
+          Enter your invite code to join Kudoz.
+        </Text>
         <TextInput
           label="Invite code"
           placeholder="ABCD1234"
@@ -45,13 +48,7 @@ export function RedeemInviteScreen({ route, navigation }: AuthScreenProps<'Redee
           autoCapitalize="characters"
         />
         <Button title="Redeem" onPress={handleRedeem} loading={redeeming} disabled={!code.trim()} />
-      </View>
+      </YStack>
     </ScreenContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: 'center', padding: spacing.md },
-  title: { ...typography.title, marginBottom: spacing.sm },
-  subtitle: { ...typography.body, marginBottom: spacing.xl },
-});

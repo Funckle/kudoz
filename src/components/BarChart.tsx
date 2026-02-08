@@ -1,7 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import { typography, spacing } from '../utils/theme';
-import { useTheme } from '../utils/ThemeContext';
+import { YStack, XStack, Text, useTheme } from 'tamagui';
 
 interface BarChartProps {
   data: { label: string; value: number; color?: string }[];
@@ -9,51 +7,25 @@ interface BarChartProps {
 }
 
 export function BarChart({ data, height = 120 }: BarChartProps) {
-  const { colors } = useTheme();
+  const theme = useTheme();
   const maxValue = Math.max(...data.map((d) => d.value), 1);
 
   return (
-    <View style={styles.container}>
-      <View style={[styles.bars, { height }]}>
+    <YStack paddingVertical="$sm">
+      <XStack height={height} alignItems="flex-end" justifyContent="space-around">
         {data.map((item, index) => (
-          <View key={index} style={styles.barWrapper}>
-            <View
-              style={[
-                styles.bar,
-                {
-                  height: (item.value / maxValue) * height,
-                  backgroundColor: item.color || colors.text,
-                },
-              ]}
+          <YStack key={index} alignItems="center" flex={1}>
+            <YStack
+              width={24}
+              borderRadius="$xs"
+              minHeight={2}
+              height={(item.value / maxValue) * height}
+              backgroundColor={item.color || theme.color.val}
             />
-            <Text style={[styles.label, { color: colors.textSecondary }]}>{item.label}</Text>
-          </View>
+            <Text fontSize="$1" color="$colorSecondary" marginTop="$xs">{item.label}</Text>
+          </YStack>
         ))}
-      </View>
-    </View>
+      </XStack>
+    </YStack>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    paddingVertical: spacing.sm,
-  },
-  bars: {
-    flexDirection: 'row',
-    alignItems: 'flex-end',
-    justifyContent: 'space-around',
-  },
-  barWrapper: {
-    alignItems: 'center',
-    flex: 1,
-  },
-  bar: {
-    width: 24,
-    borderRadius: 4,
-    minHeight: 2,
-  },
-  label: {
-    ...typography.caption,
-    marginTop: spacing.xs,
-  },
-});

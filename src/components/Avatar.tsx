@@ -1,7 +1,6 @@
 import React from 'react';
-import { View, Image, Text, StyleSheet } from 'react-native';
-import { typography } from '../utils/theme';
-import { useTheme } from '../utils/ThemeContext';
+import { Image } from 'react-native';
+import { YStack, Text } from 'tamagui';
 
 interface AvatarProps {
   uri?: string | null;
@@ -10,7 +9,6 @@ interface AvatarProps {
 }
 
 export function Avatar({ uri, name, size = 48 }: AvatarProps) {
-  const { colors } = useTheme();
   const initials = name
     ? name
         .split(' ')
@@ -23,24 +21,26 @@ export function Avatar({ uri, name, size = 48 }: AvatarProps) {
   const fontSize = size === 80 ? 28 : size === 48 ? 18 : 12;
 
   if (uri) {
-    return <Image source={{ uri }} style={[styles.image, { width: size, height: size, borderRadius: size / 2, backgroundColor: colors.border }]} />;
+    return (
+      <Image
+        source={{ uri }}
+        style={{ width: size, height: size, borderRadius: size / 2, backgroundColor: '#E5E5E5' }}
+      />
+    );
   }
 
   return (
-    <View style={[styles.fallback, { width: size, height: size, borderRadius: size / 2, backgroundColor: colors.border }]}>
-      <Text style={[styles.initials, { fontSize, color: colors.textSecondary }]}>{initials}</Text>
-    </View>
+    <YStack
+      width={size}
+      height={size}
+      borderRadius={size / 2}
+      backgroundColor="$borderColor"
+      alignItems="center"
+      justifyContent="center"
+    >
+      <Text fontSize={fontSize} fontWeight="600" color="$colorSecondary">
+        {initials}
+      </Text>
+    </YStack>
   );
 }
-
-const styles = StyleSheet.create({
-  image: {},
-  fallback: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  initials: {
-    ...typography.body,
-    fontWeight: '600',
-  },
-});

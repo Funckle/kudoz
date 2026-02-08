@@ -1,9 +1,7 @@
 import React, { useState, useRef, useImperativeHandle, forwardRef } from 'react';
-import { View, TextInput, TouchableOpacity, Text, StyleSheet } from 'react-native';
-import { typography, spacing, borderRadius } from '../utils/theme';
-import { useTheme } from '../utils/ThemeContext';
+import { TextInput, TouchableOpacity } from 'react-native';
+import { YStack, XStack, Text, useTheme } from 'tamagui';
 import { LIMITS } from '../utils/validation';
-import { checkContent } from '../utils/moderation';
 
 interface CommentInputProps {
   onSubmit: (content: string) => Promise<void>;
@@ -22,11 +20,10 @@ export const CommentInput = forwardRef<CommentInputHandle, CommentInputProps>(fu
   { onSubmit, replyingTo, onCancelReply, disabled, disabledMessage, noBorder },
   ref,
 ) {
-  const { colors } = useTheme();
+  const theme = useTheme();
   const inputRef = useRef<TextInput>(null);
   const [text, setText] = useState('');
   const [sending, setSending] = useState(false);
-  const [warning, setWarning] = useState('');
 
   useImperativeHandle(ref, () => ({
     focus: () => inputRef.current?.focus(),
@@ -34,46 +31,60 @@ export const CommentInput = forwardRef<CommentInputHandle, CommentInputProps>(fu
 
   const handleSubmit = async () => {
     if (!text.trim() || disabled) return;
-    const check = checkContent(text);
-    if (!check.clean) {
-      setWarning('Please keep it friendly');
-      return;
-    }
     setSending(true);
     await onSubmit(text.trim());
     setText('');
-    setWarning('');
     setSending(false);
   };
 
   if (disabled) {
     return (
-      <View style={[styles.disabledContainer, { borderTopColor: colors.border, backgroundColor: colors.borderLight }, noBorder && { borderTopWidth: 0 }]}>
-        <Text style={[styles.disabledText, { color: colors.textSecondary }]}>{disabledMessage || 'Comments unavailable'}</Text>
-      </View>
+      <YStack
+        borderTopWidth={noBorder ? 0 : 1}
+        borderTopColor="$borderColor"
+        backgroundColor="$borderColorLight"
+        padding="$md"
+        alignItems="center"
+      >
+        <Text fontSize="$2" color="$colorSecondary">{disabledMessage || 'Comments unavailable'}</Text>
+      </YStack>
     );
   }
 
   return (
-    <View style={[styles.container, { borderTopColor: colors.border, backgroundColor: colors.surface }, noBorder && { borderTopWidth: 0 }]}>
+    <YStack
+      borderTopWidth={noBorder ? 0 : 1}
+      borderTopColor="$borderColor"
+      backgroundColor="$surface"
+      padding="$sm"
+    >
       {replyingTo && (
-        <View style={styles.replyBar}>
-          <Text style={[styles.replyText, { color: colors.textSecondary }]}>Replying to @{replyingTo}</Text>
+        <XStack justifyContent="space-between" paddingBottom="$xs">
+          <Text fontSize="$1" color="$colorSecondary">Replying to @{replyingTo}</Text>
           <TouchableOpacity onPress={onCancelReply}>
-            <Text style={[styles.cancelReply, { color: colors.error }]}>Cancel</Text>
+            <Text fontSize="$1" color="$error">Cancel</Text>
           </TouchableOpacity>
-        </View>
+        </XStack>
       )}
-      {warning ? <Text style={[styles.warning, { color: colors.error }]}>{warning}</Text> : null}
-      <View style={styles.inputRow}>
+      <XStack alignItems="flex-end">
         <TextInput
           ref={inputRef}
-          style={[styles.input, { borderColor: colors.border, color: colors.text }]}
+          style={{
+            flex: 1,
+            fontSize: 14,
+            borderWidth: 1,
+            borderRadius: 8,
+            paddingHorizontal: 8,
+            paddingVertical: 6,
+            maxHeight: 80,
+            borderColor: theme.borderColor.val,
+            color: theme.color.val,
+          }}
           placeholder="Add a comment..."
           value={text}
-          onChangeText={(t) => { setText(t); setWarning(''); }}
+          onChangeText={setText}
           maxLength={LIMITS.COMMENT}
-          placeholderTextColor={colors.textSecondary}
+          placeholderTextColor={theme.colorSecondary.val}
           returnKeyType="send"
           blurOnSubmit
           onSubmitEditing={handleSubmit}
@@ -81,66 +92,16 @@ export const CommentInput = forwardRef<CommentInputHandle, CommentInputProps>(fu
         <TouchableOpacity
           onPress={handleSubmit}
           disabled={!text.trim() || sending}
-          style={[styles.sendBtn, (!text.trim() || sending) && styles.sendBtnDisabled]}
+          style={{
+            marginLeft: 8,
+            paddingVertical: 6,
+            paddingHorizontal: 8,
+            opacity: (!text.trim() || sending) ? 0.4 : 1,
+          }}
         >
-          <Text style={[styles.sendText, { color: colors.text }]}>Post</Text>
+          <Text fontSize="$2" fontWeight="600" color="$color">Post</Text>
         </TouchableOpacity>
-      </View>
-    </View>
+      </XStack>
+    </YStack>
   );
-});
-
-const styles = StyleSheet.create({
-  container: {
-    borderTopWidth: 1,
-    padding: spacing.sm,
-  },
-  disabledContainer: {
-    borderTopWidth: 1,
-    padding: spacing.md,
-    alignItems: 'center',
-  },
-  disabledText: {
-    ...typography.body,
-  },
-  replyBar: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingBottom: spacing.xs,
-  },
-  replyText: {
-    ...typography.caption,
-  },
-  cancelReply: {
-    ...typography.caption,
-  },
-  warning: {
-    ...typography.caption,
-    marginBottom: spacing.xs,
-  },
-  inputRow: {
-    flexDirection: 'row',
-    alignItems: 'flex-end',
-  },
-  input: {
-    flex: 1,
-    ...typography.body,
-    borderWidth: 1,
-    borderRadius,
-    paddingHorizontal: spacing.sm,
-    paddingVertical: spacing.xs + 2,
-    maxHeight: 80,
-  },
-  sendBtn: {
-    marginLeft: spacing.sm,
-    paddingVertical: spacing.xs + 2,
-    paddingHorizontal: spacing.sm,
-  },
-  sendBtnDisabled: {
-    opacity: 0.4,
-  },
-  sendText: {
-    ...typography.body,
-    fontWeight: '600',
-  },
 });

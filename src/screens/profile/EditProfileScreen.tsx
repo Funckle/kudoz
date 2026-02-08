@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
-import { ScrollView, StyleSheet, Alert, TouchableOpacity, View, Text, KeyboardAvoidingView, Platform } from 'react-native';
+import { ScrollView, Alert, TouchableOpacity, KeyboardAvoidingView, Platform } from 'react-native';
+import { YStack, XStack, Text, useTheme } from 'tamagui';
 import { ScreenContainer } from '../../components/ScreenContainer';
 import { Avatar } from '../../components/Avatar';
 import { TextInput } from '../../components/TextInput';
 import { Button } from '../../components/Button';
-import { spacing, typography } from '../../utils/theme';
-import { useTheme } from '../../utils/ThemeContext';
 import { LIMITS, validateUsername, validateUrl } from '../../utils/validation';
 import { useAuth } from '../../hooks/useAuth';
 import { updateUserProfile, checkUsernameAvailable } from '../../services/auth';
@@ -13,7 +12,7 @@ import { pickImage, optimizeImage, uploadImage } from '../../services/media';
 import type { ProfileScreenProps } from '../../types/navigation';
 
 export function EditProfileScreen({ navigation }: ProfileScreenProps<'EditProfile'>) {
-  const { colors } = useTheme();
+  const theme = useTheme();
   const { user, refreshUser } = useAuth();
   const [name, setName] = useState(user?.name || '');
   const [username, setUsername] = useState(user?.username || '');
@@ -85,42 +84,32 @@ export function EditProfileScreen({ navigation }: ProfileScreenProps<'EditProfil
     <ScreenContainer noTopInset>
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={styles.flex}
+        style={{ flex: 1 }}
         keyboardVerticalOffset={88}
       >
-        <ScrollView style={styles.container} keyboardShouldPersistTaps="handled">
-          <View style={styles.avatarSection}>
+        <ScrollView style={{ flex: 1, padding: 16 }} keyboardShouldPersistTaps="handled">
+          <YStack alignItems="center" marginBottom="$lg">
             <TouchableOpacity onPress={handlePickAvatar}>
               <Avatar uri={avatarUri} name={name} size={80} />
             </TouchableOpacity>
-            <Button title="Change photo" onPress={handlePickAvatar} variant="secondary" style={styles.photoBtn} />
-          </View>
+            <Button title="Change photo" onPress={handlePickAvatar} variant="secondary" style={{ marginTop: 8 }} />
+          </YStack>
           <TextInput label="Name" value={name} onChangeText={setName} />
           <TextInput label="Username" value={username} onChangeText={(t) => setUsername(t.toLowerCase())} maxLength={LIMITS.USERNAME_MAX} autoCapitalize="none" />
           <TextInput label="Bio" value={bio} onChangeText={setBio} maxLength={LIMITS.BIO} multiline />
           <TextInput label="Website" value={website} onChangeText={setWebsite} keyboardType="url" autoCapitalize="none" />
           <Button title="Save" onPress={handleSave} loading={saving} />
-          <View style={styles.legalRow}>
+          <XStack justifyContent="center" alignItems="center" paddingVertical="$lg">
             <TouchableOpacity onPress={() => navigation.navigate('PrivacyPolicy')}>
-              <Text style={[styles.legalLink, { color: colors.textSecondary }]}>Privacy Policy</Text>
+              <Text fontSize="$1" color="$colorSecondary">Privacy Policy</Text>
             </TouchableOpacity>
-            <Text style={[styles.legalSep, { color: colors.textSecondary }]}> · </Text>
+            <Text fontSize="$1" color="$colorSecondary"> · </Text>
             <TouchableOpacity onPress={() => navigation.navigate('Terms')}>
-              <Text style={[styles.legalLink, { color: colors.textSecondary }]}>Terms & Conditions</Text>
+              <Text fontSize="$1" color="$colorSecondary">Terms & Conditions</Text>
             </TouchableOpacity>
-          </View>
+          </XStack>
         </ScrollView>
       </KeyboardAvoidingView>
     </ScreenContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  flex: { flex: 1 },
-  container: { flex: 1, padding: spacing.md },
-  avatarSection: { alignItems: 'center', marginBottom: spacing.lg },
-  photoBtn: { marginTop: spacing.sm },
-  legalRow: { flexDirection: 'row', justifyContent: 'center', alignItems: 'center', paddingVertical: spacing.lg },
-  legalLink: { ...typography.caption },
-  legalSep: { ...typography.caption },
-});

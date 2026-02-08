@@ -1,10 +1,9 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
+import { TouchableOpacity, Alert } from 'react-native';
 import { Reply, Pencil, Trash2, Flag } from 'lucide-react-native';
+import { YStack, XStack, Text, useTheme } from 'tamagui';
 import { Avatar } from './Avatar';
 import { CommentKudozButton } from './CommentKudozButton';
-import { typography, spacing } from '../utils/theme';
-import { useTheme } from '../utils/ThemeContext';
 import { useAuth } from '../hooks/useAuth';
 import { deleteComment } from '../services/comments';
 import type { CommentWithAuthor } from '../types/database';
@@ -22,7 +21,7 @@ interface CommentItemProps {
 
 export const CommentItem = React.memo(function CommentItem({ comment, depth = 0, parentUsername, onReply, onEdit, onReport, onDeleted, noBorder }: CommentItemProps) {
   const { user } = useAuth();
-  const { colors } = useTheme();
+  const theme = useTheme();
   const isOwner = user?.id === comment.user_id;
   const showReplyingTo = depth >= 2 && parentUsername;
   const hasReplies = comment.replies && comment.replies.length > 0;
@@ -58,56 +57,85 @@ export const CommentItem = React.memo(function CommentItem({ comment, depth = 0,
   };
 
   return (
-    <View style={[
-      depth === 0 && !noBorder && { borderBottomWidth: 1, borderBottomColor: colors.border, paddingBottom: spacing.sm, marginBottom: spacing.sm },
-    ]}>
-      {/* Comment content */}
-      <View style={styles.row}>
+    <YStack
+      {...(depth === 0 && !noBorder ? {
+        borderBottomWidth: 1,
+        borderBottomColor: '$borderColor',
+        paddingBottom: '$sm',
+        marginBottom: '$sm',
+      } : {})}
+    >
+      <XStack marginBottom="$xs">
         <Avatar uri={comment.user?.avatar_url} name={comment.user?.name} size={32} />
-        <View style={styles.body}>
-          <View style={styles.header}>
-            <Text style={[styles.name, { color: colors.text }]}>{comment.user?.name}</Text>
-            <Text style={[styles.time, { color: colors.textSecondary }]}>{formatDate(comment.created_at)}</Text>
-            {comment.updated_at && <Text style={[styles.edited, { color: colors.textSecondary }]}>(edited)</Text>}
-          </View>
+        <YStack flex={1} marginLeft="$sm">
+          <XStack alignItems="center">
+            <Text fontSize="$1" fontWeight="600" color="$color" marginRight="$xs">
+              {comment.user?.name}
+            </Text>
+            <Text fontSize="$1" color="$colorSecondary">{formatDate(comment.created_at)}</Text>
+            {comment.updated_at && (
+              <Text fontSize="$1" color="$colorSecondary" fontStyle="italic" marginLeft="$xs">
+                (edited)
+              </Text>
+            )}
+          </XStack>
           {showReplyingTo && (
-            <Text style={[styles.replyingTo, { color: colors.textSecondary }]}>replying to @{parentUsername}</Text>
+            <Text fontSize="$1" color="$colorSecondary" fontStyle="italic" marginTop={1}>
+              replying to @{parentUsername}
+            </Text>
           )}
-          <Text style={[styles.content, { color: colors.text }]}>{comment.content}</Text>
-          <View style={styles.actions}>
+          <Text fontSize="$2" color="$color" marginTop={2}>{comment.content}</Text>
+          <XStack marginTop="$sm">
             <CommentKudozButton
               commentId={comment.id}
               initialCount={comment.kudoz_count}
               initialActive={comment.has_kudozd}
             />
-            <TouchableOpacity style={styles.actionBtn} onPress={() => onReply?.(comment.id, comment.user?.username || '')}>
-              <Reply size={13} color={colors.textSecondary} />
-              <Text style={[styles.actionText, { color: colors.textSecondary }]}>Reply</Text>
+            <TouchableOpacity
+              style={{ flexDirection: 'row', alignItems: 'center', marginRight: 16 }}
+              onPress={() => onReply?.(comment.id, comment.user?.username || '')}
+            >
+              <Reply size={13} color={theme.colorSecondary.val} />
+              <Text fontSize="$1" color="$colorSecondary" marginLeft={4}>Reply</Text>
             </TouchableOpacity>
             {canEdit() && (
-              <TouchableOpacity style={styles.actionBtn} onPress={() => onEdit?.(comment)}>
-                <Pencil size={13} color={colors.textSecondary} />
-                <Text style={[styles.actionText, { color: colors.textSecondary }]}>Edit</Text>
+              <TouchableOpacity
+                style={{ flexDirection: 'row', alignItems: 'center', marginRight: 16 }}
+                onPress={() => onEdit?.(comment)}
+              >
+                <Pencil size={13} color={theme.colorSecondary.val} />
+                <Text fontSize="$1" color="$colorSecondary" marginLeft={4}>Edit</Text>
               </TouchableOpacity>
             )}
             {isOwner && (
-              <TouchableOpacity style={styles.actionBtn} onPress={handleDelete}>
-                <Trash2 size={13} color={colors.error} />
-                <Text style={[styles.actionText, { color: colors.error }]}>Delete</Text>
+              <TouchableOpacity
+                style={{ flexDirection: 'row', alignItems: 'center', marginRight: 16 }}
+                onPress={handleDelete}
+              >
+                <Trash2 size={13} color={theme.error.val} />
+                <Text fontSize="$1" color="$error" marginLeft={4}>Delete</Text>
               </TouchableOpacity>
             )}
             {!isOwner && (
-              <TouchableOpacity style={styles.actionBtn} onPress={() => onReport?.(comment.id)}>
-                <Flag size={13} color={colors.textSecondary} />
-                <Text style={[styles.actionText, { color: colors.textSecondary }]}>Report</Text>
+              <TouchableOpacity
+                style={{ flexDirection: 'row', alignItems: 'center', marginRight: 16 }}
+                onPress={() => onReport?.(comment.id)}
+              >
+                <Flag size={13} color={theme.colorSecondary.val} />
+                <Text fontSize="$1" color="$colorSecondary" marginLeft={4}>Report</Text>
               </TouchableOpacity>
             )}
-          </View>
-        </View>
-      </View>
-      {/* Replies — indented once with thread line, no extra nesting */}
+          </XStack>
+        </YStack>
+      </XStack>
       {hasReplies && (
-        <View style={[styles.repliesContainer, { marginLeft: depth === 0 ? 24 : 0, borderLeftColor: colors.borderLight }]}>
+        <YStack
+          marginLeft={depth === 0 ? 24 : 0}
+          borderLeftWidth={2}
+          borderLeftColor="$borderColorLight"
+          paddingLeft="$sm"
+          marginTop="$xs"
+        >
           {comment.replies!.map((reply) => (
             <CommentItem
               key={reply.id}
@@ -120,63 +148,8 @@ export const CommentItem = React.memo(function CommentItem({ comment, depth = 0,
               onDeleted={onDeleted}
             />
           ))}
-        </View>
+        </YStack>
       )}
-    </View>
+    </YStack>
   );
-});
-
-const styles = StyleSheet.create({
-  row: {
-    flexDirection: 'row',
-    marginBottom: spacing.xs,
-  },
-  body: {
-    flex: 1,
-    marginLeft: spacing.sm,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  name: {
-    ...typography.caption,
-    fontWeight: '600',
-    marginRight: spacing.xs,
-  },
-  time: {
-    ...typography.caption,
-  },
-  edited: {
-    ...typography.caption,
-    fontStyle: 'italic',
-    marginLeft: spacing.xs,
-  },
-  replyingTo: {
-    ...typography.caption,
-    fontStyle: 'italic',
-    marginTop: 1,
-  },
-  content: {
-    ...typography.body,
-    marginTop: 2,
-  },
-  actions: {
-    flexDirection: 'row',
-    marginTop: spacing.sm,
-  },
-  actionBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginRight: spacing.md,
-  },
-  actionText: {
-    ...typography.caption,
-    marginLeft: 4,
-  },
-  repliesContainer: {
-    borderLeftWidth: 2,
-    paddingLeft: spacing.sm,
-    marginTop: spacing.xs,
-  },
 });

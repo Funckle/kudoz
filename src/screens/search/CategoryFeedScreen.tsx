@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { FlatList, StyleSheet, RefreshControl } from 'react-native';
+import { FlatList, RefreshControl } from 'react-native';
+import { useTheme } from 'tamagui';
 import { PostCard } from '../../components/PostCard';
 import { ReportModal } from '../../components/ReportModal';
 import { LoadingSpinner } from '../../components/LoadingSpinner';
 import { EmptyState } from '../../components/EmptyState';
-import { useTheme } from '../../utils/ThemeContext';
 import { getPostsByCategory } from '../../services/search';
 import type { PostWithAuthor } from '../../types/database';
 import type { SearchScreenProps } from '../../types/navigation';
@@ -15,7 +15,7 @@ export function CategoryFeedScreen({ route, navigation }: SearchScreenProps<'Cat
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [reportTarget, setReportTarget] = useState<{ visible: boolean; postId: string }>({ visible: false, postId: '' });
-  const { colors } = useTheme();
+  const theme = useTheme();
 
   const loadPosts = useCallback(async (refresh = false) => {
     const { posts: p } = await getPostsByCategory(categoryId);
@@ -47,7 +47,7 @@ export function CategoryFeedScreen({ route, navigation }: SearchScreenProps<'Cat
         )}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => { setRefreshing(true); loadPosts(true); }} />}
         ListEmptyComponent={<EmptyState title="No posts in this category yet" />}
-        style={[styles.list, { backgroundColor: colors.background }]}
+        style={{ flex: 1, backgroundColor: theme.background.val }}
       />
       <ReportModal
         visible={reportTarget.visible}
@@ -58,7 +58,3 @@ export function CategoryFeedScreen({ route, navigation }: SearchScreenProps<'Cat
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  list: { flex: 1 },
-});

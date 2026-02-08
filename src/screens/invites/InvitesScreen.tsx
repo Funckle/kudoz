@@ -1,17 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, FlatList, Share, Alert } from 'react-native';
+import { FlatList, Share, Alert } from 'react-native';
+import { YStack, XStack, Text } from 'tamagui';
 import { ScreenContainer } from '../../components/ScreenContainer';
 import { Button } from '../../components/Button';
 import { EmptyState } from '../../components/EmptyState';
 import { LoadingSpinner } from '../../components/LoadingSpinner';
-import { typography, spacing, borders, borderRadius } from '../../utils/theme';
-import { useTheme } from '../../utils/ThemeContext';
 import { useAuth } from '../../hooks/useAuth';
 import { generateInviteCode, getMyInvites, getRemainingInvites } from '../../services/invites';
 import type { Invite } from '../../types/database';
 
 export function InvitesScreen() {
-  const { colors } = useTheme();
   const { user } = useAuth();
   const [invites, setInvites] = useState<Invite[]>([]);
   const [remaining, setRemaining] = useState(0);
@@ -50,48 +48,37 @@ export function InvitesScreen() {
 
   return (
     <ScreenContainer>
-      <View style={styles.container}>
-        <Text style={[styles.title, { color: colors.text }]}>Invites</Text>
-        <Text style={[styles.remaining, { color: colors.textSecondary }]}>{remaining} invites remaining</Text>
+      <YStack flex={1} padding="$md">
+        <Text fontSize="$5" fontWeight="700" marginBottom="$xs" color="$color">Invites</Text>
+        <Text fontSize="$2" marginBottom="$md" color="$colorSecondary">{remaining} invites remaining</Text>
 
         <Button
           title="Generate invite"
           onPress={handleGenerate}
           loading={generating}
           disabled={remaining <= 0}
-          style={styles.generateBtn}
+          style={{ marginBottom: 16 }}
         />
 
         <FlatList
           data={invites}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
-            <View style={[styles.inviteRow, { borderBottomColor: colors.border }]}>
-              <View style={styles.inviteInfo}>
-                <Text style={[styles.code, { color: colors.text }]}>{item.invite_code}</Text>
-                <Text style={[styles.status, { color: colors.textSecondary }]}>
+            <XStack paddingVertical="$sm" borderBottomWidth={1} borderBottomColor="$borderColor" justifyContent="space-between" alignItems="center">
+              <YStack flex={1}>
+                <Text fontSize="$3" fontWeight="600" letterSpacing={1} color="$color">{item.invite_code}</Text>
+                <Text fontSize="$1" color="$colorSecondary">
                   {item.used_by ? 'Used' : 'Available'}
                 </Text>
-              </View>
+              </YStack>
               {!item.used_by && (
                 <Button title="Share" onPress={() => handleShare(item.invite_code)} variant="secondary" />
               )}
-            </View>
+            </XStack>
           )}
           ListEmptyComponent={<EmptyState title="No invites yet" message="Generate an invite code to share with friends." />}
         />
-      </View>
+      </YStack>
     </ScreenContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { flex: 1, padding: spacing.md },
-  title: { ...typography.title, marginBottom: spacing.xs },
-  remaining: { ...typography.body, marginBottom: spacing.md },
-  generateBtn: { marginBottom: spacing.md },
-  inviteRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: spacing.sm, borderBottomWidth: borders.width },
-  inviteInfo: { flex: 1 },
-  code: { ...typography.goalTitle, fontFamily: undefined, letterSpacing: 1 },
-  status: { ...typography.caption },
-});

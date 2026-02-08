@@ -1,17 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { ScrollView, Text, StyleSheet, Alert } from 'react-native';
+import { ScrollView, Alert } from 'react-native';
+import { Text } from 'tamagui';
 import { ScreenContainer } from '../../components/ScreenContainer';
 import { TextInput } from '../../components/TextInput';
 import { Button } from '../../components/Button';
 import { LoadingSpinner } from '../../components/LoadingSpinner';
-import { typography, spacing } from '../../utils/theme';
-import { useTheme } from '../../utils/ThemeContext';
 import { LIMITS } from '../../utils/validation';
 import { getPost, updatePost } from '../../services/posts';
 import type { CreateScreenProps } from '../../types/navigation';
 
 export function EditPostScreen({ route, navigation }: CreateScreenProps<'EditPost'>) {
-  const { colors } = useTheme();
   const { postId } = route.params;
   const [content, setContent] = useState('');
   const [loading, setLoading] = useState(true);
@@ -43,9 +41,9 @@ export function EditPostScreen({ route, navigation }: CreateScreenProps<'EditPos
 
   return (
     <ScreenContainer>
-      <ScrollView style={styles.container} keyboardShouldPersistTaps="handled">
+      <ScrollView style={{ flex: 1, padding: 16 }} keyboardShouldPersistTaps="handled">
         {progressValue != null && (
-          <Text style={[styles.progressNote, { color: colors.textSecondary }]}>Progress value: {progressValue} (not editable)</Text>
+          <Text fontSize="$1" marginBottom="$md" color="$colorSecondary">Progress value: {progressValue} (not editable)</Text>
         )}
         <TextInput
           label="Update"
@@ -53,21 +51,9 @@ export function EditPostScreen({ route, navigation }: CreateScreenProps<'EditPos
           onChangeText={setContent}
           maxLength={LIMITS.POST_CONTENT}
           multiline
-          filterBadWords
         />
         <Button title="Save" onPress={handleSave} loading={saving} />
       </ScrollView>
     </ScreenContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: spacing.md,
-  },
-  progressNote: {
-    ...typography.caption,
-    marginBottom: spacing.md,
-  },
-});

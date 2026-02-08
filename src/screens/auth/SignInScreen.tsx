@@ -1,16 +1,15 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, KeyboardAvoidingView, Platform } from 'react-native';
+import { KeyboardAvoidingView, Platform } from 'react-native';
+import { YStack, Text, useTheme } from 'tamagui';
 import { ScreenContainer } from '../../components/ScreenContainer';
 import { TextInput } from '../../components/TextInput';
 import { Button } from '../../components/Button';
-import { typography, spacing } from '../../utils/theme';
-import { useTheme } from '../../utils/ThemeContext';
 import { validateEmail } from '../../utils/validation';
 import { sendMagicLink, signInWithPassword } from '../../services/auth';
 import type { AuthScreenProps } from '../../types/navigation';
 
 export function SignInScreen({ navigation }: AuthScreenProps<'SignIn'>) {
-  const { colors } = useTheme();
+  const theme = useTheme();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -42,11 +41,26 @@ export function SignInScreen({ navigation }: AuthScreenProps<'SignIn'>) {
     <ScreenContainer>
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={styles.container}
+        style={{ flex: 1, justifyContent: 'center' }}
       >
-        <View style={styles.content}>
-          <Text style={[styles.title, { color: colors.text }]}>Kudoz</Text>
-          <Text style={[styles.subtitle, { color: colors.textSecondary }]}>Track goals. Share progress. Celebrate together.</Text>
+        <YStack paddingHorizontal="$md">
+          <Text
+            fontSize={32}
+            fontWeight="700"
+            textAlign="center"
+            marginBottom="$sm"
+            color="$color"
+          >
+            Kudoz
+          </Text>
+          <Text
+            fontSize="$2"
+            textAlign="center"
+            marginBottom="$xl"
+            color="$colorSecondary"
+          >
+            Track goals. Share progress. Celebrate together.
+          </Text>
           <TextInput
             label="Email"
             placeholder="you@example.com"
@@ -70,29 +84,8 @@ export function SignInScreen({ navigation }: AuthScreenProps<'SignIn'>) {
             loading={loading}
             disabled={!email.trim()}
           />
-        </View>
+        </YStack>
       </KeyboardAvoidingView>
     </ScreenContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-  },
-  content: {
-    paddingHorizontal: spacing.md,
-  },
-  title: {
-    ...typography.title,
-    fontSize: 32,
-    textAlign: 'center',
-    marginBottom: spacing.sm,
-  },
-  subtitle: {
-    ...typography.body,
-    textAlign: 'center',
-    marginBottom: spacing.xl,
-  },
-});

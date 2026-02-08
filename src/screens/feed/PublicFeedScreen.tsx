@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, FlatList, Modal } from 'react-native';
+import { FlatList, Modal } from 'react-native';
+import { YStack, Text, useTheme } from 'tamagui';
 import { PostCard } from '../../components/PostCard';
 import { Button } from '../../components/Button';
 import { LoadingSpinner } from '../../components/LoadingSpinner';
-import { typography, spacing } from '../../utils/theme';
-import { useTheme } from '../../utils/ThemeContext';
 import { supabase } from '../../services/supabase';
 import type { PostWithAuthor } from '../../types/database';
 
@@ -15,7 +14,7 @@ interface PublicFeedScreenProps {
 }
 
 export function PublicFeedScreen({ onSignIn, onWaitlist, onRedeemInvite }: PublicFeedScreenProps) {
-  const { colors } = useTheme();
+  const theme = useTheme();
   const [posts, setPosts] = useState<PostWithAuthor[]>([]);
   const [loading, setLoading] = useState(true);
   const [showGate, setShowGate] = useState(false);
@@ -48,7 +47,7 @@ export function PublicFeedScreen({ onSignIn, onWaitlist, onRedeemInvite }: Publi
   if (loading) return <LoadingSpinner />;
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
+    <YStack flex={1} backgroundColor="$background">
       <FlatList
         data={posts}
         keyExtractor={(item) => item.id}
@@ -57,25 +56,16 @@ export function PublicFeedScreen({ onSignIn, onWaitlist, onRedeemInvite }: Publi
         scrollEventThrottle={100}
       />
       <Modal visible={showGate} transparent animationType="fade">
-        <View style={styles.overlay}>
-          <View style={[styles.gate, { backgroundColor: colors.background }]}>
-            <Text style={[styles.gateTitle, { color: colors.text }]}>Join Kudoz</Text>
-            <Text style={[styles.gateSubtitle, { color: colors.textSecondary }]}>Create goals, share progress, and celebrate with friends.</Text>
-            <Button title="Sign in" onPress={onSignIn} style={styles.gateBtn} />
-            <Button title="Redeem invite" onPress={onRedeemInvite} variant="secondary" style={styles.gateBtn} />
-            <Button title="Join waitlist" onPress={onWaitlist} variant="secondary" style={styles.gateBtn} />
-          </View>
-        </View>
+        <YStack flex={1} backgroundColor="rgba(0,0,0,0.7)" justifyContent="center" alignItems="center" padding="$lg">
+          <YStack borderRadius="$md" padding="$lg" width="100%" maxWidth={360} backgroundColor="$background">
+            <Text fontSize="$5" fontWeight="700" textAlign="center" marginBottom="$xs" color="$color">Join Kudoz</Text>
+            <Text fontSize="$2" textAlign="center" marginBottom="$lg" color="$colorSecondary">Create goals, share progress, and celebrate with friends.</Text>
+            <Button title="Sign in" onPress={onSignIn} style={{ marginBottom: 8 }} />
+            <Button title="Redeem invite" onPress={onRedeemInvite} variant="secondary" style={{ marginBottom: 8 }} />
+            <Button title="Join waitlist" onPress={onWaitlist} variant="secondary" style={{ marginBottom: 8 }} />
+          </YStack>
+        </YStack>
       </Modal>
-    </View>
+    </YStack>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { flex: 1 },
-  overlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.7)', justifyContent: 'center', alignItems: 'center', padding: spacing.lg },
-  gate: { borderRadius: spacing.md, padding: spacing.lg, width: '100%', maxWidth: 360 },
-  gateTitle: { ...typography.title, textAlign: 'center', marginBottom: spacing.xs },
-  gateSubtitle: { ...typography.body, textAlign: 'center', marginBottom: spacing.lg },
-  gateBtn: { marginBottom: spacing.sm },
-});

@@ -1,10 +1,9 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Home, Search, PlusCircle, Bell, User } from 'lucide-react-native';
-import { borders } from '../utils/theme';
-import { useTheme } from '../utils/ThemeContext';
+import { useTheme } from 'tamagui';
 import { useAuth } from '../hooks/useAuth';
 import { getUnreadCount } from '../services/notifications';
 
@@ -116,20 +115,20 @@ function CreatePlaceholder() {
 const Tab = createBottomTabNavigator<MainTabParamList>();
 
 export function MainTabNavigator() {
-  const { colors: themeColors } = useTheme();
+  const theme = useTheme();
 
   return (
     <Tab.Navigator
       screenOptions={{
         headerShown: false,
         tabBarStyle: {
-          backgroundColor: themeColors.surface,
-          borderTopWidth: borders.width,
-          borderTopColor: themeColors.border,
+          backgroundColor: theme.surface.val,
+          borderTopWidth: 1,
+          borderTopColor: theme.borderColor.val,
         },
         tabBarShowLabel: false,
-        tabBarActiveTintColor: themeColors.text,
-        tabBarInactiveTintColor: themeColors.textSecondary,
+        tabBarActiveTintColor: theme.color.val,
+        tabBarInactiveTintColor: theme.colorSecondary.val,
       }}
     >
       <Tab.Screen

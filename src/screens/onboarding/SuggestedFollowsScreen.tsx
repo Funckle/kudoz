@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
+import { FlatList, TouchableOpacity } from 'react-native';
+import { YStack, XStack, Text, useTheme } from 'tamagui';
 import { ScreenContainer } from '../../components/ScreenContainer';
 import { Avatar } from '../../components/Avatar';
 import { Button } from '../../components/Button';
 import { LoadingSpinner } from '../../components/LoadingSpinner';
-import { typography, spacing, borderRadius, borders } from '../../utils/theme';
-import { useTheme } from '../../utils/ThemeContext';
 import { supabase } from '../../services/supabase';
 import { updateUserProfile } from '../../services/auth';
 import { useAuth } from '../../hooks/useAuth';
@@ -13,7 +12,7 @@ import type { OnboardingScreenProps } from '../../types/navigation';
 import type { User } from '../../types/database';
 
 export function SuggestedFollowsScreen({ navigation }: OnboardingScreenProps<'SuggestedFollows'>) {
-  const { colors } = useTheme();
+  const theme = useTheme();
   const { user, refreshUser } = useAuth();
   const [suggestedUsers, setSuggestedUsers] = useState<User[]>([]);
   const [following, setFollowing] = useState<Set<string>>(new Set());
@@ -61,29 +60,49 @@ export function SuggestedFollowsScreen({ navigation }: OnboardingScreenProps<'Su
   const renderUser = ({ item }: { item: User }) => {
     const isFollowing = following.has(item.id);
     return (
-      <View style={[styles.userRow, { borderBottomColor: colors.border }]}>
+      <XStack
+        alignItems="center"
+        paddingVertical="$sm"
+        borderBottomWidth={1}
+        borderBottomColor="$borderColor"
+      >
         <Avatar uri={item.avatar_url} name={item.name} size={48} />
-        <View style={styles.userInfo}>
-          <Text style={[styles.userName, { color: colors.text }]}>{item.name}</Text>
-          <Text style={[styles.userHandle, { color: colors.textSecondary }]}>@{item.username}</Text>
-        </View>
+        <YStack flex={1} marginLeft="$sm">
+          <Text fontSize="$3" fontWeight="600" color="$color">{item.name}</Text>
+          <Text fontSize="$1" color="$colorSecondary">@{item.username}</Text>
+        </YStack>
         <TouchableOpacity
-          style={[styles.followBtn, { backgroundColor: colors.text }, isFollowing && styles.followingBtn, isFollowing && { backgroundColor: colors.background, borderColor: colors.border }]}
+          style={{
+            paddingHorizontal: 16,
+            paddingVertical: 6,
+            borderRadius: 8,
+            backgroundColor: isFollowing ? theme.background.val : theme.color.val,
+            borderWidth: isFollowing ? 1 : 0,
+            borderColor: isFollowing ? theme.borderColor.val : undefined,
+          }}
           onPress={() => toggleFollow(item.id)}
         >
-          <Text style={[styles.followText, { color: colors.background }, isFollowing && { color: colors.text }]}>
+          <Text
+            fontSize="$1"
+            fontWeight="600"
+            color={isFollowing ? "$color" : "$background"}
+          >
             {isFollowing ? 'Following' : 'Follow'}
           </Text>
         </TouchableOpacity>
-      </View>
+      </XStack>
     );
   };
 
   return (
     <ScreenContainer>
-      <View style={styles.container}>
-        <Text style={[styles.title, { color: colors.text }]}>Suggested people</Text>
-        <Text style={[styles.subtitle, { color: colors.textSecondary }]}>Follow others to see their progress in your feed.</Text>
+      <YStack flex={1} paddingHorizontal="$md" paddingTop="$xl">
+        <Text fontSize="$5" fontWeight="700" marginBottom="$sm" color="$color">
+          Suggested people
+        </Text>
+        <Text fontSize="$2" marginBottom="$lg" color="$colorSecondary">
+          Follow others to see their progress in your feed.
+        </Text>
         {loading ? (
           <LoadingSpinner />
         ) : (
@@ -91,63 +110,13 @@ export function SuggestedFollowsScreen({ navigation }: OnboardingScreenProps<'Su
             data={suggestedUsers}
             renderItem={renderUser}
             keyExtractor={(item) => item.id}
-            contentContainerStyle={styles.list}
+            contentContainerStyle={{ paddingBottom: 16 }}
           />
         )}
-        <View style={styles.buttons}>
+        <YStack paddingVertical="$md">
           <Button title="Get started" onPress={handleFinish} loading={finishing} />
-        </View>
-      </View>
+        </YStack>
+      </YStack>
     </ScreenContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    paddingHorizontal: spacing.md,
-    paddingTop: spacing.xl,
-  },
-  title: {
-    ...typography.title,
-    marginBottom: spacing.sm,
-  },
-  subtitle: {
-    ...typography.body,
-    marginBottom: spacing.lg,
-  },
-  list: {
-    paddingBottom: spacing.md,
-  },
-  userRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: spacing.sm,
-    borderBottomWidth: borders.width,
-  },
-  userInfo: {
-    flex: 1,
-    marginLeft: spacing.sm,
-  },
-  userName: {
-    ...typography.goalTitle,
-  },
-  userHandle: {
-    ...typography.caption,
-  },
-  followBtn: {
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.xs + 2,
-    borderRadius,
-  },
-  followingBtn: {
-    borderWidth: 1,
-  },
-  followText: {
-    ...typography.caption,
-    fontWeight: '600',
-  },
-  buttons: {
-    paddingVertical: spacing.md,
-  },
-});

@@ -1,6 +1,5 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
-import { useTheme } from '../utils/ThemeContext';
+import { YStack } from 'tamagui';
 
 interface ProgressBarProps {
   current: number;
@@ -10,34 +9,24 @@ interface ProgressBarProps {
 }
 
 export function ProgressBar({ current, target, color, height = 8 }: ProgressBarProps) {
-  const { colors } = useTheme();
   const progress = target > 0 ? Math.min(current / target, 1) : 0;
-  const barColor = color || colors.text;
 
   return (
-    <View style={[styles.track, { height, borderRadius: height / 2, backgroundColor: colors.border }]}>
-      <View
-        style={[
-          styles.fill,
-          {
-            width: `${progress * 100}%`,
-            backgroundColor: barColor,
-            height,
-            borderRadius: height / 2,
-          },
-        ]}
+    <YStack
+      height={height}
+      borderRadius={height / 2}
+      backgroundColor="$borderColor"
+      overflow="hidden"
+    >
+      <YStack
+        position="absolute"
+        left={0}
+        top={0}
+        height={height}
+        borderRadius={height / 2}
+        backgroundColor={color ?? '$color'}
+        width={`${progress * 100}%` as any}
       />
-    </View>
+    </YStack>
   );
 }
-
-const styles = StyleSheet.create({
-  track: {
-    overflow: 'hidden',
-  },
-  fill: {
-    position: 'absolute',
-    left: 0,
-    top: 0,
-  },
-});

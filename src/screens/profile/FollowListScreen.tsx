@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { FlatList, StyleSheet } from 'react-native';
+import { FlatList } from 'react-native';
+import { useTheme } from 'tamagui';
 import { UserSearchResult } from '../../components/UserSearchResult';
 import { LoadingSpinner } from '../../components/LoadingSpinner';
 import { EmptyState } from '../../components/EmptyState';
-import { useTheme } from '../../utils/ThemeContext';
 import { getFollowers, getFollowing } from '../../services/follows';
 import type { User } from '../../types/database';
 import type { HomeScreenProps } from '../../types/navigation';
 
 export function FollowListScreen({ route, navigation }: HomeScreenProps<'FollowList'>) {
-  const { colors } = useTheme();
+  const theme = useTheme();
   const { userId, type } = route.params;
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
@@ -38,11 +38,7 @@ export function FollowListScreen({ route, navigation }: HomeScreenProps<'FollowL
         />
       )}
       ListEmptyComponent={<EmptyState title={type === 'followers' ? 'No followers yet' : 'Not following anyone'} />}
-      style={[styles.list, { backgroundColor: colors.background }]}
+      style={{ flex: 1, backgroundColor: theme.background.val }}
     />
   );
 }
-
-const styles = StyleSheet.create({
-  list: { flex: 1 },
-});

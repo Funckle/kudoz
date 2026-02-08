@@ -1,8 +1,6 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { YStack, Text, useTheme } from 'tamagui';
 import { ProgressBar } from './ProgressBar';
-import { typography, spacing } from '../utils/theme';
-import { useTheme } from '../utils/ThemeContext';
 import type { GoalWithCategories } from '../types/database';
 
 interface GoalProgressHeaderProps {
@@ -10,8 +8,8 @@ interface GoalProgressHeaderProps {
 }
 
 export function GoalProgressHeader({ goal }: GoalProgressHeaderProps) {
-  const { colors } = useTheme();
-  const primaryColor = goal.categories?.[0]?.color ?? colors.text;
+  const theme = useTheme();
+  const primaryColor = goal.categories?.[0]?.color ?? theme.color.val;
 
   const formatValue = (value: number) => {
     if (goal.goal_type === 'currency') return `$${value.toLocaleString()}`;
@@ -24,73 +22,42 @@ export function GoalProgressHeader({ goal }: GoalProgressHeaderProps) {
       : 0;
 
   return (
-    <View style={styles.container}>
+    <YStack paddingVertical="$md">
       {goal.goal_type === 'milestone' ? (
-        <View style={styles.milestoneContainer}>
-          <Text style={[styles.milestoneLabel, { color: colors.text }]}>
+        <YStack alignItems="center">
+          <Text fontSize="$4" fontWeight="600" color="$color">
             {goal.status === 'completed' ? 'Achieved' : 'In Progress'}
           </Text>
           {goal.effort_label && goal.effort_target && (
-            <View style={styles.effortSection}>
-              <Text style={[styles.effortLabel, { color: colors.text }]}>{goal.effort_label}</Text>
+            <YStack width="100%" marginTop="$md">
+              <Text fontSize="$2" fontWeight="600" color="$color" marginBottom="$sm">
+                {goal.effort_label}
+              </Text>
               <ProgressBar current={goal.current_value} target={goal.effort_target} color={primaryColor} height={12} />
-              <Text style={[styles.effortText, { color: colors.textSecondary }]}>
+              <Text fontSize="$1" color="$colorSecondary" marginTop="$xs">
                 {goal.current_value} / {goal.effort_target}
               </Text>
-            </View>
+            </YStack>
           )}
-        </View>
+        </YStack>
       ) : (
-        <View>
-          <Text style={[styles.bigNumber, { color: colors.text }]}>{formatValue(goal.current_value)}</Text>
+        <YStack>
+          <Text fontSize="$6" fontWeight="700" color="$color" marginBottom="$xs">
+            {formatValue(goal.current_value)}
+          </Text>
           {goal.target_value && (
             <>
-              <Text style={[styles.targetText, { color: colors.textSecondary }]}>of {formatValue(goal.target_value)}</Text>
+              <Text fontSize="$2" color="$colorSecondary" marginBottom="$sm">
+                of {formatValue(goal.target_value)}
+              </Text>
               <ProgressBar current={goal.current_value} target={goal.target_value} color={primaryColor} height={12} />
-              <Text style={[styles.percentText, { color: colors.textSecondary }]}>{progressPercent}%</Text>
+              <Text fontSize="$1" color="$colorSecondary" marginTop="$xs" textAlign="right">
+                {progressPercent}%
+              </Text>
             </>
           )}
-        </View>
+        </YStack>
       )}
-    </View>
+    </YStack>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    paddingVertical: spacing.md,
-  },
-  bigNumber: {
-    fontSize: 36,
-    fontWeight: '700',
-    marginBottom: spacing.xs,
-  },
-  targetText: {
-    ...typography.body,
-    marginBottom: spacing.sm,
-  },
-  percentText: {
-    ...typography.caption,
-    marginTop: spacing.xs,
-    textAlign: 'right',
-  },
-  milestoneContainer: {
-    alignItems: 'center',
-  },
-  milestoneLabel: {
-    ...typography.sectionHeader,
-  },
-  effortSection: {
-    width: '100%',
-    marginTop: spacing.md,
-  },
-  effortLabel: {
-    ...typography.body,
-    fontWeight: '600',
-    marginBottom: spacing.sm,
-  },
-  effortText: {
-    ...typography.caption,
-    marginTop: spacing.xs,
-  },
-});

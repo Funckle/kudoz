@@ -1,7 +1,6 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { typography, spacing } from '../utils/theme';
-import { useTheme } from '../utils/ThemeContext';
+import { TouchableOpacity } from 'react-native';
+import { YStack, Text } from 'tamagui';
 
 interface GoalSearchResultProps {
   title: string;
@@ -10,26 +9,16 @@ interface GoalSearchResultProps {
 }
 
 export function GoalSearchResult({ title, description, onPress }: GoalSearchResultProps) {
-  const { colors } = useTheme();
-
   return (
-    <TouchableOpacity style={[styles.container, { borderBottomColor: colors.border }]} onPress={onPress} activeOpacity={0.7}>
-      <Text style={[styles.title, { color: colors.text }]} numberOfLines={1}>{title}</Text>
-      {description && <Text style={[styles.description, { color: colors.textSecondary }]} numberOfLines={2}>{description}</Text>}
+    <TouchableOpacity onPress={onPress} activeOpacity={0.7}>
+      <YStack padding="$md" borderBottomWidth={1} borderBottomColor="$borderColor">
+        <Text fontSize="$3" fontWeight="600" color="$color" numberOfLines={1}>{title}</Text>
+        {description && (
+          <Text fontSize="$1" color="$colorSecondary" marginTop="$xs" numberOfLines={2}>
+            {description}
+          </Text>
+        )}
+      </YStack>
     </TouchableOpacity>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    padding: spacing.md,
-    borderBottomWidth: 1,
-  },
-  title: {
-    ...typography.goalTitle,
-  },
-  description: {
-    ...typography.caption,
-    marginTop: spacing.xs,
-  },
-});

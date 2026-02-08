@@ -1,13 +1,6 @@
 import React from 'react';
-import {
-  TouchableOpacity,
-  Text,
-  StyleSheet,
-  ActivityIndicator,
-  ViewStyle,
-} from 'react-native';
-import { borderRadius, typography, spacing } from '../utils/theme';
-import { useTheme } from '../utils/ThemeContext';
+import { ActivityIndicator, ViewStyle } from 'react-native';
+import { YStack, Text, useTheme } from 'tamagui';
 
 interface ButtonProps {
   title: string;
@@ -26,46 +19,40 @@ export function Button({
   loading = false,
   style,
 }: ButtonProps) {
-  const { colors } = useTheme();
+  const theme = useTheme();
   const isDisabled = disabled || loading;
 
-  const variantStyle: ViewStyle =
-    variant === 'primary' ? { backgroundColor: colors.text } :
-    variant === 'destructive' ? { backgroundColor: colors.error } :
-    { backgroundColor: colors.background, borderWidth: 1, borderColor: colors.border };
+  const bg =
+    variant === 'primary' ? theme.color.val :
+    variant === 'destructive' ? theme.error.val :
+    theme.background.val;
 
   const textColor =
-    variant === 'secondary' ? colors.text : colors.background;
+    variant === 'secondary' ? theme.color.val : theme.background.val;
 
   return (
-    <TouchableOpacity
-      onPress={onPress}
-      disabled={isDisabled}
-      style={[styles.base, variantStyle, isDisabled && styles.disabled, style]}
-      activeOpacity={0.7}
+    <YStack
+      paddingVertical="$smPlus"
+      paddingHorizontal="$md"
+      borderRadius="$md"
+      alignItems="center"
+      justifyContent="center"
+      backgroundColor={bg}
+      borderWidth={variant === 'secondary' ? 1 : 0}
+      borderColor={variant === 'secondary' ? '$borderColor' : undefined}
+      opacity={isDisabled ? 0.5 : 1}
+      onPress={isDisabled ? undefined : onPress}
+      pressStyle={{ opacity: 0.7 }}
+      cursor={isDisabled ? 'default' : 'pointer'}
+      {...(style ? { style } : {})}
     >
       {loading ? (
         <ActivityIndicator color={textColor} size="small" />
       ) : (
-        <Text style={[styles.text, { color: textColor }]}>{title}</Text>
+        <Text fontSize="$2" fontWeight="600" color={textColor}>
+          {title}
+        </Text>
       )}
-    </TouchableOpacity>
+    </YStack>
   );
 }
-
-const styles = StyleSheet.create({
-  base: {
-    paddingVertical: spacing.sm + 4,
-    paddingHorizontal: spacing.md,
-    borderRadius,
-    alignItems: 'center',
-    justifyContent: 'center',
-    minHeight: 44,
-  },
-  disabled: {
-    opacity: 0.5,
-  },
-  text: {
-    ...typography.goalTitle,
-  },
-});

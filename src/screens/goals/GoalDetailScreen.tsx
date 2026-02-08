@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, FlatList, StyleSheet, Alert } from 'react-native';
+import { FlatList, Alert } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
+import { YStack, XStack, Text, useTheme } from 'tamagui';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { GoalProgressHeader } from '../../components/GoalProgressHeader';
 import { CategoryBadge } from '../../components/CategoryBadge';
@@ -10,8 +11,6 @@ import { Button } from '../../components/Button';
 import { LoadingSpinner } from '../../components/LoadingSpinner';
 import { ErrorState } from '../../components/ErrorState';
 import { EmptyState } from '../../components/EmptyState';
-import { typography, spacing } from '../../utils/theme';
-import { useTheme } from '../../utils/ThemeContext';
 import { useAuth } from '../../hooks/useAuth';
 import { getGoal, completeGoal, deleteGoal } from '../../services/goals';
 import { getPostsByGoalWithAuthors } from '../../services/posts';
@@ -21,7 +20,7 @@ import type { HomeScreenProps } from '../../types/navigation';
 export function GoalDetailScreen({ route, navigation }: HomeScreenProps<'GoalDetail'>) {
   const { goalId } = route.params;
   const { user } = useAuth();
-  const { colors } = useTheme();
+  const theme = useTheme();
   const [goal, setGoal] = useState<GoalWithCategories | null>(null);
   const [posts, setPosts] = useState<PostWithAuthor[]>([]);
   const [loading, setLoading] = useState(true);
@@ -91,45 +90,45 @@ export function GoalDetailScreen({ route, navigation }: HomeScreenProps<'GoalDet
       data={posts}
       keyExtractor={(item) => item.id}
       ListHeaderComponent={
-        <View style={styles.header}>
-          <Text style={[styles.title, { color: colors.text }]}>{goal.title}</Text>
-          {goal.description ? <Text style={[styles.description, { color: colors.textSecondary }]}>{goal.description}</Text> : null}
-          <View style={styles.categories}>
+        <YStack padding="$md">
+          <Text fontSize="$5" fontWeight="700" color="$color">{goal.title}</Text>
+          {goal.description ? <Text fontSize="$2" marginTop="$sm" color="$colorSecondary">{goal.description}</Text> : null}
+          <XStack flexWrap="wrap" marginTop="$sm">
             {goal.categories.map((c) => <CategoryBadge key={c.id} category={c} />)}
-          </View>
+          </XStack>
           <GoalProgressHeader goal={goal} />
           {goal.stakes && (
-            <View style={[styles.stakesBox, { backgroundColor: colors.borderLight }]}>
-              <Text style={[styles.stakesLabel, { color: colors.textSecondary }]}>Stakes</Text>
-              <Text style={[styles.stakesText, { color: colors.text }]}>{goal.stakes}</Text>
-            </View>
+            <YStack marginTop="$md" padding="$md" borderRadius={8} backgroundColor="$borderColorLight">
+              <Text fontSize="$1" fontWeight="600" marginBottom="$xs" color="$colorSecondary">Stakes</Text>
+              <Text fontSize="$2" color="$color">{goal.stakes}</Text>
+            </YStack>
           )}
           {isOwner && goal.status === 'active' && goal.goal_type === 'milestone' && goal.effort_target && goal.current_value >= goal.effort_target && (
-            <View style={[styles.milestonePrompt, { backgroundColor: colors.borderLight, borderColor: colors.border }]}>
-              <Text style={[styles.milestoneTitle, { color: colors.text }]}>You've hit your target!</Text>
-              <Text style={[styles.milestoneBody, { color: colors.textSecondary }]}>Ready to mark this goal complete?</Text>
-              <Button title="Complete Goal" onPress={handleComplete} style={styles.milestoneBtn} />
-            </View>
+            <YStack marginTop="$md" padding="$md" borderRadius={8} borderWidth={1} alignItems="center" backgroundColor="$borderColorLight" borderColor="$borderColor">
+              <Text fontSize="$4" fontWeight="600" marginBottom="$xs" color="$color">You've hit your target!</Text>
+              <Text fontSize="$2" marginBottom="$sm" color="$colorSecondary">Ready to mark this goal complete?</Text>
+              <Button title="Complete Goal" onPress={handleComplete} style={{ minWidth: 160 }} />
+            </YStack>
           )}
           {showInvitePrompt && user && user.invites_remaining > 0 && (
-            <View style={[styles.milestonePrompt, { backgroundColor: colors.borderLight, borderColor: colors.border }]}>
-              <Text style={[styles.milestoneTitle, { color: colors.text }]}>Know someone who'd benefit?</Text>
-              <Text style={[styles.milestoneBody, { color: colors.textSecondary }]}>You have {user.invites_remaining} invite{user.invites_remaining !== 1 ? 's' : ''} left.</Text>
-              <View style={styles.ownerActions}>
-                <Button title="Share Invite" onPress={() => { setShowInvitePrompt(false); navigation.navigate('Invites' as any); }} style={styles.actionBtn} />
-                <Button title="Not now" onPress={() => setShowInvitePrompt(false)} variant="secondary" style={styles.actionBtn} />
-              </View>
-            </View>
+            <YStack marginTop="$md" padding="$md" borderRadius={8} borderWidth={1} alignItems="center" backgroundColor="$borderColorLight" borderColor="$borderColor">
+              <Text fontSize="$4" fontWeight="600" marginBottom="$xs" color="$color">Know someone who'd benefit?</Text>
+              <Text fontSize="$2" marginBottom="$sm" color="$colorSecondary">You have {user.invites_remaining} invite{user.invites_remaining !== 1 ? 's' : ''} left.</Text>
+              <XStack marginTop="$md">
+                <Button title="Share Invite" onPress={() => { setShowInvitePrompt(false); navigation.navigate('Invites' as any); }} style={{ flex: 1, marginRight: 8 }} />
+                <Button title="Not now" onPress={() => setShowInvitePrompt(false)} variant="secondary" style={{ flex: 1, marginRight: 8 }} />
+              </XStack>
+            </YStack>
           )}
           {isOwner && goal.status === 'active' && (
-            <View style={styles.ownerActions}>
-              <Button title="Complete" onPress={handleComplete} style={styles.actionBtn} />
-              <Button title="Edit" onPress={() => navigation.navigate('GoalDetail', { goalId })} variant="secondary" style={styles.actionBtn} />
-              <Button title="Delete" onPress={handleDelete} variant="destructive" style={styles.actionBtn} />
-            </View>
+            <XStack marginTop="$md">
+              <Button title="Complete" onPress={handleComplete} style={{ flex: 1, marginRight: 8 }} />
+              <Button title="Edit" onPress={() => navigation.navigate('GoalDetail', { goalId })} variant="secondary" style={{ flex: 1, marginRight: 8 }} />
+              <Button title="Delete" onPress={handleDelete} variant="destructive" style={{ flex: 1, marginRight: 8 }} />
+            </XStack>
           )}
-          <Text style={[styles.postsTitle, { color: colors.text }]}>Updates</Text>
-        </View>
+          <Text fontSize="$4" fontWeight="600" marginTop="$lg" marginBottom="$sm" color="$color">Updates</Text>
+        </YStack>
       }
       renderItem={({ item }) => (
         <PostCard
@@ -144,7 +143,7 @@ export function GoalDetailScreen({ route, navigation }: HomeScreenProps<'GoalDet
         />
       )}
       ListEmptyComponent={<EmptyState title="No updates yet" />}
-      style={[styles.container, { backgroundColor: colors.background }]}
+      style={{ flex: 1, backgroundColor: theme.background.val }}
     />
     <ReportModal
       visible={reportTarget.visible}
@@ -155,21 +154,3 @@ export function GoalDetailScreen({ route, navigation }: HomeScreenProps<'GoalDet
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { flex: 1 },
-  header: { padding: spacing.md },
-  title: { ...typography.title },
-  description: { ...typography.body, marginTop: spacing.sm },
-  categories: { flexDirection: 'row', flexWrap: 'wrap', marginTop: spacing.sm },
-  stakesBox: { marginTop: spacing.md, padding: spacing.md, borderRadius: 8 },
-  stakesLabel: { ...typography.caption, fontWeight: '600', marginBottom: spacing.xs },
-  stakesText: { ...typography.body },
-  milestonePrompt: { marginTop: spacing.md, padding: spacing.md, borderRadius: 8, borderWidth: 1, alignItems: 'center' },
-  milestoneTitle: { ...typography.sectionHeader, marginBottom: spacing.xs },
-  milestoneBody: { ...typography.body, marginBottom: spacing.sm },
-  milestoneBtn: { minWidth: 160 },
-  ownerActions: { flexDirection: 'row', marginTop: spacing.md },
-  actionBtn: { flex: 1, marginRight: spacing.sm },
-  postsTitle: { ...typography.sectionHeader, marginTop: spacing.lg, marginBottom: spacing.sm },
-});

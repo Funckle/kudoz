@@ -1,11 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
 import NetInfo from '@react-native-community/netinfo';
-import { typography, spacing } from '../utils/theme';
-import { useTheme } from '../utils/ThemeContext';
+import { YStack, Text } from 'tamagui';
 
 export function NetworkBanner() {
-  const { colors } = useTheme();
   const [isOffline, setIsOffline] = useState(false);
 
   useEffect(() => {
@@ -18,20 +15,8 @@ export function NetworkBanner() {
   if (!isOffline) return null;
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.error }]}>
-      <Text style={styles.text}>No connection</Text>
-    </View>
+    <YStack paddingVertical={6} alignItems="center" backgroundColor="$error">
+      <Text fontSize="$1" fontWeight="600" color="#FFFFFF">No connection</Text>
+    </YStack>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    paddingVertical: spacing.xs + 2,
-    alignItems: 'center',
-  },
-  text: {
-    ...typography.caption,
-    color: '#FFFFFF',
-    fontWeight: '600',
-  },
-});

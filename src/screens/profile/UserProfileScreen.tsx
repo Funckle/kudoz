@@ -1,13 +1,12 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert, Linking } from 'react-native';
+import { FlatList, TouchableOpacity, Alert, Linking } from 'react-native';
+import { YStack, XStack, Text, useTheme } from 'tamagui';
 import { Avatar } from '../../components/Avatar';
 import { GoalCard } from '../../components/GoalCard';
 import { FollowButton } from '../../components/FollowButton';
 import { EmptyState } from '../../components/EmptyState';
 import { LoadingSpinner } from '../../components/LoadingSpinner';
 import { ReportModal } from '../../components/ReportModal';
-import { typography, spacing, borders } from '../../utils/theme';
-import { useTheme } from '../../utils/ThemeContext';
 import { useAuth } from '../../hooks/useAuth';
 import { getUserProfile } from '../../services/auth';
 import { getUserGoals } from '../../services/goals';
@@ -17,7 +16,7 @@ import type { User, GoalWithCategories } from '../../types/database';
 import type { HomeScreenProps } from '../../types/navigation';
 
 export function UserProfileScreen({ route, navigation }: HomeScreenProps<'UserProfile'>) {
-  const { colors } = useTheme();
+  const theme = useTheme();
   const { userId } = route.params;
   const { user: currentUser } = useAuth();
   const [profileUser, setProfileUser] = useState<User | null>(null);
@@ -64,31 +63,31 @@ export function UserProfileScreen({ route, navigation }: HomeScreenProps<'UserPr
   if (!profileUser) return <EmptyState title="User not found" />;
 
   const header = (
-    <View style={styles.header}>
-      <View style={styles.profileRow}>
+    <YStack padding="$md">
+      <XStack alignItems="center">
         <Avatar uri={profileUser.avatar_url} name={profileUser.name} size={80} />
-        <View style={styles.stats}>
-          <TouchableOpacity style={styles.stat} onPress={() => navigation.navigate('FollowList', { userId, type: 'followers' })}>
-            <Text style={[styles.statNum, { color: colors.text }]}>{followers}</Text>
-            <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Followers</Text>
+        <XStack flex={1} justifyContent="space-around" marginLeft="$md">
+          <TouchableOpacity style={{ alignItems: 'center' }} onPress={() => navigation.navigate('FollowList', { userId, type: 'followers' })}>
+            <Text fontSize="$3" fontWeight="600" color="$color">{followers}</Text>
+            <Text fontSize="$1" color="$colorSecondary">Followers</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.stat} onPress={() => navigation.navigate('FollowList', { userId, type: 'following' })}>
-            <Text style={[styles.statNum, { color: colors.text }]}>{following}</Text>
-            <Text style={[styles.statLabel, { color: colors.textSecondary }]}>Following</Text>
+          <TouchableOpacity style={{ alignItems: 'center' }} onPress={() => navigation.navigate('FollowList', { userId, type: 'following' })}>
+            <Text fontSize="$3" fontWeight="600" color="$color">{following}</Text>
+            <Text fontSize="$1" color="$colorSecondary">Following</Text>
           </TouchableOpacity>
-        </View>
-      </View>
-      <Text style={[styles.name, { color: colors.text }]}>{profileUser.name}</Text>
-      <Text style={[styles.username, { color: colors.textSecondary }]}>@{profileUser.username}</Text>
-      {profileUser.bio ? <Text style={[styles.bio, { color: colors.text }]}>{profileUser.bio}</Text> : null}
+        </XStack>
+      </XStack>
+      <Text fontSize="$4" fontWeight="600" marginTop="$sm" color="$color">{profileUser.name}</Text>
+      <Text fontSize="$2" color="$colorSecondary">@{profileUser.username}</Text>
+      {profileUser.bio ? <Text fontSize="$2" color="$color" marginTop="$xs">{profileUser.bio}</Text> : null}
       {profileUser.website ? (
         <TouchableOpacity onPress={() => Linking.openURL(profileUser.website!.startsWith('http') ? profileUser.website! : `https://${profileUser.website}`)}>
-          <Text style={[styles.website, { color: colors.link }]} numberOfLines={1}>{profileUser.website}</Text>
+          <Text fontSize="$2" color="$link" marginTop="$xs" numberOfLines={1}>{profileUser.website}</Text>
         </TouchableOpacity>
       ) : null}
-      <View style={styles.actionRow}>
+      <XStack alignItems="center" marginTop="$md">
         <FollowButton userId={userId} />
-        <TouchableOpacity style={styles.menuBtn} onPress={() => {
+        <TouchableOpacity style={{ marginLeft: 16 }} onPress={() => {
           Alert.alert('Options', '', [
             { text: 'Mute', onPress: handleMute },
             { text: 'Block', onPress: handleBlock, style: 'destructive' },
@@ -96,23 +95,23 @@ export function UserProfileScreen({ route, navigation }: HomeScreenProps<'UserPr
             { text: 'Cancel', style: 'cancel' },
           ]);
         }}>
-          <Text style={[styles.menuText, { color: colors.textSecondary }]}>···</Text>
+          <Text fontSize={20} color="$colorSecondary">···</Text>
         </TouchableOpacity>
-      </View>
-      <Text style={[styles.goalsTitle, { color: colors.text }]}>Goals</Text>
-    </View>
+      </XStack>
+      <Text fontSize="$4" fontWeight="600" marginTop="$lg" color="$color">Goals</Text>
+    </YStack>
   );
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
+    <YStack flex={1} backgroundColor="$background">
       <FlatList
         data={goals}
         keyExtractor={(item) => item.id}
         ListHeaderComponent={header}
         renderItem={({ item }) => (
-          <View style={styles.goalContainer}>
+          <YStack paddingHorizontal="$md">
             <GoalCard goal={item} onPress={() => navigation.navigate('GoalDetail', { goalId: item.id })} />
-          </View>
+          </YStack>
         )}
         ListEmptyComponent={<EmptyState title="No visible goals" />}
       />
@@ -122,25 +121,6 @@ export function UserProfileScreen({ route, navigation }: HomeScreenProps<'UserPr
         contentId={userId}
         onClose={() => setReportVisible(false)}
       />
-    </View>
+    </YStack>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { flex: 1 },
-  header: { padding: spacing.md },
-  profileRow: { flexDirection: 'row', alignItems: 'center' },
-  stats: { flex: 1, flexDirection: 'row', justifyContent: 'space-around', marginLeft: spacing.md },
-  stat: { alignItems: 'center' },
-  statNum: { ...typography.goalTitle },
-  statLabel: { ...typography.caption },
-  name: { ...typography.sectionHeader, marginTop: spacing.sm },
-  username: { ...typography.body },
-  bio: { ...typography.body, marginTop: spacing.xs },
-  website: { ...typography.body, marginTop: spacing.xs },
-  actionRow: { flexDirection: 'row', alignItems: 'center', marginTop: spacing.md },
-  menuBtn: { marginLeft: spacing.md },
-  menuText: { fontSize: 20 },
-  goalsTitle: { ...typography.sectionHeader, marginTop: spacing.lg },
-  goalContainer: { paddingHorizontal: spacing.md },
-});

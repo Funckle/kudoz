@@ -1,11 +1,10 @@
 import React, { useCallback } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, Alert } from 'react-native';
+import { TouchableOpacity, Image, Alert } from 'react-native';
 import { MessageCircle } from 'lucide-react-native';
+import { YStack, XStack, Text, useTheme } from 'tamagui';
 import { Avatar } from './Avatar';
 import { CategoryBadge } from './CategoryBadge';
 import { KudozButton } from './KudozButton';
-import { typography, spacing, borderRadius } from '../utils/theme';
-import { useTheme } from '../utils/ThemeContext';
 import type { PostWithAuthor } from '../types/database';
 import { useAuth } from '../hooks/useAuth';
 import { deletePost } from '../services/posts';
@@ -34,7 +33,7 @@ export const PostCard = React.memo(function PostCard({
   isExpanded,
 }: PostCardProps) {
   const { user } = useAuth();
-  const { colors } = useTheme();
+  const theme = useTheme();
   const isOwner = user?.id === post.user_id;
 
   const formatDate = (dateStr: string) => {
@@ -86,69 +85,97 @@ export const PostCard = React.memo(function PostCard({
     : 'posted an update';
 
   return (
-    <TouchableOpacity
-      style={[styles.card, { backgroundColor: colors.surface, borderBottomColor: colors.border }]}
-      onPress={onPressPost}
-      activeOpacity={0.8}
-    >
-      <View style={styles.header}>
-        <TouchableOpacity onPress={onPressAuthor} style={styles.authorRow}>
-          <Avatar uri={post.user?.avatar_url} name={post.user?.name} size={32} />
-          <View style={styles.authorInfo}>
-            <Text style={[styles.authorName, { color: colors.text }]}>{post.user?.name}</Text>
-            <Text style={[styles.meta, { color: colors.textSecondary }]}>
-              @{post.user?.username} · {postTypeLabel} · {formatDate(post.created_at)}
+    <TouchableOpacity onPress={onPressPost} activeOpacity={0.8}>
+      <YStack padding="$md" backgroundColor="$surface" borderBottomWidth={1} borderBottomColor="$borderColor">
+        {/* Header */}
+        <XStack justifyContent="space-between" alignItems="flex-start" marginBottom="$sm">
+          <TouchableOpacity onPress={onPressAuthor} style={{ flexDirection: 'row', flex: 1 }}>
+            <Avatar uri={post.user?.avatar_url} name={post.user?.name} size={32} />
+            <YStack marginLeft="$sm" flex={1}>
+              <Text fontSize="$2" fontWeight="600" color="$color">{post.user?.name}</Text>
+              <Text fontSize="$1" color="$colorSecondary">
+                @{post.user?.username} · {postTypeLabel} · {formatDate(post.created_at)}
+              </Text>
+            </YStack>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={handleMenu} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+            <Text fontSize={18} color="$colorSecondary" paddingLeft="$sm">···</Text>
+          </TouchableOpacity>
+        </XStack>
+
+        {/* Goal link */}
+        <TouchableOpacity onPress={onPressGoal}>
+          <Text fontSize="$1" fontWeight="600" color="$colorSecondary" marginBottom="$xs">
+            {post.goal?.title}
+          </Text>
+        </TouchableOpacity>
+
+        {/* Content */}
+        {post.content && (
+          <Text fontSize="$2" color="$color" marginBottom="$sm">{post.content}</Text>
+        )}
+
+        {/* Progress chip */}
+        {post.progress_value != null && post.progress_value > 0 && (
+          <YStack
+            alignSelf="flex-start"
+            paddingHorizontal="$sm"
+            paddingVertical="$xs"
+            borderRadius="$md"
+            backgroundColor="$borderColorLight"
+            marginBottom="$sm"
+          >
+            <Text fontSize="$2" fontWeight="600" color="$color">
+              +{post.goal?.goal_type === 'currency' ? `$${post.progress_value}` : post.progress_value}
             </Text>
-          </View>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={handleMenu} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
-          <Text style={[styles.menuDots, { color: colors.textSecondary }]}>···</Text>
-        </TouchableOpacity>
-      </View>
+          </YStack>
+        )}
 
-      <TouchableOpacity onPress={onPressGoal}>
-        <Text style={[styles.goalLink, { color: colors.textSecondary }]}>{post.goal?.title}</Text>
-      </TouchableOpacity>
+        {/* Media */}
+        {post.media_url && (
+          <Image
+            source={{ uri: post.media_url }}
+            style={{
+              width: '100%',
+              borderRadius: 8,
+              marginBottom: 8,
+              aspectRatio: (post.media_width || 1) / (post.media_height || 1),
+            }}
+            resizeMode="contain"
+          />
+        )}
 
-      {post.content && <Text style={[styles.content, { color: colors.text }]}>{post.content}</Text>}
-
-      {post.progress_value != null && post.progress_value > 0 && (
-        <View style={[styles.progressChip, { backgroundColor: colors.borderLight }]}>
-          <Text style={[styles.progressText, { color: colors.text }]}>
-            +{post.goal?.goal_type === 'currency' ? `$${post.progress_value}` : post.progress_value}
+        {/* Edited label */}
+        {post.edited_at && (
+          <Text fontSize="$1" color="$colorSecondary" fontStyle="italic" marginBottom="$sm">
+            edited
           </Text>
-        </View>
-      )}
+        )}
 
-      {post.media_url && (
-        <Image
-          source={{ uri: post.media_url }}
-          style={[styles.image, { aspectRatio: (post.media_width || 1) / (post.media_height || 1) }]}
-          resizeMode="contain"
-        />
-      )}
+        {/* Categories */}
+        {post.categories && post.categories.length > 0 && (
+          <XStack flexWrap="wrap" marginBottom="$sm">
+            {post.categories.map((c) => <CategoryBadge key={c.id} category={c} />)}
+          </XStack>
+        )}
 
-      {post.edited_at && <Text style={[styles.edited, { color: colors.textSecondary }]}>edited</Text>}
-
-      {post.categories && post.categories.length > 0 && (
-        <View style={styles.categories}>
-          {post.categories.map((c) => <CategoryBadge key={c.id} category={c} />)}
-        </View>
-      )}
-
-      <View style={styles.actions}>
-        <KudozButton postId={post.id} initialCount={post.kudoz_count} initialActive={post.has_kudozd} />
-        <TouchableOpacity onPress={onPressComments} style={styles.commentBtn}>
-          <MessageCircle size={14} color={colors.textSecondary} />
-          <Text style={[styles.commentText, { color: colors.textSecondary }]}>
-            {post.comment_count > 0 ? `${post.comment_count} comments` : 'Comment'}
-          </Text>
-        </TouchableOpacity>
-      </View>
+        {/* Actions */}
+        <XStack alignItems="center">
+          <KudozButton postId={post.id} initialCount={post.kudoz_count} initialActive={post.has_kudozd} />
+          <TouchableOpacity
+            onPress={onPressComments}
+            style={{ flexDirection: 'row', alignItems: 'center', marginLeft: 16, paddingVertical: 4 }}
+          >
+            <MessageCircle size={14} color={theme.colorSecondary.val} />
+            <Text fontSize="$1" color="$colorSecondary" marginLeft={4}>
+              {post.comment_count > 0 ? `${post.comment_count} comments` : 'Comment'}
+            </Text>
+          </TouchableOpacity>
+        </XStack>
+      </YStack>
     </TouchableOpacity>
   );
 }, (prev, next) => {
-  // Custom comparator: skip function props, only compare data that affects rendering
   return prev.post.id === next.post.id
     && prev.post.kudoz_count === next.post.kudoz_count
     && prev.post.comment_count === next.post.comment_count
@@ -156,85 +183,4 @@ export const PostCard = React.memo(function PostCard({
     && prev.post.edited_at === next.post.edited_at
     && prev.post.content === next.post.content
     && prev.isExpanded === next.isExpanded;
-});
-
-const styles = StyleSheet.create({
-  card: {
-    padding: spacing.md,
-    borderBottomWidth: 1,
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    marginBottom: spacing.sm,
-  },
-  authorRow: {
-    flexDirection: 'row',
-    flex: 1,
-  },
-  authorInfo: {
-    marginLeft: spacing.sm,
-    flex: 1,
-  },
-  authorName: {
-    ...typography.body,
-    fontWeight: '600',
-  },
-  meta: {
-    ...typography.caption,
-  },
-  menuDots: {
-    fontSize: 18,
-    paddingLeft: spacing.sm,
-  },
-  goalLink: {
-    ...typography.caption,
-    fontWeight: '600',
-    marginBottom: spacing.xs,
-  },
-  categories: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    marginBottom: spacing.sm,
-  },
-  content: {
-    ...typography.body,
-    marginBottom: spacing.sm,
-  },
-  progressChip: {
-    alignSelf: 'flex-start',
-    paddingHorizontal: spacing.sm,
-    paddingVertical: spacing.xs,
-    borderRadius,
-    marginBottom: spacing.sm,
-  },
-  progressText: {
-    ...typography.body,
-    fontWeight: '600',
-  },
-  image: {
-    width: '100%',
-    borderRadius,
-    marginBottom: spacing.sm,
-  },
-  edited: {
-    ...typography.caption,
-    fontStyle: 'italic',
-    marginBottom: spacing.sm,
-  },
-  actions: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  commentBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginLeft: spacing.md,
-    paddingVertical: spacing.xs,
-  },
-  commentText: {
-    ...typography.caption,
-    marginLeft: 4,
-  },
 });

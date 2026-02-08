@@ -1,11 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
+import { FlatList, TouchableOpacity } from 'react-native';
+import { XStack, YStack, Text, useTheme } from 'tamagui';
 import { Avatar } from '../../components/Avatar';
 import { ScreenContainer } from '../../components/ScreenContainer';
 import { LoadingSpinner } from '../../components/LoadingSpinner';
 import { EmptyState } from '../../components/EmptyState';
-import { typography, spacing, borderRadius } from '../../utils/theme';
-import { useTheme } from '../../utils/ThemeContext';
 import { useAuth } from '../../hooks/useAuth';
 import { getBlockedUsers, unblockUser } from '../../services/social';
 
@@ -17,7 +16,7 @@ interface BlockedUser {
 }
 
 export function BlockedUsersScreen() {
-  const { colors } = useTheme();
+  const theme = useTheme();
   const { user } = useAuth();
   const [blockedUsers, setBlockedUsers] = useState<BlockedUser[]>([]);
   const [loading, setLoading] = useState(true);
@@ -45,40 +44,29 @@ export function BlockedUsersScreen() {
         data={blockedUsers}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <View style={[styles.row, { borderBottomColor: colors.border }]}>
-            <Avatar uri={item.avatar_url} name={item.name} size={40} />
-            <View style={styles.info}>
-              <Text style={[styles.name, { color: colors.text }]}>{item.name}</Text>
-              <Text style={[styles.username, { color: colors.textSecondary }]}>@{item.username}</Text>
-            </View>
-            <TouchableOpacity style={[styles.unblockBtn, { borderColor: colors.border }]} onPress={() => handleUnblock(item.id)}>
-              <Text style={[styles.unblockText, { color: colors.text }]}>Unblock</Text>
+          <XStack padding="$md" borderBottomWidth={1} borderBottomColor="$borderColor" alignItems="center">
+            <Avatar uri={item.avatar_url} name={item.name} size={48} />
+            <YStack flex={1} marginLeft="$sm">
+              <Text fontSize="$2" fontWeight="600" color="$color">{item.name}</Text>
+              <Text fontSize="$1" color="$colorSecondary">@{item.username}</Text>
+            </YStack>
+            <TouchableOpacity
+              style={{
+                borderWidth: 1,
+                borderColor: theme.borderColor.val,
+                borderRadius: 8,
+                paddingHorizontal: 12,
+                paddingVertical: 6,
+              }}
+              onPress={() => handleUnblock(item.id)}
+            >
+              <Text fontSize="$1" fontWeight="600" color="$color">Unblock</Text>
             </TouchableOpacity>
-          </View>
+          </XStack>
         )}
         ListEmptyComponent={<EmptyState title="No blocked users" />}
-        style={styles.list}
+        style={{ flex: 1 }}
       />
     </ScreenContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  list: { flex: 1 },
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: spacing.md,
-    borderBottomWidth: 1,
-  },
-  info: { flex: 1, marginLeft: spacing.sm },
-  name: { ...typography.body, fontWeight: '600' },
-  username: { ...typography.caption },
-  unblockBtn: {
-    borderWidth: 1,
-    borderRadius,
-    paddingHorizontal: spacing.sm + 4,
-    paddingVertical: spacing.xs + 2,
-  },
-  unblockText: { ...typography.caption, fontWeight: '600' },
-});

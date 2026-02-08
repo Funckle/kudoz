@@ -1,7 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import { typography, spacing } from '../utils/theme';
-import { useTheme } from '../utils/ThemeContext';
+import { YStack, Text } from 'tamagui';
 import { Button } from './Button';
 
 interface EmptyStateProps {
@@ -13,38 +11,19 @@ interface EmptyStateProps {
 }
 
 export function EmptyState({ title, message, actionTitle, onAction }: EmptyStateProps) {
-  const { colors } = useTheme();
-
   return (
-    <View style={styles.container}>
-      <Text style={[styles.title, { color: colors.text }]}>{title}</Text>
-      {message && <Text style={[styles.message, { color: colors.textSecondary }]}>{message}</Text>}
-      {actionTitle && onAction && (
-        <Button title={actionTitle} onPress={onAction} style={styles.button} />
+    <YStack flex={1} justifyContent="center" alignItems="center" padding="$xl">
+      <Text fontSize="$4" fontWeight="600" color="$color" textAlign="center" marginBottom="$sm">
+        {title}
+      </Text>
+      {message && (
+        <Text fontSize="$2" color="$colorSecondary" textAlign="center" marginBottom="$md">
+          {message}
+        </Text>
       )}
-    </View>
+      {actionTitle && onAction && (
+        <Button title={actionTitle} onPress={onAction} style={{ marginTop: 8, minWidth: 160 }} />
+      )}
+    </YStack>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: spacing.xl,
-  },
-  title: {
-    ...typography.sectionHeader,
-    textAlign: 'center',
-    marginBottom: spacing.sm,
-  },
-  message: {
-    ...typography.body,
-    textAlign: 'center',
-    marginBottom: spacing.md,
-  },
-  button: {
-    marginTop: spacing.sm,
-    minWidth: 160,
-  },
-});

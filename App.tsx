@@ -1,9 +1,11 @@
 import React, { useEffect, useRef } from 'react';
-import { Platform, View, StyleSheet } from 'react-native';
+import { Platform, useColorScheme } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { NavigationContainerRef } from '@react-navigation/native';
+import { TamaguiProvider, Theme, YStack } from 'tamagui';
+import config from './tamagui.config';
 import { AuthContext, useAuthProvider } from './src/hooks/useAuth';
 import { RootNavigator } from './src/navigation/RootNavigator';
 import { setupDeepLinkListener } from './src/services/linking';
@@ -11,7 +13,6 @@ import { registerForPushNotifications, setupNotificationListeners } from './src/
 import type { NotificationNavData } from './src/services/pushNotifications';
 import { fetchCategories } from './src/services/categories';
 import { NetworkBanner } from './src/components/NetworkBanner';
-import { ThemeProvider, useTheme } from './src/utils/ThemeContext';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -71,42 +72,30 @@ function AppInner() {
   );
 }
 
-function ThemedApp() {
-  const { colors, isDark } = useTheme();
-
-  return (
-    <View style={[styles.outer, { backgroundColor: isDark ? '#000000' : '#F5F5F5' }]}>
-      <View style={[styles.inner, {
-        backgroundColor: colors.background,
-        ...(Platform.OS === 'web' ? { borderLeftWidth: 1, borderRightWidth: 1, borderColor: colors.border } : {}),
-      }]}>
-        <QueryClientProvider client={queryClient}>
-          <SafeAreaProvider>
-            <AppInner />
-            <StatusBar style={isDark ? 'light' : 'dark'} />
-          </SafeAreaProvider>
-        </QueryClientProvider>
-      </View>
-    </View>
-  );
-}
-
 export default function App() {
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === 'dark';
+
   return (
-    <ThemeProvider>
-      <ThemedApp />
-    </ThemeProvider>
+    <TamaguiProvider config={config} defaultTheme={isDark ? 'dark' : 'light'}>
+      <Theme name={isDark ? 'dark' : 'light'}>
+        <YStack flex={1} alignItems="center" backgroundColor={isDark ? '#000000' : '#F5F5F5'}>
+          <YStack
+            flex={1}
+            width="100%"
+            maxWidth={480}
+            backgroundColor="$background"
+            {...(Platform.OS === 'web' ? { borderLeftWidth: 1, borderRightWidth: 1, borderColor: '$borderColor' } : {})}
+          >
+            <QueryClientProvider client={queryClient}>
+              <SafeAreaProvider>
+                <AppInner />
+                <StatusBar style={isDark ? 'light' : 'dark'} />
+              </SafeAreaProvider>
+            </QueryClientProvider>
+          </YStack>
+        </YStack>
+      </Theme>
+    </TamaguiProvider>
   );
 }
-
-const styles = StyleSheet.create({
-  outer: {
-    flex: 1,
-    alignItems: 'center',
-  },
-  inner: {
-    flex: 1,
-    width: '100%',
-    maxWidth: 480,
-  },
-});

@@ -1,8 +1,7 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { TouchableOpacity } from 'react-native';
+import { XStack, YStack, Text } from 'tamagui';
 import { Avatar } from './Avatar';
-import { typography, spacing } from '../utils/theme';
-import { useTheme } from '../utils/ThemeContext';
 import type { NotificationWithData } from '../types/database';
 
 interface NotificationItemProps {
@@ -11,8 +10,6 @@ interface NotificationItemProps {
 }
 
 export function NotificationItem({ notification, onPress }: NotificationItemProps) {
-  const { colors } = useTheme();
-
   const getMessage = () => {
     const name = notification.actor?.name || 'Someone';
     switch (notification.type) {
@@ -58,46 +55,23 @@ export function NotificationItem({ notification, onPress }: NotificationItemProp
   };
 
   return (
-    <TouchableOpacity
-      style={[
-        styles.container,
-        { borderBottomColor: colors.border },
-        !notification.read && { backgroundColor: colors.borderLight },
-      ]}
-      onPress={onPress}
-      activeOpacity={0.7}
-    >
-      <Avatar uri={notification.actor?.avatar_url} name={notification.actor?.name} size={32} />
-      <View style={styles.body}>
-        <Text style={[styles.message, { color: colors.text }]}>{getMessage()}</Text>
-        <Text style={[styles.time, { color: colors.textSecondary }]}>{formatDate(notification.created_at)}</Text>
-      </View>
-      {!notification.read && <View style={[styles.dot, { backgroundColor: colors.text }]} />}
+    <TouchableOpacity onPress={onPress} activeOpacity={0.7}>
+      <XStack
+        alignItems="center"
+        padding="$md"
+        borderBottomWidth={1}
+        borderBottomColor="$borderColor"
+        backgroundColor={!notification.read ? '$borderColorLight' : 'transparent'}
+      >
+        <Avatar uri={notification.actor?.avatar_url} name={notification.actor?.name} size={32} />
+        <YStack flex={1} marginLeft="$sm">
+          <Text fontSize="$2" color="$color">{getMessage()}</Text>
+          <Text fontSize="$1" color="$colorSecondary" marginTop={2}>{formatDate(notification.created_at)}</Text>
+        </YStack>
+        {!notification.read && (
+          <YStack width={8} height={8} borderRadius={4} backgroundColor="$color" />
+        )}
+      </XStack>
     </TouchableOpacity>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: spacing.md,
-    borderBottomWidth: 1,
-  },
-  body: {
-    flex: 1,
-    marginLeft: spacing.sm,
-  },
-  message: {
-    ...typography.body,
-  },
-  time: {
-    ...typography.caption,
-    marginTop: 2,
-  },
-  dot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-  },
-});

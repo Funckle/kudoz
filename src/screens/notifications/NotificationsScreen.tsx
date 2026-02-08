@@ -1,17 +1,16 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { FlatList, StyleSheet, RefreshControl, TouchableOpacity, Text, View } from 'react-native';
+import { FlatList, RefreshControl, TouchableOpacity } from 'react-native';
+import { YStack, Text, useTheme } from 'tamagui';
 import { NotificationItem } from '../../components/NotificationItem';
 import { LoadingSpinner } from '../../components/LoadingSpinner';
 import { EmptyState } from '../../components/EmptyState';
-import { typography, spacing } from '../../utils/theme';
-import { useTheme } from '../../utils/ThemeContext';
 import { useAuth } from '../../hooks/useAuth';
 import { getNotifications, markAsRead, markAllRead } from '../../services/notifications';
 import type { NotificationWithData } from '../../types/database';
 import type { NotificationsScreenProps } from '../../types/navigation';
 
 export function NotificationsScreen({ navigation }: NotificationsScreenProps<'Notifications'>) {
-  const { colors } = useTheme();
+  const theme = useTheme();
   const { user } = useAuth();
   const [notifications, setNotifications] = useState<NotificationWithData[]>([]);
   const [loading, setLoading] = useState(true);
@@ -61,10 +60,10 @@ export function NotificationsScreen({ navigation }: NotificationsScreenProps<'No
   const hasUnread = notifications.some((n) => !n.read);
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
+    <YStack flex={1} backgroundColor="$background">
       {hasUnread && (
-        <TouchableOpacity style={styles.markAllBtn} onPress={handleMarkAllRead}>
-          <Text style={[styles.markAllText, { color: colors.text }]}>Mark all as read</Text>
+        <TouchableOpacity style={{ padding: 16, alignItems: 'flex-end' }} onPress={handleMarkAllRead}>
+          <Text fontSize="$1" fontWeight="600" color="$color">Mark all as read</Text>
         </TouchableOpacity>
       )}
       <FlatList
@@ -76,12 +75,6 @@ export function NotificationsScreen({ navigation }: NotificationsScreenProps<'No
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => { setRefreshing(true); loadNotifications(); }} />}
         ListEmptyComponent={<EmptyState title="No notifications yet" message="When someone interacts with you, you'll see it here." />}
       />
-    </View>
+    </YStack>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { flex: 1 },
-  markAllBtn: { padding: spacing.md, alignItems: 'flex-end' },
-  markAllText: { ...typography.caption, fontWeight: '600' },
-});

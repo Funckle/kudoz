@@ -1,10 +1,9 @@
 import React, { useState, useCallback, useRef } from 'react';
-import { View, Text, StyleSheet, FlatList, TextInput as RNTextInput, TouchableOpacity } from 'react-native';
+import { FlatList, TextInput as RNTextInput, TouchableOpacity } from 'react-native';
+import { YStack, XStack, Text, useTheme } from 'tamagui';
 import { UserSearchResult } from '../../components/UserSearchResult';
 import { GoalSearchResult } from '../../components/GoalSearchResult';
 import { LoadingSpinner } from '../../components/LoadingSpinner';
-import { typography, spacing, borderRadius, borders } from '../../utils/theme';
-import { useTheme } from '../../utils/ThemeContext';
 import { getCategories } from '../../utils/categories';
 import { useAuth } from '../../hooks/useAuth';
 import { searchAll } from '../../services/search';
@@ -20,7 +19,7 @@ interface SearchResult {
 }
 
 export function SearchScreen({ navigation }: SearchScreenProps<'Search'>) {
-  const { colors } = useTheme();
+  const theme = useTheme();
   const { user } = useAuth();
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<SearchResult[]>([]);
@@ -45,13 +44,29 @@ export function SearchScreen({ navigation }: SearchScreenProps<'Search'>) {
 
   const renderCategory = ({ item }: { item: Category }) => (
     <TouchableOpacity
-      style={[styles.categoryCard, { borderColor: colors.border }]}
+      style={{
+        flex: 1,
+        marginHorizontal: 4,
+        padding: 16,
+        borderWidth: 1,
+        borderColor: theme.borderColor.val,
+        borderRadius: 8,
+        alignItems: 'center',
+      }}
       onPress={() => navigation.navigate('CategoryFeed', { categoryId: item.id, categoryName: item.name })}
     >
-      <View style={[styles.catIcon, { backgroundColor: item.color + '20' }]}>
-        <View style={[styles.catDot, { backgroundColor: item.color }]} />
-      </View>
-      <Text style={[styles.catName, { color: colors.text }]}>{item.name}</Text>
+      <YStack
+        width={40}
+        height={40}
+        borderRadius={20}
+        alignItems="center"
+        justifyContent="center"
+        marginBottom="$xs"
+        backgroundColor={item.color + '20'}
+      >
+        <YStack width={16} height={16} borderRadius={8} backgroundColor={item.color} />
+      </YStack>
+      <Text fontSize="$2" fontWeight="600" color="$color">{item.name}</Text>
     </TouchableOpacity>
   );
 
@@ -78,22 +93,31 @@ export function SearchScreen({ navigation }: SearchScreenProps<'Search'>) {
     }
     return (
       <TouchableOpacity
-        style={[styles.postResult, { borderBottomColor: colors.border }]}
+        style={{ padding: 16, borderBottomWidth: 1, borderBottomColor: theme.borderColor.val }}
         onPress={() => navigation.navigate('PostDetail', { postId: item.result_id })}
       >
-        <Text style={[styles.postContent, { color: colors.text }]} numberOfLines={2}>{item.title}</Text>
+        <Text fontSize="$2" color="$color" numberOfLines={2}>{item.title}</Text>
       </TouchableOpacity>
     );
   };
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
+    <YStack flex={1} backgroundColor="$background">
       <RNTextInput
-        style={[styles.searchInput, { color: colors.text, borderColor: colors.border }]}
+        style={{
+          fontSize: 14,
+          fontWeight: '400',
+          margin: 16,
+          padding: 10,
+          borderWidth: 1,
+          borderRadius: 8,
+          color: theme.color.val,
+          borderColor: theme.borderColor.val,
+        }}
         placeholder="Search users, goals, posts..."
         value={query}
         onChangeText={handleSearch}
-        placeholderTextColor={colors.textSecondary}
+        placeholderTextColor={theme.colorSecondary.val}
         autoCapitalize="none"
         autoCorrect={false}
       />
@@ -106,9 +130,9 @@ export function SearchScreen({ navigation }: SearchScreenProps<'Search'>) {
             keyExtractor={(item) => `${item.result_type}-${item.result_id}`}
             renderItem={renderResult}
             ListEmptyComponent={
-              <View style={styles.emptySearch}>
-                <Text style={[styles.emptyText, { color: colors.textSecondary }]}>No results found</Text>
-              </View>
+              <YStack padding="$xl" alignItems="center">
+                <Text fontSize="$2" color="$colorSecondary">No results found</Text>
+              </YStack>
             }
           />
         )
@@ -118,33 +142,11 @@ export function SearchScreen({ navigation }: SearchScreenProps<'Search'>) {
           keyExtractor={(item) => item.id}
           renderItem={renderCategory}
           numColumns={2}
-          columnWrapperStyle={styles.categoryRow}
-          contentContainerStyle={styles.categoryGrid}
-          ListHeaderComponent={<Text style={[styles.browseTitle, { color: colors.text }]}>Browse categories</Text>}
+          columnWrapperStyle={{ justifyContent: 'space-between', marginBottom: 8 }}
+          contentContainerStyle={{ paddingHorizontal: 16 }}
+          ListHeaderComponent={<Text fontSize="$4" fontWeight="600" color="$color" paddingHorizontal="$md" marginBottom="$sm">Browse categories</Text>}
         />
       )}
-    </View>
+    </YStack>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { flex: 1 },
-  searchInput: {
-    ...typography.body,
-    margin: spacing.md,
-    padding: spacing.sm + 2,
-    borderWidth: borders.width,
-    borderRadius,
-  },
-  browseTitle: { ...typography.sectionHeader, paddingHorizontal: spacing.md, marginBottom: spacing.sm },
-  categoryGrid: { paddingHorizontal: spacing.md },
-  categoryRow: { justifyContent: 'space-between', marginBottom: spacing.sm },
-  categoryCard: { flex: 1, marginHorizontal: spacing.xs, padding: spacing.md, borderWidth: borders.width, borderRadius, alignItems: 'center' },
-  catIcon: { width: 40, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center', marginBottom: spacing.xs },
-  catDot: { width: 16, height: 16, borderRadius: 8 },
-  catName: { ...typography.body, fontWeight: '600' },
-  postResult: { padding: spacing.md, borderBottomWidth: borders.width },
-  postContent: { ...typography.body },
-  emptySearch: { padding: spacing.xl, alignItems: 'center' },
-  emptyText: { ...typography.body },
-});

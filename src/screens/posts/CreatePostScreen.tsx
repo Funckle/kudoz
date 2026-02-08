@@ -1,14 +1,13 @@
 import React, { useState, useCallback } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, Alert } from 'react-native';
+import { ScrollView, TouchableOpacity, Image, Alert } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
+import { YStack, Text, useTheme } from 'tamagui';
 import { ScreenContainer } from '../../components/ScreenContainer';
 import { TextInput } from '../../components/TextInput';
 import { Button } from '../../components/Button';
 import { GoalCard } from '../../components/GoalCard';
 import { EmptyState } from '../../components/EmptyState';
 import { LoadingSpinner } from '../../components/LoadingSpinner';
-import { typography, spacing, borderRadius, borders } from '../../utils/theme';
-import { useTheme } from '../../utils/ThemeContext';
 import { LIMITS } from '../../utils/validation';
 import { useAuth } from '../../hooks/useAuth';
 import { getUserGoals } from '../../services/goals';
@@ -20,7 +19,7 @@ import type { GoalWithCategories } from '../../types/database';
 import type { CreateScreenProps } from '../../types/navigation';
 
 export function CreatePostScreen({ route, navigation }: CreateScreenProps<'CreatePost'>) {
-  const { colors } = useTheme();
+  const theme = useTheme();
   const { user } = useAuth();
   const [goals, setGoals] = useState<GoalWithCategories[]>([]);
   const [selectedGoal, setSelectedGoal] = useState<GoalWithCategories | null>(null);
@@ -133,8 +132,8 @@ export function CreatePostScreen({ route, navigation }: CreateScreenProps<'Creat
   if (!selectedGoal) {
     return (
       <ScreenContainer noTopInset>
-        <ScrollView style={styles.container} contentContainerStyle={styles.scrollContent}>
-          <Text style={[styles.title, { color: colors.text }]}>Select a goal</Text>
+        <ScrollView style={{ flex: 1, padding: 16 }} contentContainerStyle={{ paddingBottom: 32 }}>
+          <Text fontSize="$5" fontWeight="700" marginBottom="$md" color="$color">Select a goal</Text>
           {goals.map((goal) => (
             <GoalCard key={goal.id} goal={goal} onPress={() => setSelectedGoal(goal)} />
           ))}
@@ -142,7 +141,7 @@ export function CreatePostScreen({ route, navigation }: CreateScreenProps<'Creat
             title="Create new goal"
             onPress={() => navigation.navigate('CreateGoal')}
             variant="secondary"
-            style={styles.newGoalBtn}
+            style={{ marginTop: 8 }}
           />
         </ScrollView>
       </ScreenContainer>
@@ -153,9 +152,9 @@ export function CreatePostScreen({ route, navigation }: CreateScreenProps<'Creat
 
   return (
     <ScreenContainer noTopInset>
-      <ScrollView style={styles.container} keyboardShouldPersistTaps="handled">
+      <ScrollView style={{ flex: 1, padding: 16 }} keyboardShouldPersistTaps="handled">
         <TouchableOpacity onPress={() => setSelectedGoal(null)}>
-          <Text style={[styles.goalLabel, { color: colors.textSecondary }]}>Goal: {selectedGoal.title} (change)</Text>
+          <Text fontSize="$2" fontWeight="600" marginBottom="$md" color="$colorSecondary">Goal: {selectedGoal.title} (change)</Text>
         </TouchableOpacity>
 
         {showProgressInput && (
@@ -175,18 +174,17 @@ export function CreatePostScreen({ route, navigation }: CreateScreenProps<'Creat
           onChangeText={setContent}
           maxLength={LIMITS.POST_CONTENT}
           multiline
-          filterBadWords
         />
 
         {imageUri ? (
-          <View style={styles.imagePreview}>
-            <Image source={{ uri: imageUri }} style={[styles.image, imageSize && { aspectRatio: imageSize.width / imageSize.height }]} resizeMode="contain" />
-            <TouchableOpacity style={styles.removeImage} onPress={() => { setImageUri(null); setImageSize(null); }}>
-              <Text style={[styles.removeImageText, { color: colors.error }]}>Remove</Text>
+          <YStack marginBottom="$md">
+            <Image source={{ uri: imageUri }} style={{ width: '100%', borderRadius: 8, ...(imageSize && { aspectRatio: imageSize.width / imageSize.height }) }} resizeMode="contain" />
+            <TouchableOpacity style={{ marginTop: 4, alignSelf: 'flex-end' }} onPress={() => { setImageUri(null); setImageSize(null); }}>
+              <Text fontSize="$1" color="$error">Remove</Text>
             </TouchableOpacity>
-          </View>
+          </YStack>
         ) : (
-          <Button title="Add photo" onPress={handlePickImage} variant="secondary" style={styles.photoBtn} />
+          <Button title="Add photo" onPress={handlePickImage} variant="secondary" style={{ marginBottom: 16 }} />
         )}
 
         <Button title="Post" onPress={handlePost} loading={posting} disabled={!content.trim() && !progressValue} />
@@ -194,42 +192,3 @@ export function CreatePostScreen({ route, navigation }: CreateScreenProps<'Creat
     </ScreenContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: spacing.md,
-  },
-  scrollContent: {
-    paddingBottom: spacing.xl,
-  },
-  title: {
-    ...typography.title,
-    marginBottom: spacing.md,
-  },
-  goalLabel: {
-    ...typography.body,
-    fontWeight: '600',
-    marginBottom: spacing.md,
-  },
-  imagePreview: {
-    marginBottom: spacing.md,
-  },
-  image: {
-    width: '100%',
-    borderRadius,
-  },
-  removeImage: {
-    marginTop: spacing.xs,
-    alignSelf: 'flex-end',
-  },
-  removeImageText: {
-    ...typography.caption,
-  },
-  photoBtn: {
-    marginBottom: spacing.md,
-  },
-  newGoalBtn: {
-    marginTop: spacing.sm,
-  },
-});

@@ -1,8 +1,9 @@
 import React from 'react';
+import { useColorScheme } from 'react-native';
 import { NavigationContainer, NavigationContainerRef, DefaultTheme, DarkTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { useTheme } from 'tamagui';
 import { useAuth } from '../hooks/useAuth';
-import { useTheme } from '../utils/ThemeContext';
 import { LoadingSpinner } from '../components/LoadingSpinner';
 import { AuthNavigator } from './AuthNavigator';
 import { OnboardingNavigator } from './OnboardingNavigator';
@@ -34,14 +35,15 @@ interface RootNavigatorProps {
 
 export function RootNavigator({ navigationRef }: RootNavigatorProps) {
   const { loading, isAuthenticated, isNewUser } = useAuth();
-  const { isDark, colors } = useTheme();
+  const theme = useTheme();
+  const isDark = useColorScheme() === 'dark';
 
   const navTheme = isDark ? {
     ...DarkTheme,
-    colors: { ...DarkTheme.colors, background: colors.background, card: colors.surface, text: colors.text, border: colors.border },
+    colors: { ...DarkTheme.colors, background: theme.background.val, card: theme.surface.val, text: theme.color.val, border: theme.borderColor.val },
   } : {
     ...DefaultTheme,
-    colors: { ...DefaultTheme.colors, background: colors.background, card: colors.surface, text: colors.text, border: colors.border },
+    colors: { ...DefaultTheme.colors, background: theme.background.val, card: theme.surface.val, text: theme.color.val, border: theme.borderColor.val },
   };
 
   if (loading) {

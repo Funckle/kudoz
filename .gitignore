@@ -86,6 +86,7 @@ build/
 # Cache
 .cache/
 .turbo/
+.tamagui/
 
 # Temporary files
 tmp/

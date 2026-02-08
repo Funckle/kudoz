@@ -1,7 +1,6 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { TouchableOpacity, Text, StyleSheet } from 'react-native';
-import { typography, spacing, borderRadius } from '../utils/theme';
-import { useTheme } from '../utils/ThemeContext';
+import { TouchableOpacity } from 'react-native';
+import { Text, useTheme } from 'tamagui';
 import { useAuth } from '../hooks/useAuth';
 import { followUser, unfollowUser, checkFollowStatus } from '../services/follows';
 
@@ -11,7 +10,7 @@ interface FollowButtonProps {
 }
 
 export function FollowButton({ userId, compact }: FollowButtonProps) {
-  const { colors } = useTheme();
+  const theme = useTheme();
   const { user } = useAuth();
   const [isFollowing, setIsFollowing] = useState(false);
   const [isMutual, setIsMutual] = useState(false);
@@ -39,7 +38,6 @@ export function FollowButton({ userId, compact }: FollowButtonProps) {
     if (result.error) {
       setIsFollowing(wasFollowing);
     } else if (!wasFollowing) {
-      // Re-check mutual status
       const status = await checkFollowStatus(user.id, userId);
       setIsMutual(status.isMutual);
     } else {
@@ -54,32 +52,24 @@ export function FollowButton({ userId, compact }: FollowButtonProps) {
 
   return (
     <TouchableOpacity
-      style={[styles.button, isFollowing ? [styles.following, { backgroundColor: colors.background, borderColor: colors.border }] : { backgroundColor: colors.text }, compact && styles.compact]}
+      style={{
+        paddingHorizontal: compact ? 8 : 16,
+        paddingVertical: compact ? 4 : 6,
+        borderRadius: 8,
+        backgroundColor: isFollowing ? theme.background.val : theme.color.val,
+        borderWidth: isFollowing ? 1 : 0,
+        borderColor: isFollowing ? theme.borderColor.val : undefined,
+      }}
       onPress={handlePress}
       activeOpacity={0.7}
     >
-      <Text style={[styles.text, { color: isFollowing ? colors.text : colors.background }]}>
+      <Text
+        fontSize="$1"
+        fontWeight="600"
+        color={isFollowing ? theme.color.val : theme.background.val}
+      >
         {label}
       </Text>
     </TouchableOpacity>
   );
 }
-
-const styles = StyleSheet.create({
-  button: {
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.xs + 2,
-    borderRadius,
-  },
-  compact: {
-    paddingHorizontal: spacing.sm,
-    paddingVertical: spacing.xs,
-  },
-  following: {
-    borderWidth: 1,
-  },
-  text: {
-    ...typography.caption,
-    fontWeight: '600',
-  },
-});

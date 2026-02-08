@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useRef } from 'react';
-import { View, Text, FlatList, StyleSheet, RefreshControl, TouchableOpacity, TextInput, ActivityIndicator } from 'react-native';
+import { FlatList, RefreshControl, TouchableOpacity, TextInput, ActivityIndicator } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
+import { YStack, XStack, Text, useTheme } from 'tamagui';
 import { PostCard } from '../../components/PostCard';
 import { CommentItem } from '../../components/CommentItem';
 import { CommentInput, CommentInputHandle } from '../../components/CommentInput';
@@ -9,8 +10,6 @@ import { SubscriptionBanner } from '../../components/SubscriptionBanner';
 import { LoadingSpinner } from '../../components/LoadingSpinner';
 import { EmptyState } from '../../components/EmptyState';
 import { ErrorState } from '../../components/ErrorState';
-import { typography, spacing } from '../../utils/theme';
-import { useTheme } from '../../utils/ThemeContext';
 import { useAuth } from '../../hooks/useAuth';
 import { useSubscription } from '../../hooks/useSubscription';
 import { getFeedPosts } from '../../services/posts';
@@ -23,7 +22,7 @@ const COMMENTS_PAGE_SIZE = 10;
 export function FeedScreen({ navigation }: HomeScreenProps<'Feed'>) {
   const { user } = useAuth();
   const { isLapsed, canComment } = useSubscription();
-  const { colors } = useTheme();
+  const theme = useTheme();
   const [posts, setPosts] = useState<PostWithAuthor[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -160,7 +159,7 @@ export function FeedScreen({ navigation }: HomeScreenProps<'Feed'>) {
   if (error && posts.length === 0) return <ErrorState message={error} onRetry={() => loadPosts(0, true)} />;
 
   return (
-    <View style={styles.container}>
+    <YStack flex={1}>
       <FlatList
         ref={flatListRef}
         data={posts}
@@ -175,7 +174,7 @@ export function FeedScreen({ navigation }: HomeScreenProps<'Feed'>) {
           ) : null
         }
         renderItem={({ item }) => (
-          <View>
+          <YStack>
             <PostCard
               post={item}
               isExpanded={expandedPostId === item.id}
@@ -188,11 +187,21 @@ export function FeedScreen({ navigation }: HomeScreenProps<'Feed'>) {
               onDeleted={handleRefresh}
             />
             {expandedPostId === item.id && (
-              <View style={[styles.commentsSection, { backgroundColor: colors.surface }]}>
+              <YStack paddingHorizontal="$md" paddingBottom="$sm" backgroundColor="$surface">
                 {editingComment ? (
-                  <View style={styles.editBar}>
+                  <YStack marginBottom="$sm">
                     <TextInput
-                      style={[styles.editInput, { borderColor: colors.border, color: colors.text }]}
+                      style={{
+                        fontSize: 14,
+                        fontWeight: '400',
+                        borderWidth: 1,
+                        borderRadius: 8,
+                        paddingHorizontal: 8,
+                        paddingVertical: 6,
+                        maxHeight: 80,
+                        borderColor: theme.borderColor.val,
+                        color: theme.color.val,
+                      }}
                       value={editText}
                       onChangeText={setEditText}
                       autoFocus
@@ -201,15 +210,15 @@ export function FeedScreen({ navigation }: HomeScreenProps<'Feed'>) {
                       onSubmitEditing={handleSaveEdit}
                       onKeyPress={({ nativeEvent }) => { if (nativeEvent.key === 'Escape') handleCancelEdit(); }}
                     />
-                    <View style={styles.editActions}>
+                    <XStack justifyContent="flex-end" marginTop="$xs">
                       <TouchableOpacity onPress={handleCancelEdit}>
-                        <Text style={[styles.editCancel, { color: colors.textSecondary }]}>Cancel</Text>
+                        <Text fontSize="$2" marginRight="$md" color="$colorSecondary">Cancel</Text>
                       </TouchableOpacity>
                       <TouchableOpacity onPress={handleSaveEdit} disabled={!editText.trim()}>
-                        <Text style={[styles.editSave, { color: colors.text }]}>Save</Text>
+                        <Text fontSize="$2" fontWeight="600" color="$color">Save</Text>
                       </TouchableOpacity>
-                    </View>
-                  </View>
+                    </XStack>
+                  </YStack>
                 ) : (
                   <CommentInput
                     ref={commentInputRef}
@@ -221,15 +230,15 @@ export function FeedScreen({ navigation }: HomeScreenProps<'Feed'>) {
                     noBorder
                   />
                 )}
-                <View style={[styles.commentsSeparator, { backgroundColor: colors.border }]} />
+                <YStack height={1} marginHorizontal={-16} backgroundColor="$borderColor" />
                 {commentsLoading ? (
-                  <ActivityIndicator style={styles.commentsLoader} color={colors.textSecondary} />
+                  <ActivityIndicator style={{ paddingVertical: 16 }} color={theme.colorSecondary.val} />
                 ) : comments.length === 0 ? (
-                  <Text style={[styles.noComments, { color: colors.textSecondary }]}>No comments yet</Text>
+                  <Text fontSize="$1" textAlign="center" paddingVertical="$md" color="$colorSecondary">No comments yet</Text>
                 ) : (
                   <>
                     {visibleComments.map((comment, idx) => (
-                      <View key={comment.id} style={styles.commentContainer}>
+                      <YStack key={comment.id} paddingTop="$sm">
                         <CommentItem
                           comment={comment}
                           noBorder={idx === visibleComments.length - 1}
@@ -238,24 +247,24 @@ export function FeedScreen({ navigation }: HomeScreenProps<'Feed'>) {
                           onReport={(commentId) => setReportTarget({ visible: true, contentType: 'comment', contentId: commentId })}
                           onDeleted={handleCommentDeleted}
                         />
-                      </View>
+                      </YStack>
                     ))}
                     {hasMoreComments && (
                       <TouchableOpacity
-                        style={styles.loadMoreBtn}
+                        style={{ paddingVertical: 8, alignItems: 'center' }}
                         onPress={() => setVisibleCount((c) => c + COMMENTS_PAGE_SIZE)}
                       >
-                        <Text style={[styles.loadMoreText, { color: colors.textSecondary }]}>
+                        <Text fontSize="$1" color="$colorSecondary">
                           Show more comments ({comments.length - visibleCount} remaining)
                         </Text>
                       </TouchableOpacity>
                     )}
                   </>
                 )}
-                <View style={[styles.commentsSeparator, { backgroundColor: colors.border }]} />
-              </View>
+                <YStack height={1} marginHorizontal={-16} backgroundColor="$borderColor" />
+              </YStack>
             )}
-          </View>
+          </YStack>
         )}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
         onEndReached={handleLoadMore}
@@ -266,7 +275,7 @@ export function FeedScreen({ navigation }: HomeScreenProps<'Feed'>) {
             message="Follow others or create your first goal to get started."
           />
         }
-        style={[styles.list, { backgroundColor: colors.background }]}
+        style={{ flex: 1, backgroundColor: theme.background.val }}
         removeClippedSubviews
         maxToRenderPerBatch={5}
         windowSize={5}
@@ -277,65 +286,6 @@ export function FeedScreen({ navigation }: HomeScreenProps<'Feed'>) {
         contentId={reportTarget.contentId}
         onClose={() => setReportTarget({ visible: false, contentType: 'post', contentId: '' })}
       />
-    </View>
+    </YStack>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  list: {
-    flex: 1,
-  },
-  commentsSection: {
-    paddingHorizontal: spacing.md,
-    paddingBottom: spacing.sm,
-  },
-  commentsSeparator: {
-    height: 1,
-    marginHorizontal: -spacing.md,
-  },
-  commentsLoader: {
-    paddingVertical: spacing.md,
-  },
-  noComments: {
-    ...typography.caption,
-    textAlign: 'center',
-    paddingVertical: spacing.md,
-  },
-  commentContainer: {
-    paddingTop: spacing.sm,
-  },
-  loadMoreBtn: {
-    paddingVertical: spacing.sm,
-    alignItems: 'center',
-  },
-  loadMoreText: {
-    ...typography.caption,
-  },
-  editBar: {
-    marginBottom: spacing.sm,
-  },
-  editInput: {
-    ...typography.body,
-    borderWidth: 1,
-    borderRadius: 8,
-    paddingHorizontal: spacing.sm,
-    paddingVertical: spacing.xs + 2,
-    maxHeight: 80,
-  },
-  editActions: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    marginTop: spacing.xs,
-  },
-  editCancel: {
-    ...typography.body,
-    marginRight: spacing.md,
-  },
-  editSave: {
-    ...typography.body,
-    fontWeight: '600',
-  },
-});
