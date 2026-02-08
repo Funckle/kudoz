@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ScrollView, StyleSheet, Alert, TouchableOpacity, View } from 'react-native';
+import { ScrollView, StyleSheet, Alert, TouchableOpacity, View, KeyboardAvoidingView, Platform } from 'react-native';
 import { ScreenContainer } from '../../components/ScreenContainer';
 import { Avatar } from '../../components/Avatar';
 import { TextInput } from '../../components/TextInput';
@@ -83,6 +83,11 @@ export function EditProfileScreen({ navigation }: ProfileScreenProps<'EditProfil
 
   return (
     <ScreenContainer>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={styles.flex}
+        keyboardVerticalOffset={88}
+      >
       <ScrollView style={styles.container} keyboardShouldPersistTaps="handled">
         <View style={styles.avatarSection}>
           <TouchableOpacity onPress={handlePickAvatar}>
@@ -96,11 +101,13 @@ export function EditProfileScreen({ navigation }: ProfileScreenProps<'EditProfil
         <TextInput label="Website" value={website} onChangeText={setWebsite} keyboardType="url" autoCapitalize="none" />
         <Button title="Save" onPress={handleSave} loading={saving} />
       </ScrollView>
+      </KeyboardAvoidingView>
     </ScreenContainer>
   );
 }
 
 const styles = StyleSheet.create({
+  flex: { flex: 1 },
   container: { flex: 1, padding: spacing.md },
   avatarSection: { alignItems: 'center', marginBottom: spacing.lg },
   photoBtn: { marginTop: spacing.sm },
