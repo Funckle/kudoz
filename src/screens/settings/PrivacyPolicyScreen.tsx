@@ -126,7 +126,7 @@ export function PrivacyPolicyScreen() {
 
         <Text fontSize="$4" fontWeight="600" color="$color" marginTop="$lg" marginBottom="$xs">Account deletion and suspension</Text>
         <Text fontSize="$2" color="$colorSecondary" lineHeight={22} marginBottom="$sm">
-          If you delete your account: You can permanently delete your account from Settings. This removes your profile, goals, posts, comments, reactions, uploaded images, follow connections, and notification history. Account deletion is permanent and irreversible. We don't retain your data after deletion.
+          If you delete your account: You can permanently delete your account from Settings. This removes your profile, goals, posts, comments, reactions, uploaded images, follow connections, and notification history. Account deletion is permanent and irreversible. We retain a minimal record that your account was deleted (user ID and deletion date) for legal compliance purposes, but all your content, profile, and personal data is permanently removed.
         </Text>
         <Text fontSize="$2" color="$colorSecondary" lineHeight={22} marginBottom="$sm">
           If we suspend your account: If your account is suspended for violating our Terms & Conditions, your account is disabled and you can't log in or interact. Your data is retained during the suspension. You can appeal a suspension by contacting us — if the decision is reversed, your account is restored.
