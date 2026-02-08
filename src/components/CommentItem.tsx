@@ -20,7 +20,7 @@ interface CommentItemProps {
   noBorder?: boolean;
 }
 
-export function CommentItem({ comment, depth = 0, parentUsername, onReply, onEdit, onReport, onDeleted, noBorder }: CommentItemProps) {
+export const CommentItem = React.memo(function CommentItem({ comment, depth = 0, parentUsername, onReply, onEdit, onReport, onDeleted, noBorder }: CommentItemProps) {
   const { user } = useAuth();
   const { colors } = useTheme();
   const isOwner = user?.id === comment.user_id;
@@ -124,7 +124,7 @@ export function CommentItem({ comment, depth = 0, parentUsername, onReply, onEdi
       )}
     </View>
   );
-}
+});
 
 const styles = StyleSheet.create({
   row: {

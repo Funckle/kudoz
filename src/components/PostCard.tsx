@@ -22,7 +22,7 @@ interface PostCardProps {
   isExpanded?: boolean;
 }
 
-export function PostCard({
+export const PostCard = React.memo(function PostCard({
   post,
   onPressAuthor,
   onPressGoal,
@@ -147,7 +147,16 @@ export function PostCard({
       </View>
     </TouchableOpacity>
   );
-}
+}, (prev, next) => {
+  // Custom comparator: skip function props, only compare data that affects rendering
+  return prev.post.id === next.post.id
+    && prev.post.kudoz_count === next.post.kudoz_count
+    && prev.post.comment_count === next.post.comment_count
+    && prev.post.has_kudozd === next.post.has_kudozd
+    && prev.post.edited_at === next.post.edited_at
+    && prev.post.content === next.post.content
+    && prev.isExpanded === next.isExpanded;
+});
 
 const styles = StyleSheet.create({
   card: {

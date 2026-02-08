@@ -267,7 +267,9 @@ export function FeedScreen({ navigation }: HomeScreenProps<'Feed'>) {
           />
         }
         style={[styles.list, { backgroundColor: colors.background }]}
-        removeClippedSubviews={false}
+        removeClippedSubviews
+        maxToRenderPerBatch={5}
+        windowSize={5}
       />
       <ReportModal
         visible={reportTarget.visible}
