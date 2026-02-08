@@ -58,7 +58,7 @@ export function PrivacyPolicyScreen() {
           {'\u2022'} Display your profile, goals, and posts to other users based on your visibility settings{'\n'}
           {'\u2022'} Show you a chronological feed of people you follow{'\n'}
           {'\u2022'} Send you push notifications about activity on your posts (if enabled){'\n'}
-          {'\u2022'} Enforce community guidelines through moderation{'\n'}
+          {'\u2022'} Enforce community guidelines through automated content screening and manual moderation (see Third-party services){'\n'}
           {'\u2022'} Improve the app based on aggregate, anonymous usage patterns
         </Text>
 
@@ -101,7 +101,13 @@ export function PrivacyPolicyScreen() {
           <Text fontSize="$2" color="$link" marginBottom="$sm">Expo Privacy Policy</Text>
         </TouchableOpacity>
         <Text fontSize="$2" color="$colorSecondary" lineHeight={22} marginBottom="$sm">
-          We don't share your data with any other third parties.
+          OpenAI — Automated content safety screening. Text of posts, comments, and goal descriptions; image URLs (when images are attached to posts). Content is sent to OpenAI's moderation endpoint for safety classification only — it is not used for AI training.
+        </Text>
+        <TouchableOpacity onPress={() => Linking.openURL('https://openai.com/privacy')}>
+          <Text fontSize="$2" color="$link" marginBottom="$sm">OpenAI Privacy Policy</Text>
+        </TouchableOpacity>
+        <Text fontSize="$2" color="$colorSecondary" lineHeight={22} marginBottom="$sm">
+          We don't share your data with any other third parties. You can review each provider's own privacy policy through the links above.
         </Text>
 
         <Text fontSize="$4" fontWeight="600" color="$color" marginTop="$lg" marginBottom="$xs">Your visibility settings</Text>

@@ -64,7 +64,7 @@ export function TermsScreen() {
         <Text fontSize="$3" fontWeight="600" color="$color" marginTop="$sm" marginBottom="$xs">What's welcome</Text>
         <Text fontSize="$2" color="$colorSecondary" lineHeight={22} marginBottom="$sm">
           {'\u2022'} Goals about personal growth, fitness, health, learning, finance, career, habits, creativity, or life milestones{'\n'}
-          {'\u2022'} Honest progress updates — including setbacks{'\n'}
+          {'\u2022'} Honest progress updates — including setbacks ("missed this week, but back at it"){'\n'}
           {'\u2022'} Supportive comments and encouragement
         </Text>
         <Text fontSize="$3" fontWeight="600" color="$color" marginTop="$sm" marginBottom="$xs">What's not allowed</Text>
@@ -74,10 +74,15 @@ export function TermsScreen() {
           {'\u2022'} Impersonation of another person{'\n'}
           {'\u2022'} Sexually explicit or violent content{'\n'}
           {'\u2022'} Content promoting illegal activity{'\n'}
-          {'\u2022'} Off-topic content that isn't related to personal goals or progress
+          {'\u2022'} Off-topic content that isn't related to personal goals or progress (political debates, religious arguments, etc.)
         </Text>
         <Text fontSize="$2" color="$colorSecondary" lineHeight={22} marginBottom="$sm">
           Content that violates these rules may be removed. Repeated violations may result in account suspension. Continued violations after suspension may lead to permanent termination of your account and deletion of all your data.
+        </Text>
+
+        <Text fontSize="$3" fontWeight="600" color="$color" marginTop="$sm" marginBottom="$xs">Automated content screening</Text>
+        <Text fontSize="$2" color="$colorSecondary" lineHeight={22} marginBottom="$sm">
+          Kudoz uses AI-powered content screening to detect harmful content — such as hate speech, harassment, threats, and inappropriate images — before it's posted. If your content is flagged, you'll see a message and can revise it before resubmitting. This screening classifies intent, not individual words, so normal language (including casual profanity) is allowed. Automated screening is one layer of our moderation — it doesn't catch everything, which is why we also have manual reporting.
         </Text>
 
         <Text fontSize="$3" fontWeight="600" color="$color" marginTop="$sm" marginBottom="$xs">Character limits</Text>
@@ -103,13 +108,13 @@ export function TermsScreen() {
           {'\u2022'} By posting on Kudoz, you grant us a license to display your content to other users according to your visibility settings, and to store it on our servers. By using Kudoz, you agree to this license{'\n'}
           {'\u2022'} This license ends when you delete your content or your account{'\n'}
           {'\u2022'} We don't claim ownership of anything you create{'\n'}
-          {'\u2022'} We don't use your content to train AI models or sell to third parties
+          {'\u2022'} We don't use your content to train AI models or sell to third parties. (Content is sent to OpenAI's moderation endpoint for safety screening only — see our Privacy Policy for details.)
         </Text>
 
         <Text fontSize="$3" fontWeight="600" color="$color" marginTop="$sm" marginBottom="$xs">Editing and deleting your content</Text>
         <Text fontSize="$2" color="$colorSecondary" lineHeight={22} marginBottom="$sm">
           {'\u2022'} Goals: You can edit the title, description, and target at any time. You cannot change a goal's type (currency, count, or milestone) after creation. Deleting a goal removes all its associated posts.{'\n'}
-          {'\u2022'} Progress posts: You can edit the text and image at any time. You cannot edit the progress value after posting — deleting the post reverses it instead.{'\n'}
+          {'\u2022'} Progress posts: You can edit the text and image at any time. You cannot edit the progress value (the amount added or deducted) after posting — deleting the post reverses it instead.{'\n'}
           {'\u2022'} Comments: You can edit a comment within 5 minutes of posting, as long as no one has replied to it. You can delete a comment at any time.
         </Text>
 
@@ -136,7 +141,7 @@ export function TermsScreen() {
           We reserve the right to:{'\n\n'}
           {'\u2022'} Remove content that violates these terms{'\n'}
           {'\u2022'} Suspend or terminate accounts for repeated or severe violations{'\n'}
-          {'\u2022'} Rate-limit posting to prevent spam{'\n'}
+          {'\u2022'} Rate-limit posting to prevent spam (e.g., brief cooldown after rapid posting){'\n'}
           {'\u2022'} Modify, update, or discontinue features of the app{'\n'}
           {'\u2022'} Change pricing for future subscriptions (existing subscribers keep their current rate until renewal)
         </Text>
@@ -168,9 +173,9 @@ export function TermsScreen() {
         <Text fontSize="$4" fontWeight="600" color="$color" marginTop="$lg" marginBottom="$xs">Suspension and termination</Text>
         <Text fontSize="$2" color="$colorSecondary" lineHeight={22} marginBottom="$sm">
           {'\u2022'} You can delete your account at any time from Settings{'\n'}
-          {'\u2022'} We may suspend your account for violating these terms. A suspended account is disabled — you can't log in or interact, but your data is retained. You can appeal by contacting us{'\n'}
+          {'\u2022'} We may suspend your account for violating these terms. A suspended account is disabled — you can't log in or interact, but your data is retained. You can appeal a suspension by contacting us{'\n'}
           {'\u2022'} For repeated or severe violations, we may permanently terminate your account. On termination, your content is permanently deleted (see our Privacy Policy){'\n'}
-          {'\u2022'} Suspension comes before termination — we won't delete your data without giving you a chance to appeal, except in cases of severe violations
+          {'\u2022'} Suspension comes before termination — we won't delete your data without giving you a chance to appeal, except in cases of severe violations (e.g., illegal content)
         </Text>
 
         <Text fontSize="$4" fontWeight="600" color="$color" marginTop="$lg" marginBottom="$xs">Changes to these terms</Text>
