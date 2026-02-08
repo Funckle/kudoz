@@ -115,7 +115,7 @@ export function PostCard({
         <Image
           source={{ uri: post.media_url }}
           style={[styles.image, { aspectRatio: (post.media_width || 1) / (post.media_height || 1) }]}
-          resizeMode="cover"
+          resizeMode="contain"
         />
       )}
 
@@ -196,7 +196,6 @@ const styles = StyleSheet.create({
     width: '100%',
     borderRadius,
     marginBottom: spacing.sm,
-    maxHeight: 300,
   },
   edited: {
     ...typography.caption,
