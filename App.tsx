@@ -1,3 +1,4 @@
+import '@tamagui/native/setup-zeego';
 import React, { useEffect, useRef } from 'react';
 import { Platform, useColorScheme } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
@@ -74,12 +75,12 @@ function AppInner() {
 
 export default function App() {
   const colorScheme = useColorScheme();
-  const isDark = colorScheme === 'dark';
+  const themeName = colorScheme === 'dark' ? 'dark' : 'light';
 
   return (
-    <TamaguiProvider config={config} defaultTheme={isDark ? 'dark' : 'light'}>
-      <Theme name={isDark ? 'dark' : 'light'}>
-        <YStack flex={1} alignItems="center" backgroundColor={isDark ? '#000000' : '#F5F5F5'}>
+    <TamaguiProvider config={config} defaultTheme="light">
+      <Theme name={themeName}>
+        <YStack flex={1} alignItems="center" backgroundColor={themeName === 'dark' ? '#000000' : '#F5F5F5'}>
           <YStack
             flex={1}
             width="100%"
@@ -90,7 +91,7 @@ export default function App() {
             <QueryClientProvider client={queryClient}>
               <SafeAreaProvider>
                 <AppInner />
-                <StatusBar style={isDark ? 'light' : 'dark'} />
+                <StatusBar style={themeName === 'dark' ? 'light' : 'dark'} />
               </SafeAreaProvider>
             </QueryClientProvider>
           </YStack>
