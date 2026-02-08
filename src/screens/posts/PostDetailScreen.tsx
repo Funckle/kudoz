@@ -157,10 +157,11 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   content: {
-    flexGrow: 1,
+    paddingBottom: spacing.md,
   },
   commentContainer: {
     paddingHorizontal: spacing.md,
+    paddingTop: spacing.sm,
   },
   editBar: {
     borderTopWidth: 1,

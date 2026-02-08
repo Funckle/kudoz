@@ -133,20 +133,18 @@ export function CreatePostScreen({ route, navigation }: CreateScreenProps<'Creat
   if (!selectedGoal) {
     return (
       <ScreenContainer>
-        <View style={styles.container}>
+        <ScrollView style={styles.container} contentContainerStyle={styles.scrollContent}>
           <Text style={[styles.title, { color: colors.text }]}>Select a goal</Text>
-          <ScrollView>
-            {goals.map((goal) => (
-              <GoalCard key={goal.id} goal={goal} onPress={() => setSelectedGoal(goal)} />
-            ))}
-          </ScrollView>
+          {goals.map((goal) => (
+            <GoalCard key={goal.id} goal={goal} onPress={() => setSelectedGoal(goal)} />
+          ))}
           <Button
             title="Create new goal"
             onPress={() => navigation.navigate('CreateGoal')}
             variant="secondary"
             style={styles.newGoalBtn}
           />
-        </View>
+        </ScrollView>
       </ScreenContainer>
     );
   }
@@ -201,6 +199,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: spacing.md,
+  },
+  scrollContent: {
+    paddingBottom: spacing.xl,
   },
   title: {
     ...typography.title,

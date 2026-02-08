@@ -25,6 +25,9 @@ npm-debug.log
 yarn-error.log
 yarn.log
 
+# Metro
+.metro-health-check*
+
 # React Native
 *.jks
 *.p8

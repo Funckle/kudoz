@@ -11,17 +11,19 @@ import type { CommentWithAuthor } from '../types/database';
 interface CommentItemProps {
   comment: CommentWithAuthor;
   depth?: number;
+  parentUsername?: string;
   onReply?: (commentId: string, username: string) => void;
   onEdit?: (comment: CommentWithAuthor) => void;
   onReport?: (commentId: string) => void;
   onDeleted?: () => void;
 }
 
-export function CommentItem({ comment, depth = 0, onReply, onEdit, onReport, onDeleted }: CommentItemProps) {
+export function CommentItem({ comment, depth = 0, parentUsername, onReply, onEdit, onReport, onDeleted }: CommentItemProps) {
   const { user } = useAuth();
   const { colors } = useTheme();
   const isOwner = user?.id === comment.user_id;
-  const indent = depth > 0 ? 24 : 0;
+  const showReplyingTo = depth >= 2 && parentUsername;
+  const hasReplies = comment.replies && comment.replies.length > 0;
 
   const formatDate = (dateStr: string) => {
     const diffMs = Date.now() - new Date(dateStr).getTime();
@@ -54,7 +56,10 @@ export function CommentItem({ comment, depth = 0, onReply, onEdit, onReport, onD
   };
 
   return (
-    <View style={[styles.container, { marginLeft: indent }, depth === 0 && { borderBottomWidth: 1, borderBottomColor: colors.border }]}>
+    <View style={[
+      depth === 0 && { borderBottomWidth: 1, borderBottomColor: colors.border, paddingBottom: spacing.sm, marginBottom: spacing.sm },
+    ]}>
+      {/* Comment content */}
       <View style={styles.row}>
         <Avatar uri={comment.user?.avatar_url} name={comment.user?.name} size={32} />
         <View style={styles.body}>
@@ -63,14 +68,15 @@ export function CommentItem({ comment, depth = 0, onReply, onEdit, onReport, onD
             <Text style={[styles.time, { color: colors.textSecondary }]}>{formatDate(comment.created_at)}</Text>
             {comment.updated_at && <Text style={[styles.edited, { color: colors.textSecondary }]}>(edited)</Text>}
           </View>
+          {showReplyingTo && (
+            <Text style={[styles.replyingTo, { color: colors.textSecondary }]}>replying to @{parentUsername}</Text>
+          )}
           <Text style={[styles.content, { color: colors.text }]}>{comment.content}</Text>
           <View style={styles.actions}>
-            {depth < 2 && (
-              <TouchableOpacity style={styles.actionBtn} onPress={() => onReply?.(comment.id, comment.user?.username || '')}>
-                <Reply size={13} color={colors.textSecondary} />
-                <Text style={[styles.actionText, { color: colors.textSecondary }]}>Reply</Text>
-              </TouchableOpacity>
-            )}
+            <TouchableOpacity style={styles.actionBtn} onPress={() => onReply?.(comment.id, comment.user?.username || '')}>
+              <Reply size={13} color={colors.textSecondary} />
+              <Text style={[styles.actionText, { color: colors.textSecondary }]}>Reply</Text>
+            </TouchableOpacity>
             {canEdit() && (
               <TouchableOpacity style={styles.actionBtn} onPress={() => onEdit?.(comment)}>
                 <Pencil size={13} color={colors.textSecondary} />
@@ -92,28 +98,31 @@ export function CommentItem({ comment, depth = 0, onReply, onEdit, onReport, onD
           </View>
         </View>
       </View>
-      {comment.replies?.map((reply) => (
-        <CommentItem
-          key={reply.id}
-          comment={reply}
-          depth={depth + 1}
-          onReply={onReply}
-          onEdit={onEdit}
-          onReport={onReport}
-          onDeleted={onDeleted}
-        />
-      ))}
+      {/* Replies — indented once with thread line, no extra nesting */}
+      {hasReplies && (
+        <View style={[styles.repliesContainer, { marginLeft: depth === 0 ? 24 : 0, borderLeftColor: colors.borderLight }]}>
+          {comment.replies!.map((reply) => (
+            <CommentItem
+              key={reply.id}
+              comment={reply}
+              depth={depth + 1}
+              parentUsername={comment.user?.username}
+              onReply={onReply}
+              onEdit={onEdit}
+              onReport={onReport}
+              onDeleted={onDeleted}
+            />
+          ))}
+        </View>
+      )}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    paddingBottom: spacing.md,
-    marginBottom: spacing.md,
-  },
   row: {
     flexDirection: 'row',
+    marginBottom: spacing.xs,
   },
   body: {
     flex: 1,
@@ -136,6 +145,11 @@ const styles = StyleSheet.create({
     fontStyle: 'italic',
     marginLeft: spacing.xs,
   },
+  replyingTo: {
+    ...typography.caption,
+    fontStyle: 'italic',
+    marginTop: 1,
+  },
   content: {
     ...typography.body,
     marginTop: 2,
@@ -152,5 +166,10 @@ const styles = StyleSheet.create({
   actionText: {
     ...typography.caption,
     marginLeft: 4,
+  },
+  repliesContainer: {
+    borderLeftWidth: 2,
+    paddingLeft: spacing.sm,
+    marginTop: spacing.xs,
   },
 });

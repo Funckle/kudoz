@@ -6,28 +6,35 @@ import { Button } from '../../components/Button';
 import { typography, spacing } from '../../utils/theme';
 import { useTheme } from '../../utils/ThemeContext';
 import { validateEmail } from '../../utils/validation';
-import { sendMagicLink } from '../../services/auth';
+import { sendMagicLink, signInWithPassword } from '../../services/auth';
 import type { AuthScreenProps } from '../../types/navigation';
 
 export function SignInScreen({ navigation }: AuthScreenProps<'SignIn'>) {
   const { colors } = useTheme();
   const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const handleSendLink = async () => {
+  const handleSignIn = async () => {
     if (!validateEmail(email)) {
       setError('Please enter a valid email');
       return;
     }
     setError('');
     setLoading(true);
-    const result = await sendMagicLink(email);
-    setLoading(false);
-    if (result.error) {
-      setError(result.error);
+    if (password) {
+      const result = await signInWithPassword(email, password);
+      setLoading(false);
+      if (result.error) setError(result.error);
     } else {
-      navigation.navigate('MagicLinkSent', { email });
+      const result = await sendMagicLink(email);
+      setLoading(false);
+      if (result.error) {
+        setError(result.error);
+      } else {
+        navigation.navigate('MagicLinkSent', { email });
+      }
     }
   };
 
@@ -50,9 +57,16 @@ export function SignInScreen({ navigation }: AuthScreenProps<'SignIn'>) {
             autoCapitalize="none"
             autoCorrect={false}
           />
+          <TextInput
+            label="Password (optional)"
+            placeholder="Leave empty for magic link"
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry
+          />
           <Button
-            title="Send magic link"
-            onPress={handleSendLink}
+            title={password ? "Sign in" : "Send magic link"}
+            onPress={handleSignIn}
             loading={loading}
             disabled={!email.trim()}
           />

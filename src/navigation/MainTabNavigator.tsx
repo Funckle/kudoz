@@ -84,7 +84,7 @@ const ProfileStack = createNativeStackNavigator<ProfileStackParamList>();
 function ProfileStackNavigator() {
   return (
     <ProfileStack.Navigator>
-      <ProfileStack.Screen name="Profile" component={ProfileScreen} options={{ headerShown: false }} />
+      <ProfileStack.Screen name="Profile" component={ProfileScreen} options={{ title: 'Profile' }} />
       <ProfileStack.Screen name="EditProfile" component={EditProfileScreen} options={{ title: 'Edit Profile' }} />
       <ProfileStack.Screen name="GoalDetail" component={GoalDetailScreen} options={{ title: 'Goal' }} />
       <ProfileStack.Screen name="Settings" component={SettingsScreen} />

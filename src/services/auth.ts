@@ -2,6 +2,12 @@ import { supabase } from './supabase';
 import { getAuthRedirectUrl } from './linking';
 import type { User } from '../types/database';
 
+export async function signInWithPassword(email: string, password: string): Promise<{ error?: string }> {
+  const { error } = await supabase.auth.signInWithPassword({ email, password });
+  if (error) return { error: error.message };
+  return {};
+}
+
 export async function sendMagicLink(email: string): Promise<{ error?: string }> {
   const { error } = await supabase.auth.signInWithOtp({
     email,
