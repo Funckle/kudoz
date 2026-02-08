@@ -1,4 +1,5 @@
 import { supabase } from './supabase';
+import { moderateContent } from './moderation';
 import type { Post, PostWithAuthor, Category } from '../types/database';
 
 async function enrichWithCategories(posts: PostWithAuthor[]): Promise<PostWithAuthor[]> {
@@ -33,6 +34,11 @@ export async function createPost(data: {
   media_height?: number;
   media_size_bytes?: number;
 }): Promise<{ post?: Post; error?: string }> {
+  const moderation = await moderateContent(data.content, data.media_url);
+  if (!moderation.allowed) {
+    return { error: moderation.reason || 'This content may contain harmful language. Please revise and try again.' };
+  }
+
   const { data: post, error } = await supabase
     .from('posts')
     .insert(data)
@@ -40,9 +46,6 @@ export async function createPost(data: {
     .single();
 
   if (error) {
-    if (error.message.includes('inappropriate language')) {
-      return { error: 'Please keep your post content friendly' };
-    }
     return { error: error.message };
   }
 
@@ -71,14 +74,16 @@ export async function updatePost(
   postId: string,
   data: Partial<Pick<Post, 'content' | 'media_url' | 'media_type' | 'media_width' | 'media_height' | 'media_size_bytes'>>
 ): Promise<{ error?: string }> {
+  const moderation = await moderateContent(data.content, data.media_url);
+  if (!moderation.allowed) {
+    return { error: moderation.reason || 'This content may contain harmful language. Please revise and try again.' };
+  }
+
   const { error } = await supabase
     .from('posts')
     .update({ ...data, edited_at: new Date().toISOString(), updated_at: new Date().toISOString() })
     .eq('id', postId);
   if (error) {
-    if (error.message.includes('inappropriate language')) {
-      return { error: 'Please keep your post content friendly' };
-    }
     return { error: error.message };
   }
   return {};

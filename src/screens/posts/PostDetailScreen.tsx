@@ -1,14 +1,13 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { View, Text, FlatList, StyleSheet, KeyboardAvoidingView, Platform, TouchableOpacity, TextInput } from 'react-native';
+import { Alert, FlatList, KeyboardAvoidingView, Platform, TouchableOpacity, TextInput } from 'react-native';
 import { useHeaderHeight } from '@react-navigation/elements';
+import { YStack, XStack, Text, useTheme } from 'tamagui';
 import { PostCard } from '../../components/PostCard';
 import { CommentItem } from '../../components/CommentItem';
 import { CommentInput, CommentInputHandle } from '../../components/CommentInput';
 import { ReportModal } from '../../components/ReportModal';
 import { LoadingSpinner } from '../../components/LoadingSpinner';
 import { ErrorState } from '../../components/ErrorState';
-import { typography, spacing } from '../../utils/theme';
-import { useTheme } from '../../utils/ThemeContext';
 import { useAuth } from '../../hooks/useAuth';
 import { useSubscription } from '../../hooks/useSubscription';
 import { getPost } from '../../services/posts';
@@ -19,7 +18,7 @@ import type { HomeScreenProps } from '../../types/navigation';
 export function PostDetailScreen({ route, navigation }: HomeScreenProps<'PostDetail'>) {
   const { postId } = route.params;
   const { user } = useAuth();
-  const { colors } = useTheme();
+  const theme = useTheme();
   const { canComment } = useSubscription();
   const [post, setPost] = useState<PostWithAuthor | null>(null);
   const [comments, setComments] = useState<CommentWithAuthor[]>([]);
@@ -56,6 +55,8 @@ export function PostDetailScreen({ route, navigation }: HomeScreenProps<'PostDet
     if (!result.error) {
       setReplyTo(null);
       loadData();
+    } else {
+      Alert.alert('Error', result.error);
     }
   };
 
@@ -86,7 +87,7 @@ export function PostDetailScreen({ route, navigation }: HomeScreenProps<'PostDet
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      style={[styles.container, { backgroundColor: colors.background }]}
+      style={{ flex: 1, backgroundColor: theme.background.val }}
       keyboardVerticalOffset={headerHeight}
     >
       <FlatList
@@ -103,7 +104,7 @@ export function PostDetailScreen({ route, navigation }: HomeScreenProps<'PostDet
           />
         }
         renderItem={({ item }) => (
-          <View style={styles.commentContainer}>
+          <YStack paddingHorizontal="$md" paddingTop="$sm">
             <CommentItem
               comment={item}
               onReply={(id, username) => { setReplyTo({ id, username }); commentInputRef.current?.focus(); }}
@@ -111,14 +112,24 @@ export function PostDetailScreen({ route, navigation }: HomeScreenProps<'PostDet
               onReport={(commentId) => setReportTarget({ visible: true, contentType: 'comment', contentId: commentId })}
               onDeleted={loadData}
             />
-          </View>
+          </YStack>
         )}
-        contentContainerStyle={styles.content}
+        contentContainerStyle={{ paddingBottom: 16 }}
       />
       {editingComment ? (
-        <View style={[styles.editBar, { borderTopColor: colors.border, backgroundColor: colors.surface }]}>
+        <YStack borderTopWidth={1} borderTopColor="$borderColor" backgroundColor="$surface" padding="$sm">
           <TextInput
-            style={[styles.editInput, { borderColor: colors.border, color: colors.text }]}
+            style={{
+              fontSize: 14,
+              fontWeight: '400',
+              borderWidth: 1,
+              borderRadius: 8,
+              paddingHorizontal: 8,
+              paddingVertical: 6,
+              maxHeight: 80,
+              borderColor: theme.borderColor.val,
+              color: theme.color.val,
+            }}
             value={editText}
             onChangeText={setEditText}
             autoFocus
@@ -127,15 +138,15 @@ export function PostDetailScreen({ route, navigation }: HomeScreenProps<'PostDet
             onSubmitEditing={handleSaveEdit}
             onKeyPress={({ nativeEvent }) => { if (nativeEvent.key === 'Escape') handleCancelEdit(); }}
           />
-          <View style={styles.editActions}>
+          <XStack justifyContent="flex-end" marginTop="$xs">
             <TouchableOpacity onPress={handleCancelEdit}>
-              <Text style={[styles.editCancel, { color: colors.textSecondary }]}>Cancel</Text>
+              <Text fontSize="$2" marginRight="$md" color="$colorSecondary">Cancel</Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={handleSaveEdit} disabled={!editText.trim()}>
-              <Text style={[styles.editSave, { color: colors.text }]}>Save</Text>
+              <Text fontSize="$2" fontWeight="600" color="$color">Save</Text>
             </TouchableOpacity>
-          </View>
-        </View>
+          </XStack>
+        </YStack>
       ) : (
         <CommentInput
           ref={commentInputRef}
@@ -155,41 +166,3 @@ export function PostDetailScreen({ route, navigation }: HomeScreenProps<'PostDet
     </KeyboardAvoidingView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  content: {
-    paddingBottom: spacing.md,
-  },
-  commentContainer: {
-    paddingHorizontal: spacing.md,
-    paddingTop: spacing.sm,
-  },
-  editBar: {
-    borderTopWidth: 1,
-    padding: spacing.sm,
-  },
-  editInput: {
-    ...typography.body,
-    borderWidth: 1,
-    borderRadius: 8,
-    paddingHorizontal: spacing.sm,
-    paddingVertical: spacing.xs + 2,
-    maxHeight: 80,
-  },
-  editActions: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    marginTop: spacing.xs,
-  },
-  editCancel: {
-    ...typography.body,
-    marginRight: spacing.md,
-  },
-  editSave: {
-    ...typography.body,
-    fontWeight: '600',
-  },
-});

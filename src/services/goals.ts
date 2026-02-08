@@ -1,4 +1,5 @@
 import { supabase } from './supabase';
+import { moderateContent } from './moderation';
 import type { Goal, GoalWithCategories, GoalStatus, Category } from '../types/database';
 
 export async function createGoal(data: {
@@ -13,6 +14,11 @@ export async function createGoal(data: {
   visibility: Goal['visibility'];
   category_ids: string[];
 }): Promise<{ goal?: Goal; error?: string }> {
+  const moderation = await moderateContent([data.title, data.description].join('\n'));
+  if (!moderation.allowed) {
+    return { error: moderation.reason || 'This content may contain harmful language. Please revise and try again.' };
+  }
+
   const { category_ids, ...goalData } = data;
 
   const { data: goal, error } = await supabase
@@ -22,9 +28,6 @@ export async function createGoal(data: {
     .single();
 
   if (error) {
-    if (error.message.includes('inappropriate language')) {
-      return { error: 'Please keep your goal content friendly' };
-    }
     return { error: error.message };
   }
 
@@ -50,11 +53,16 @@ export async function updateGoal(
   goalId: string,
   data: Partial<Pick<Goal, 'title' | 'description' | 'target_value' | 'stakes' | 'effort_label' | 'effort_target' | 'visibility'>>
 ): Promise<{ error?: string }> {
+  const textParts = [data.title, data.description].filter(Boolean);
+  if (textParts.length > 0) {
+    const moderation = await moderateContent(textParts.join('\n'));
+    if (!moderation.allowed) {
+      return { error: moderation.reason || 'This content may contain harmful language. Please revise and try again.' };
+    }
+  }
+
   const { error } = await supabase.from('goals').update(data).eq('id', goalId);
   if (error) {
-    if (error.message.includes('inappropriate language')) {
-      return { error: 'Please keep your goal content friendly' };
-    }
     return { error: error.message };
   }
   return {};

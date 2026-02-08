@@ -1,6 +1,6 @@
 import { supabase } from './supabase';
+import { moderateContent } from './moderation';
 import type { Comment, CommentWithAuthor } from '../types/database';
-import { checkContent } from '../utils/moderation';
 
 export async function createComment(data: {
   user_id: string;
@@ -8,10 +8,9 @@ export async function createComment(data: {
   content: string;
   parent_comment_id?: string;
 }): Promise<{ comment?: Comment; error?: string }> {
-  // Check bad words
-  const modResult = checkContent(data.content);
-  if (!modResult.clean) {
-    return { error: 'Please keep your comment friendly' };
+  const moderation = await moderateContent(data.content);
+  if (!moderation.allowed) {
+    return { error: moderation.reason || 'This content may contain harmful language. Please revise and try again.' };
   }
 
   const { data: comment, error } = await supabase
@@ -23,9 +22,6 @@ export async function createComment(data: {
   if (error) {
     if (error.message.includes('subscription_status')) {
       return { error: 'Commenting is a paid feature. Upgrade to join the conversation!' };
-    }
-    if (error.message.includes('inappropriate language')) {
-      return { error: 'Please keep your comment friendly' };
     }
     return { error: error.message };
   }
@@ -63,9 +59,9 @@ export async function updateComment(
     return { error: 'Cannot edit a comment with replies' };
   }
 
-  const modResult = checkContent(content);
-  if (!modResult.clean) {
-    return { error: 'Please keep your comment friendly' };
+  const moderation = await moderateContent(content);
+  if (!moderation.allowed) {
+    return { error: moderation.reason || 'This content may contain harmful language. Please revise and try again.' };
   }
 
   const { error } = await supabase
@@ -74,9 +70,6 @@ export async function updateComment(
     .eq('id', commentId);
 
   if (error) {
-    if (error.message.includes('inappropriate language')) {
-      return { error: 'Please keep your comment friendly' };
-    }
     return { error: error.message };
   }
   return {};
