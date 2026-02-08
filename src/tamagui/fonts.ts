@@ -1,7 +1,7 @@
 import { createFont } from 'tamagui';
 
 export const systemFont = createFont({
-  family: 'System',
+  family: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
   size: {
     1: 12,  // caption
     2: 14,  // body
