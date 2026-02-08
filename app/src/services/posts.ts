@@ -1,5 +1,25 @@
 import { supabase } from './supabase';
-import type { Post, PostWithAuthor } from '../types/database';
+import type { Post, PostWithAuthor, Category } from '../types/database';
+
+async function enrichWithCategories(posts: PostWithAuthor[]): Promise<PostWithAuthor[]> {
+  if (posts.length === 0) return posts;
+  const goalIds = [...new Set(posts.map((p) => p.goal_id))];
+  const { data: goalCats } = await supabase
+    .from('goal_categories')
+    .select('goal_id, categories(*)')
+    .in('goal_id', goalIds);
+
+  const catMap = new Map<string, Category[]>();
+  for (const gc of (goalCats || []) as Array<{ goal_id: string; categories: Category }>) {
+    if (gc.categories) {
+      const existing = catMap.get(gc.goal_id) || [];
+      existing.push(gc.categories);
+      catMap.set(gc.goal_id, existing);
+    }
+  }
+
+  return posts.map((p) => ({ ...p, categories: catMap.get(p.goal_id) || [] }));
+}
 
 export async function createPost(data: {
   user_id: string;
@@ -28,7 +48,6 @@ export async function createPost(data: {
 
   // Update goal progress if progress_value provided
   if (data.progress_value && data.progress_value > 0) {
-    // Increment goal's current_value
     const { data: goal } = await supabase
       .from('goals')
       .select('current_value')
@@ -36,9 +55,11 @@ export async function createPost(data: {
       .single();
 
     if (goal) {
+      const currentValue = Number(goal.current_value) || 0;
+      const increment = Number(data.progress_value);
       await supabase
         .from('goals')
-        .update({ current_value: (goal.current_value || 0) + data.progress_value })
+        .update({ current_value: currentValue + increment })
         .eq('id', data.goal_id);
     }
   }
@@ -138,7 +159,7 @@ export async function getFeedPosts(
     has_kudozd: Boolean(row.has_kudozd),
   }));
 
-  return { posts };
+  return { posts: await enrichWithCategories(posts) };
 }
 
 export async function getPostsByGoal(
@@ -190,7 +211,7 @@ export async function getPostsByGoalWithAuthors(
     })
   );
 
-  return { posts };
+  return { posts: await enrichWithCategories(posts) };
 }
 
 export async function getPost(postId: string): Promise<{ post?: PostWithAuthor; error?: string }> {
@@ -213,12 +234,13 @@ export async function getPost(postId: string): Promise<{ post?: PostWithAuthor; 
     supabase.from('reactions').select('id').eq('post_id', postId).eq('user_id', data.user_id).maybeSingle(),
   ]);
 
-  return {
-    post: {
-      ...data,
-      kudoz_count: kudozCount ?? 0,
-      comment_count: commentCount ?? 0,
-      has_kudozd: !!kudozd,
-    } as PostWithAuthor,
-  };
+  const post: PostWithAuthor = {
+    ...data,
+    kudoz_count: kudozCount ?? 0,
+    comment_count: commentCount ?? 0,
+    has_kudozd: !!kudozd,
+  } as PostWithAuthor;
+
+  const [enriched] = await enrichWithCategories([post]);
+  return { post: enriched };
 }

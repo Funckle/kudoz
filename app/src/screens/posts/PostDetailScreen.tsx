@@ -118,8 +118,11 @@ export function PostDetailScreen({ route, navigation }: HomeScreenProps<'PostDet
             style={[styles.editInput, { borderColor: colors.border, color: colors.text }]}
             value={editText}
             onChangeText={setEditText}
-            multiline
             autoFocus
+            returnKeyType="done"
+            blurOnSubmit
+            onSubmitEditing={handleSaveEdit}
+            onKeyPress={({ nativeEvent }) => { if (nativeEvent.key === 'Escape') handleCancelEdit(); }}
           />
           <View style={styles.editActions}>
             <TouchableOpacity onPress={handleCancelEdit}>

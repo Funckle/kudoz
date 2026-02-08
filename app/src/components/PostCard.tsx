@@ -1,6 +1,7 @@
 import React, { useCallback } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image, Alert } from 'react-native';
 import { Avatar } from './Avatar';
+import { CategoryBadge } from './CategoryBadge';
 import { KudozButton } from './KudozButton';
 import { typography, spacing, borderRadius } from '../utils/theme';
 import { useTheme } from '../utils/ThemeContext';
@@ -106,6 +107,12 @@ export function PostCard({
         <Text style={[styles.goalLink, { color: colors.textSecondary }]}>{post.goal?.title}</Text>
       </TouchableOpacity>
 
+      {post.categories && post.categories.length > 0 && (
+        <View style={styles.categories}>
+          {post.categories.map((c) => <CategoryBadge key={c.id} category={c} />)}
+        </View>
+      )}
+
       {post.content && <Text style={[styles.content, { color: colors.text }]}>{post.content}</Text>}
 
       {post.progress_value != null && post.progress_value > 0 && (
@@ -171,6 +178,11 @@ const styles = StyleSheet.create({
   goalLink: {
     ...typography.caption,
     fontWeight: '600',
+    marginBottom: spacing.xs,
+  },
+  categories: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
     marginBottom: spacing.sm,
   },
   content: {

@@ -1,5 +1,6 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import { FlatList, StyleSheet, RefreshControl } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 import { PostCard } from '../../components/PostCard';
 import { ReportModal } from '../../components/ReportModal';
 import { SubscriptionBanner } from '../../components/SubscriptionBanner';
@@ -39,9 +40,9 @@ export function FeedScreen({ navigation }: HomeScreenProps<'Feed'>) {
     setRefreshing(false);
   }, [user]);
 
-  useEffect(() => {
+  useFocusEffect(useCallback(() => {
     loadPosts(0, true);
-  }, [loadPosts]);
+  }, [loadPosts]));
 
   const handleRefresh = useCallback(() => {
     setRefreshing(true);

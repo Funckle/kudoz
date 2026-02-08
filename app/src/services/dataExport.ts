@@ -7,72 +7,77 @@ const FileSystem = require('expo-file-system') as {
   writeAsStringAsync: (uri: string, content: string, options?: { encoding: string }) => Promise<void>;
 };
 
-export async function exportUserData(userId: string): Promise<{ error?: string }> {
-  try {
-    // Try edge function for ZIP+CSV export
-    const { data, error } = await supabase.functions.invoke('export-data', {
-      body: { userId },
-    });
-
-    if (error || !data?.data) {
-      // Fallback to client-side JSON export
-      return exportUserDataFallback(userId);
-    }
-
-    const fileUri = (FileSystem.documentDirectory || '') + 'kudoz-data-export.zip';
-    await FileSystem.writeAsStringAsync(fileUri, data.data, { encoding: 'base64' });
-
-    const canShare = await Sharing.isAvailableAsync();
-    if (canShare) {
-      await Sharing.shareAsync(fileUri, {
-        mimeType: 'application/zip',
-        dialogTitle: 'Export your Kudoz data',
-      });
-    }
-
-    return {};
-  } catch (e) {
-    // Fallback to client-side JSON export
-    return exportUserDataFallback(userId);
+function escapeCsv(val: any): string {
+  if (val == null) return '';
+  const str = String(val);
+  if (str.includes(',') || str.includes('"') || str.includes('\n')) {
+    return `"${str.replace(/"/g, '""')}"`;
   }
+  return str;
 }
 
-async function exportUserDataFallback(userId: string): Promise<{ error?: string }> {
+function toCsv(headers: string[], rows: Record<string, any>[]): string {
+  const lines = [headers.map(escapeCsv).join(',')];
+  for (const row of rows) {
+    lines.push(headers.map((h) => escapeCsv(row[h])).join(','));
+  }
+  return lines.join('\n');
+}
+
+export async function exportUserData(userId: string): Promise<{ error?: string }> {
   try {
     const [
       { data: profile },
       { data: goals },
       { data: posts },
       { data: comments },
-      { data: follows },
-      { data: reactions },
     ] = await Promise.all([
       supabase.from('users').select('*').eq('id', userId).single(),
-      supabase.from('goals').select('*').eq('user_id', userId),
-      supabase.from('posts').select('*').eq('user_id', userId),
-      supabase.from('comments').select('*').eq('user_id', userId),
-      supabase.from('follows').select('*').eq('follower_id', userId),
-      supabase.from('reactions').select('*').eq('user_id', userId),
+      supabase.from('goals').select('*').eq('user_id', userId).order('created_at', { ascending: false }),
+      supabase.from('posts').select('*').eq('user_id', userId).order('created_at', { ascending: false }),
+      supabase.from('comments').select('*').eq('user_id', userId).order('created_at', { ascending: false }),
     ]);
 
-    const exportData = {
-      exported_at: new Date().toISOString(),
-      profile,
-      goals: goals || [],
-      posts: posts || [],
-      comments: comments || [],
-      follows: follows || [],
-      reactions: reactions || [],
-    };
+    const sections: string[] = [];
 
-    const json = JSON.stringify(exportData, null, 2);
-    const fileUri = (FileSystem.documentDirectory || '') + 'kudoz-data-export.json';
-    await FileSystem.writeAsStringAsync(fileUri, json);
+    // Profile
+    if (profile) {
+      sections.push('PROFILE');
+      sections.push(toCsv(
+        ['name', 'username', 'email', 'bio', 'created_at'],
+        [profile],
+      ));
+    }
+
+    // Goals
+    sections.push('\nGOALS');
+    sections.push(toCsv(
+      ['title', 'description', 'status', 'goal_type', 'effort_target', 'current_value', 'stakes', 'target_date', 'created_at', 'completed_at'],
+      goals || [],
+    ));
+
+    // Posts
+    sections.push('\nPOSTS');
+    sections.push(toCsv(
+      ['content', 'post_type', 'progress_value', 'media_url', 'created_at', 'edited_at'],
+      posts || [],
+    ));
+
+    // Comments
+    sections.push('\nCOMMENTS');
+    sections.push(toCsv(
+      ['content', 'post_id', 'parent_comment_id', 'created_at', 'edited_at'],
+      comments || [],
+    ));
+
+    const csv = sections.join('\n');
+    const fileUri = (FileSystem.documentDirectory || '') + 'kudoz-export.csv';
+    await FileSystem.writeAsStringAsync(fileUri, csv);
 
     const canShare = await Sharing.isAvailableAsync();
     if (canShare) {
       await Sharing.shareAsync(fileUri, {
-        mimeType: 'application/json',
+        mimeType: 'text/csv',
         dialogTitle: 'Export your Kudoz data',
       });
     }

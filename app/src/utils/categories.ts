@@ -1,21 +1,32 @@
 import { colors } from './theme';
-import { Category } from '../types/database';
+import { getCachedCategories, getCategoryByIdFromCache } from '../services/categories';
+import type { Category } from '../types/database';
 
-export const CATEGORIES: Category[] = [
-  { id: '1', name: 'Fitness', icon: 'dumbbell', color: colors.categories.fitness },
-  { id: '2', name: 'Health', icon: 'heart-pulse', color: colors.categories.health },
-  { id: '3', name: 'Learning', icon: 'book-open', color: colors.categories.learning },
-  { id: '4', name: 'Finance', icon: 'wallet', color: colors.categories.finance },
-  { id: '5', name: 'Career', icon: 'briefcase', color: colors.categories.career },
-  { id: '6', name: 'Habits', icon: 'repeat', color: colors.categories.habits },
-  { id: '7', name: 'Creative', icon: 'palette', color: colors.categories.creative },
-  { id: '8', name: 'Life', icon: 'sun', color: colors.categories.life },
-];
+// Fallback colors by name (used when DB categories are loaded)
+const CATEGORY_COLORS: Record<string, string> = {
+  Fitness: colors.categories.fitness,
+  Health: colors.categories.health,
+  Learning: colors.categories.learning,
+  Finance: colors.categories.finance,
+  Career: colors.categories.career,
+  Habits: colors.categories.habits,
+  Creative: colors.categories.creative,
+  Life: colors.categories.life,
+};
+
+export function getCategories(): Category[] {
+  return getCachedCategories();
+}
 
 export function getCategoryById(id: string): Category | undefined {
-  return CATEGORIES.find((c) => c.id === id);
+  return getCategoryByIdFromCache(id);
 }
 
 export function getCategoryColor(id: string): string {
-  return getCategoryById(id)?.color ?? colors.gray;
+  const cat = getCategoryById(id);
+  return cat?.color ?? colors.gray;
+}
+
+export function getCategoryColorByName(name: string): string {
+  return CATEGORY_COLORS[name] ?? colors.gray;
 }

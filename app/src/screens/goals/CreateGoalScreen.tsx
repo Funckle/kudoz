@@ -6,7 +6,7 @@ import { Button } from '../../components/Button';
 import { typography, spacing, borderRadius, borders } from '../../utils/theme';
 import { useTheme } from '../../utils/ThemeContext';
 import { LIMITS } from '../../utils/validation';
-import { CATEGORIES } from '../../utils/categories';
+import { getCategories } from '../../utils/categories';
 import { useAuth } from '../../hooks/useAuth';
 import { useSubscription } from '../../hooks/useSubscription';
 import { createGoal, getActiveGoalCount } from '../../services/goals';
@@ -39,11 +39,13 @@ export function CreateGoalScreen({ navigation }: CreateScreenProps<'CreateGoal'>
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [visibility, setVisibility] = useState<Visibility>(user?.default_visibility ?? 'public');
   const [creating, setCreating] = useState(false);
+  const [categoryError, setCategoryError] = useState(false);
 
   const toggleCategory = (id: string) => {
+    setCategoryError(false);
     setSelectedCategories((prev) => {
       if (prev.includes(id)) return prev.filter((c) => c !== id);
-      if (prev.length >= LIMITS.MAX_CATEGORIES_PER_GOAL) return prev;
+      if (prev.length >= LIMITS.MAX_getCategories()_PER_GOAL) return prev;
       return [...prev, id];
     });
   };
@@ -63,7 +65,7 @@ export function CreateGoalScreen({ navigation }: CreateScreenProps<'CreateGoal'>
       return;
     }
     if (selectedCategories.length === 0) {
-      Alert.alert('Select at least one category');
+      setCategoryError(true);
       return;
     }
 
@@ -84,6 +86,8 @@ export function CreateGoalScreen({ navigation }: CreateScreenProps<'CreateGoal'>
 
     if (result.error) {
       Alert.alert('Error', result.error);
+    } else if (result.goal) {
+      navigation.navigate('CreatePost', { goalId: result.goal.id });
     } else {
       navigation.goBack();
     }
@@ -137,9 +141,9 @@ export function CreateGoalScreen({ navigation }: CreateScreenProps<'CreateGoal'>
 
         <TextInput label="Stakes (optional)" value={stakes} onChangeText={setStakes} maxLength={LIMITS.STAKES} placeholder="What happens if you succeed or fail?" multiline />
 
-        <Text style={[styles.sectionTitle, { color: colors.text }]}>Categories (1-3)</Text>
+        <Text style={[styles.sectionTitle, { color: categoryError ? colors.error : colors.text }]}>Categories (1-3){categoryError ? ' — select at least one' : ''}</Text>
         <View style={styles.categoryGrid}>
-          {CATEGORIES.map((cat) => (
+          {getCategories().map((cat) => (
             <TouchableOpacity
               key={cat.id}
               style={[styles.categoryChip, { borderColor: colors.border }, selectedCategories.includes(cat.id) && { borderColor: cat.color, backgroundColor: cat.color + '15' }]}

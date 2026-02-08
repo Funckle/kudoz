@@ -1,12 +1,24 @@
-import React from 'react';
-import { Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import React, { useState } from 'react';
+import { Text, StyleSheet, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import { ScreenContainer } from '../../components/ScreenContainer';
 import { typography, spacing } from '../../utils/theme';
 import { useTheme } from '../../utils/ThemeContext';
+import { useAuth } from '../../hooks/useAuth';
+import { exportUserData } from '../../services/dataExport';
 import type { ProfileScreenProps } from '../../types/navigation';
 
 export function YourDataScreen({ navigation }: ProfileScreenProps<'YourData'>) {
   const { colors } = useTheme();
+  const { user } = useAuth();
+  const [exporting, setExporting] = useState(false);
+
+  const handleExport = async () => {
+    if (!user) return;
+    setExporting(true);
+    const result = await exportUserData(user.id);
+    setExporting(false);
+    if (result.error) Alert.alert('Export failed', result.error);
+  };
 
   return (
     <ScreenContainer>
@@ -26,16 +38,15 @@ export function YourDataScreen({ navigation }: ProfileScreenProps<'YourData'>) {
           or share it with advertisers.
         </Text>
 
-        <Text style={[styles.sectionTitle, { color: colors.text }]}>Data Storage</Text>
+        <Text style={[styles.sectionTitle, { color: colors.text }]}>Where It Lives</Text>
         <Text style={[styles.body, { color: colors.textSecondary }]}>
-          Your data is stored securely using Supabase (built on PostgreSQL) with row-level security.
-          Only you can access your private data.
+          Your data is stored securely on protected servers. Other users can only see what you've chosen to share. Kudoz administrators can access data when needed to run and maintain the service, but we'll never share it with anyone else.
         </Text>
 
         <Text style={[styles.sectionTitle, { color: colors.text }]}>Your Rights</Text>
 
-        <TouchableOpacity style={[styles.actionRow, { borderBottomColor: colors.border }]} onPress={() => navigation.navigate('Settings')}>
-          <Text style={[styles.actionText, { color: colors.text }]}>Export your data</Text>
+        <TouchableOpacity style={[styles.actionRow, { borderBottomColor: colors.border }]} onPress={handleExport} disabled={exporting}>
+          <Text style={[styles.actionText, { color: colors.text }]}>{exporting ? 'Exporting...' : 'Export your data'}</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={[styles.actionRow, { borderBottomColor: colors.border }]} onPress={() => navigation.navigate('DeleteAccount')}>

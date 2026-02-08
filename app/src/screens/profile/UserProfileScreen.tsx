@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert, Linking } from 'react-native';
 import { Avatar } from '../../components/Avatar';
 import { GoalCard } from '../../components/GoalCard';
 import { FollowButton } from '../../components/FollowButton';
@@ -81,6 +81,11 @@ export function UserProfileScreen({ route, navigation }: HomeScreenProps<'UserPr
       <Text style={[styles.name, { color: colors.text }]}>{profileUser.name}</Text>
       <Text style={[styles.username, { color: colors.textSecondary }]}>@{profileUser.username}</Text>
       {profileUser.bio ? <Text style={[styles.bio, { color: colors.text }]}>{profileUser.bio}</Text> : null}
+      {profileUser.website ? (
+        <TouchableOpacity onPress={() => Linking.openURL(profileUser.website!.startsWith('http') ? profileUser.website! : `https://${profileUser.website}`)}>
+          <Text style={[styles.website, { color: colors.link }]} numberOfLines={1}>{profileUser.website}</Text>
+        </TouchableOpacity>
+      ) : null}
       <View style={styles.actionRow}>
         <FollowButton userId={userId} />
         <TouchableOpacity style={styles.menuBtn} onPress={() => {
@@ -132,6 +137,7 @@ const styles = StyleSheet.create({
   name: { ...typography.sectionHeader, marginTop: spacing.sm },
   username: { ...typography.body },
   bio: { ...typography.body, marginTop: spacing.xs },
+  website: { ...typography.body, marginTop: spacing.xs },
   actionRow: { flexDirection: 'row', alignItems: 'center', marginTop: spacing.md },
   menuBtn: { marginLeft: spacing.md },
   menuText: { fontSize: 20 },

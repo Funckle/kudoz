@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
+import React, { useState, useCallback } from 'react';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Linking } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 import { Avatar } from '../../components/Avatar';
 import { GoalCard } from '../../components/GoalCard';
 import { EmptyState } from '../../components/EmptyState';
@@ -37,7 +38,7 @@ export function ProfileScreen({ navigation }: ProfileScreenProps<'Profile'>) {
     setLoading(false);
   }, [user]);
 
-  useEffect(() => { loadData(); }, [loadData]);
+  useFocusEffect(useCallback(() => { loadData(); }, [loadData]));
 
   if (!user) return <LoadingSpinner />;
 
@@ -65,6 +66,11 @@ export function ProfileScreen({ navigation }: ProfileScreenProps<'Profile'>) {
       <Text style={[styles.name, { color: colors.text }]}>{user.name}</Text>
       <Text style={[styles.username, { color: colors.textSecondary }]}>@{user.username}</Text>
       {user.bio ? <Text style={[styles.bio, { color: colors.text }]}>{user.bio}</Text> : null}
+      {user.website ? (
+        <TouchableOpacity onPress={() => Linking.openURL(user.website!.startsWith('http') ? user.website! : `https://${user.website}`)}>
+          <Text style={[styles.website, { color: colors.link }]} numberOfLines={1}>{user.website}</Text>
+        </TouchableOpacity>
+      ) : null}
       <View style={styles.actionRow}>
         <TouchableOpacity style={[styles.editBtn, { borderColor: colors.border }]} onPress={() => navigation.navigate('EditProfile')}>
           <Text style={[styles.editBtnText, { color: colors.text }]}>Edit profile</Text>
@@ -118,6 +124,7 @@ const styles = StyleSheet.create({
   name: { ...typography.sectionHeader, marginTop: spacing.sm },
   username: { ...typography.body },
   bio: { ...typography.body, marginTop: spacing.xs },
+  website: { ...typography.body, marginTop: spacing.xs },
   actionRow: { flexDirection: 'row', marginTop: spacing.md },
   editBtn: { flex: 1, marginRight: spacing.sm, borderWidth: 1, borderRadius: 8, paddingVertical: spacing.xs + 2, alignItems: 'center' },
   editBtnText: { ...typography.body, fontWeight: '600' },

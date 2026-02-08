@@ -169,6 +169,7 @@ export interface Mute {
 export interface PostWithAuthor extends Post {
   user: Pick<User, 'id' | 'name' | 'username' | 'avatar_url'>;
   goal: Pick<Goal, 'id' | 'title' | 'goal_type' | 'target_value' | 'current_value' | 'status'>;
+  categories?: Category[];
   kudoz_count: number;
   comment_count: number;
   has_kudozd: boolean;

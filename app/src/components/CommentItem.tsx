@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
+import { Reply, Pencil, Trash2, Flag } from 'lucide-react-native';
 import { Avatar } from './Avatar';
 import { typography, spacing } from '../utils/theme';
 import { useTheme } from '../utils/ThemeContext';
@@ -20,7 +21,7 @@ export function CommentItem({ comment, depth = 0, onReply, onEdit, onReport, onD
   const { user } = useAuth();
   const { colors } = useTheme();
   const isOwner = user?.id === comment.user_id;
-  const indent = Math.min(depth, 3) * 24;
+  const indent = depth > 0 ? 24 : 0;
 
   const formatDate = (dateStr: string) => {
     const diffMs = Date.now() - new Date(dateStr).getTime();
@@ -53,7 +54,7 @@ export function CommentItem({ comment, depth = 0, onReply, onEdit, onReport, onD
   };
 
   return (
-    <View style={[styles.container, { marginLeft: indent }]}>
+    <View style={[styles.container, { marginLeft: indent }, depth === 0 && { borderBottomWidth: 1, borderBottomColor: colors.border }]}>
       <View style={styles.row}>
         <Avatar uri={comment.user?.avatar_url} name={comment.user?.name} size={32} />
         <View style={styles.body}>
@@ -64,22 +65,28 @@ export function CommentItem({ comment, depth = 0, onReply, onEdit, onReport, onD
           </View>
           <Text style={[styles.content, { color: colors.text }]}>{comment.content}</Text>
           <View style={styles.actions}>
-            <TouchableOpacity onPress={() => onReply?.(comment.id, comment.user?.username || '')}>
-              <Text style={[styles.action, { color: colors.textSecondary }]}>Reply</Text>
-            </TouchableOpacity>
+            {depth < 2 && (
+              <TouchableOpacity style={styles.actionBtn} onPress={() => onReply?.(comment.id, comment.user?.username || '')}>
+                <Reply size={13} color={colors.textSecondary} />
+                <Text style={[styles.actionText, { color: colors.textSecondary }]}>Reply</Text>
+              </TouchableOpacity>
+            )}
             {canEdit() && (
-              <TouchableOpacity onPress={() => onEdit?.(comment)}>
-                <Text style={[styles.action, { color: colors.textSecondary }]}>Edit</Text>
+              <TouchableOpacity style={styles.actionBtn} onPress={() => onEdit?.(comment)}>
+                <Pencil size={13} color={colors.textSecondary} />
+                <Text style={[styles.actionText, { color: colors.textSecondary }]}>Edit</Text>
               </TouchableOpacity>
             )}
             {isOwner && (
-              <TouchableOpacity onPress={handleDelete}>
-                <Text style={[styles.action, { color: colors.error }]}>Delete</Text>
+              <TouchableOpacity style={styles.actionBtn} onPress={handleDelete}>
+                <Trash2 size={13} color={colors.error} />
+                <Text style={[styles.actionText, { color: colors.error }]}>Delete</Text>
               </TouchableOpacity>
             )}
             {!isOwner && (
-              <TouchableOpacity onPress={() => onReport?.(comment.id)}>
-                <Text style={[styles.action, { color: colors.textSecondary }]}>Report</Text>
+              <TouchableOpacity style={styles.actionBtn} onPress={() => onReport?.(comment.id)}>
+                <Flag size={13} color={colors.textSecondary} />
+                <Text style={[styles.actionText, { color: colors.textSecondary }]}>Report</Text>
               </TouchableOpacity>
             )}
           </View>
@@ -102,7 +109,8 @@ export function CommentItem({ comment, depth = 0, onReply, onEdit, onReport, onD
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: spacing.sm,
+    paddingBottom: spacing.md,
+    marginBottom: spacing.md,
   },
   row: {
     flexDirection: 'row',
@@ -134,10 +142,15 @@ const styles = StyleSheet.create({
   },
   actions: {
     flexDirection: 'row',
-    marginTop: spacing.xs,
+    marginTop: spacing.sm,
   },
-  action: {
-    ...typography.caption,
+  actionBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
     marginRight: spacing.md,
+  },
+  actionText: {
+    ...typography.caption,
+    marginLeft: 4,
   },
 });

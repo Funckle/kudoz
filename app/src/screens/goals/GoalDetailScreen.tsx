@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, FlatList, StyleSheet, Alert } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { GoalProgressHeader } from '../../components/GoalProgressHeader';
 import { CategoryBadge } from '../../components/CategoryBadge';
@@ -39,7 +40,7 @@ export function GoalDetailScreen({ route, navigation }: HomeScreenProps<'GoalDet
     setLoading(false);
   }, [goalId]);
 
-  useEffect(() => { loadData(); }, [loadData]);
+  useFocusEffect(useCallback(() => { loadData(); }, [loadData]));
 
   const isOwner = user?.id === goal?.user_id;
 

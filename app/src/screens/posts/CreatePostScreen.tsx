@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, Alert } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 import { ScreenContainer } from '../../components/ScreenContainer';
 import { TextInput } from '../../components/TextInput';
 import { Button } from '../../components/Button';
@@ -30,20 +31,20 @@ export function CreatePostScreen({ route, navigation }: CreateScreenProps<'Creat
   const [loading, setLoading] = useState(true);
   const [posting, setPosting] = useState(false);
 
-  useEffect(() => {
+  useFocusEffect(useCallback(() => {
     if (user) {
       getUserGoals(user.id, 'active').then(({ goals: g }) => {
         setGoals(g);
-        // Pre-select if goalId passed
+        // Auto-select if goalId passed and no goal selected yet
         const goalId = route.params?.goalId;
-        if (goalId) {
+        if (goalId && !selectedGoal) {
           const found = g.find((gl) => gl.id === goalId);
           if (found) setSelectedGoal(found);
         }
         setLoading(false);
       });
     }
-  }, [user, route.params]);
+  }, [user, route.params?.goalId]));
 
   const handlePickImage = async () => {
     const result = await pickImage();
@@ -107,7 +108,11 @@ export function CreatePostScreen({ route, navigation }: CreateScreenProps<'Creat
     }
 
     setPosting(false);
-    navigation.goBack();
+    // Navigate to Feed explicitly to ensure it refreshes with the new post
+    navigation.getParent()?.navigate('Main', {
+      screen: 'HomeTab',
+      params: { screen: 'Feed' },
+    });
   };
 
   if (loading) return <LoadingSpinner />;
@@ -177,7 +182,7 @@ export function CreatePostScreen({ route, navigation }: CreateScreenProps<'Creat
 
         {imageUri ? (
           <View style={styles.imagePreview}>
-            <Image source={{ uri: imageUri }} style={styles.image} resizeMode="cover" />
+            <Image source={{ uri: imageUri }} style={[styles.image, imageSize && { aspectRatio: imageSize.width / imageSize.height }]} resizeMode="contain" />
             <TouchableOpacity style={styles.removeImage} onPress={() => { setImageUri(null); setImageSize(null); }}>
               <Text style={[styles.removeImageText, { color: colors.error }]}>Remove</Text>
             </TouchableOpacity>
@@ -211,7 +216,6 @@ const styles = StyleSheet.create({
   },
   image: {
     width: '100%',
-    height: 200,
     borderRadius,
   },
   removeImage: {

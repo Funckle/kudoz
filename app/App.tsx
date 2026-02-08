@@ -9,6 +9,7 @@ import { RootNavigator } from './src/navigation/RootNavigator';
 import { setupDeepLinkListener } from './src/services/linking';
 import { registerForPushNotifications, setupNotificationListeners } from './src/services/pushNotifications';
 import type { NotificationNavData } from './src/services/pushNotifications';
+import { fetchCategories } from './src/services/categories';
 import { NetworkBanner } from './src/components/NetworkBanner';
 import { ThemeProvider, useTheme } from './src/utils/ThemeContext';
 
@@ -24,6 +25,10 @@ const queryClient = new QueryClient({
 function AppInner() {
   const auth = useAuthProvider();
   const navigationRef = useRef<NavigationContainerRef<Record<string, unknown>>>(null);
+
+  useEffect(() => {
+    fetchCategories();
+  }, []);
 
   useEffect(() => {
     // On native, set up deep link listener for magic link callbacks

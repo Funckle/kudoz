@@ -59,8 +59,10 @@ export function CommentInput({ onSubmit, replyingTo, onCancelReply, disabled, di
           value={text}
           onChangeText={(t) => { setText(t); setWarning(''); }}
           maxLength={LIMITS.COMMENT}
-          multiline
           placeholderTextColor={colors.textSecondary}
+          returnKeyType="send"
+          blurOnSubmit
+          onSubmitEditing={handleSubmit}
         />
         <TouchableOpacity
           onPress={handleSubmit}

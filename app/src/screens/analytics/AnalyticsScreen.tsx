@@ -8,7 +8,7 @@ import { LoadingSpinner } from '../../components/LoadingSpinner';
 import { typography, spacing } from '../../utils/theme';
 import { useTheme } from '../../utils/ThemeContext';
 import { useAuth } from '../../hooks/useAuth';
-import { getGoalStats, getActiveGoalProgress, getFollowerGrowth, getMostKudozdPosts, getGoalsByCategory, getCompletionRateOverTime } from '../../services/analytics';
+import { getGoalStats, getActiveGoalProgress, getFollowerGrowth, getMostKudozdPosts, getMostKudozdGoals, getGoalsByCategory, getCompletionRateOverTime } from '../../services/analytics';
 
 export function AnalyticsScreen() {
   const { colors } = useTheme();
@@ -18,6 +18,7 @@ export function AnalyticsScreen() {
   const [followerCount, setFollowerCount] = useState(0);
   const [topPosts, setTopPosts] = useState<Array<{ id: string; content: string; kudoz_count: number }>>([]);
   const [categoryData, setCategoryData] = useState<Array<{ name: string; count: number; color: string }>>([]);
+  const [topGoals, setTopGoals] = useState<Array<{ id: string; title: string; kudoz_count: number }>>([]);
   const [completionTrend, setCompletionTrend] = useState<Array<{ month: string; rate: number }>>([]);
   const [loading, setLoading] = useState(true);
 
@@ -28,13 +29,15 @@ export function AnalyticsScreen() {
       getActiveGoalProgress(user.id),
       getFollowerGrowth(user.id),
       getMostKudozdPosts(user.id),
+      getMostKudozdGoals(user.id),
       getGoalsByCategory(user.id),
       getCompletionRateOverTime(user.id),
-    ]).then(([s, g, f, p, cats, trend]) => {
+    ]).then(([s, g, f, p, tg, cats, trend]) => {
       setStats(s);
       setActiveGoals(g);
       setFollowerCount(f.count);
       setTopPosts(p);
+      setTopGoals(tg);
       setCategoryData(cats);
       setCompletionTrend(trend);
       setLoading(false);
@@ -83,6 +86,18 @@ export function AnalyticsScreen() {
                 <Text style={[styles.goalTitle, { color: colors.text }]} numberOfLines={1}>{g.title}</Text>
                 <ProgressBar current={g.progress} target={100} height={6} />
                 <Text style={[styles.progressText, { color: colors.textSecondary }]}>{g.progress}%</Text>
+              </View>
+            ))}
+          </View>
+        )}
+
+        {topGoals.length > 0 && (
+          <View style={styles.section}>
+            <Text style={[styles.sectionTitle, { color: colors.text }]}>Most Kudoz'd Goals</Text>
+            {topGoals.map((g) => (
+              <View key={g.id} style={[styles.postRow, { borderBottomColor: colors.border }]}>
+                <Text style={[styles.postContent, { color: colors.text }]} numberOfLines={1}>{g.title}</Text>
+                <Text style={[styles.kudozCount, { color: colors.text }]}>{g.kudoz_count} Kudoz</Text>
               </View>
             ))}
           </View>

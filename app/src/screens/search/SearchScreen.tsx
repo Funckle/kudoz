@@ -5,7 +5,7 @@ import { GoalSearchResult } from '../../components/GoalSearchResult';
 import { LoadingSpinner } from '../../components/LoadingSpinner';
 import { typography, spacing, borderRadius, borders } from '../../utils/theme';
 import { useTheme } from '../../utils/ThemeContext';
-import { CATEGORIES } from '../../utils/categories';
+import { getCategories } from '../../utils/categories';
 import { useAuth } from '../../hooks/useAuth';
 import { searchAll } from '../../services/search';
 import type { Category } from '../../types/database';
@@ -114,7 +114,7 @@ export function SearchScreen({ navigation }: SearchScreenProps<'Search'>) {
         )
       ) : (
         <FlatList
-          data={CATEGORIES}
+          data={getCategories()}
           keyExtractor={(item) => item.id}
           renderItem={renderCategory}
           numColumns={2}

@@ -4,7 +4,7 @@ import { ScreenContainer } from '../../components/ScreenContainer';
 import { Button } from '../../components/Button';
 import { typography, spacing, borderRadius, borders } from '../../utils/theme';
 import { useTheme } from '../../utils/ThemeContext';
-import { CATEGORIES } from '../../utils/categories';
+import { getCategories } from '../../utils/categories';
 import type { OnboardingScreenProps } from '../../types/navigation';
 import type { Category } from '../../types/database';
 
@@ -40,7 +40,7 @@ export function CategorySelectionScreen({ navigation }: OnboardingScreenProps<'C
         <Text style={[styles.title, { color: colors.text }]}>What are you working on?</Text>
         <Text style={[styles.subtitle, { color: colors.textSecondary }]}>Select categories that interest you. You can always change this later.</Text>
         <FlatList
-          data={CATEGORIES}
+          data={getCategories()}
           renderItem={renderCategory}
           keyExtractor={(item) => item.id}
           numColumns={2}

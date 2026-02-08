@@ -11,34 +11,26 @@ export function AboutScreen() {
     <ScreenContainer>
       <ScrollView style={styles.container}>
         <Text style={[styles.title, { color: colors.text }]}>About Kudoz</Text>
+        <Text style={[styles.subtitle, { color: colors.textSecondary }]}>Track goals that matter. Celebrate with friends.</Text>
 
-        <Text style={[styles.sectionTitle, { color: colors.text }]}>How Kudoz Works</Text>
         <Text style={[styles.body, { color: colors.textSecondary }]}>
-          Kudoz is a social goal-tracking platform. Set goals, post progress updates, and celebrate
-          achievements with friends. Give "Kudoz" to cheer others on.
+          Set a goal, share your progress, and let your friends cheer you on. Every post on Kudoz is tied to a real goal — no noise, just forward movement.
         </Text>
 
-        <Text style={[styles.sectionTitle, { color: colors.text }]}>Our Model</Text>
+        <Text style={[styles.sectionTitle, { color: colors.text }]}>Your feed, unfiltered</Text>
         <Text style={[styles.body, { color: colors.textSecondary }]}>
-          Kudoz offers a free tier with up to 3 active goals. Premium subscribers unlock unlimited
-          goals and commenting. We believe in a sustainable business model — no ads, no data selling,
-          just a simple subscription.
+          No ads. No algorithms. No data selling. Your feed shows your friends' progress in chronological order — nothing more, nothing less. What you share is yours to control.
         </Text>
 
-        <Text style={[styles.sectionTitle, { color: colors.text }]}>No Ads, No Tracking</Text>
+        <Text style={[styles.sectionTitle, { color: colors.text }]}>Simple pricing, no tricks</Text>
         <Text style={[styles.body, { color: colors.textSecondary }]}>
-          We don't show advertisements. We don't sell your data. We don't use third-party trackers.
-          Your goal progress and personal information stay private.
+          Start free with up to 3 active goals. Want more? $12/year unlocks unlimited goals and commenting. No hidden fees, no upsells.
         </Text>
 
-        <Text style={[styles.sectionTitle, { color: colors.text }]}>Our Values — TPPS</Text>
+        <Text style={[styles.sectionTitle, { color: colors.text }]}>What you won't find here</Text>
         <Text style={[styles.body, { color: colors.textSecondary }]}>
-          Every decision at Kudoz follows our core principles, in order of priority:
+          No rankings or leaderboards. No like counts on your profile. No streak-shaming or guilt notifications. Kudoz is built to help you grow, not to keep you scrolling.
         </Text>
-        <Text style={[styles.value, { color: colors.text }]}>Transparency — Be open about how the platform works</Text>
-        <Text style={[styles.value, { color: colors.text }]}>Positivity — Foster encouragement, not comparison</Text>
-        <Text style={[styles.value, { color: colors.text }]}>Prevention — Protect users from harm proactively</Text>
-        <Text style={[styles.value, { color: colors.text }]}>Simplicity — Keep things simple and focused</Text>
       </ScrollView>
     </ScreenContainer>
   );
@@ -46,8 +38,8 @@ export function AboutScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, padding: spacing.md },
-  title: { ...typography.title, marginBottom: spacing.lg },
+  title: { ...typography.title, marginBottom: spacing.xs },
+  subtitle: { ...typography.body, lineHeight: 22, marginBottom: spacing.lg },
   sectionTitle: { ...typography.sectionHeader, marginTop: spacing.md, marginBottom: spacing.xs },
   body: { ...typography.body, lineHeight: 22, marginBottom: spacing.sm },
-  value: { ...typography.body, marginLeft: spacing.md, marginBottom: spacing.xs },
 });
