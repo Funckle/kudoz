@@ -1,9 +1,20 @@
 import * as Linking from 'expo-linking';
-import { Platform } from 'react-native';
+import { Alert, Platform } from 'react-native';
+import type { LinkingOptions } from '@react-navigation/native';
 import { supabase } from './supabase';
+import type { RootStackParamList } from '../types/navigation';
 
-export const linking = {
+export const linking: LinkingOptions<RootStackParamList> = {
   prefixes: [Linking.createURL('/'), 'kudoz://'],
+  config: {
+    screens: {
+      Auth: {
+        screens: {
+          RedeemInvite: 'invite/:code',
+        },
+      },
+    },
+  },
 };
 
 /**
@@ -22,7 +33,14 @@ export function getAuthRedirectUrl(): string {
   return Linking.createURL('auth/callback');
 }
 
-export async function handleDeepLink(url: string) {
+export async function handleDeepLink(url: string, getIsAuthenticated?: () => boolean) {
+  // Handle invite deep link when user is already authenticated
+  const inviteMatch = url.match(/invite\/([A-Za-z0-9]+)/);
+  if (inviteMatch && getIsAuthenticated?.()) {
+    Alert.alert('Already signed in', 'You already have access — no invite code needed.');
+    return;
+  }
+
   // Handle magic link callback — tokens are in the URL hash fragment (#access_token=...)
   if (url.includes('auth/callback') || url.includes('access_token')) {
     let params: URLSearchParams;
@@ -44,15 +62,15 @@ export async function handleDeepLink(url: string) {
   }
 }
 
-export function setupDeepLinkListener() {
+export function setupDeepLinkListener(getIsAuthenticated?: () => boolean) {
   // Handle deep links when app is already open
   const subscription = Linking.addEventListener('url', ({ url }) => {
-    handleDeepLink(url);
+    handleDeepLink(url, getIsAuthenticated);
   });
 
   // Handle deep link that opened the app
   Linking.getInitialURL().then((url) => {
-    if (url) handleDeepLink(url);
+    if (url) handleDeepLink(url, getIsAuthenticated);
   });
 
   return () => subscription.remove();

@@ -33,7 +33,7 @@ function AppInner() {
   useEffect(() => {
     // On native, set up deep link listener for magic link callbacks
     if (Platform.OS !== 'web') {
-      const cleanup = setupDeepLinkListener();
+      const cleanup = setupDeepLinkListener(() => auth.isAuthenticated);
       return cleanup;
     }
   }, []);
