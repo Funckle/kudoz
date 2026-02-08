@@ -88,6 +88,7 @@ function ProfileStackNavigator() {
     <ProfileStack.Navigator>
       <ProfileStack.Screen name="Profile" component={ProfileScreen} options={{ title: 'Profile' }} />
       <ProfileStack.Screen name="EditProfile" component={EditProfileScreen} options={{ title: 'Edit Profile' }} />
+      <ProfileStack.Screen name="PostDetail" component={PostDetailScreen} options={{ title: 'Post' }} />
       <ProfileStack.Screen name="GoalDetail" component={GoalDetailScreen} options={{ title: 'Goal' }} />
       <ProfileStack.Screen name="Settings" component={SettingsScreen} />
       <ProfileStack.Screen name="Subscription" component={SubscriptionScreen} />

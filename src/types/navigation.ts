@@ -59,6 +59,7 @@ export type NotificationsStackParamList = {
 export type ProfileStackParamList = {
   Profile: undefined;
   EditProfile: undefined;
+  PostDetail: { postId: string };
   GoalDetail: { goalId: string };
   Settings: undefined;
   Subscription: undefined;
