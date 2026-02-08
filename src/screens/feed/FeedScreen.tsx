@@ -291,7 +291,7 @@ const styles = StyleSheet.create({
   },
   commentsSection: {
     paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm,
+    paddingBottom: spacing.sm,
   },
   commentsSeparator: {
     height: 1,
