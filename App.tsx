@@ -73,6 +73,12 @@ function AppInner() {
   );
 }
 
+// Set sans-serif font on web where Tamagui's CSS var may not cascade
+if (Platform.OS === 'web' && typeof document !== 'undefined') {
+  document.documentElement.style.fontFamily =
+    '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif';
+}
+
 export default function App() {
   const colorScheme = useColorScheme();
   const themeName = colorScheme === 'dark' ? 'dark' : 'light';
