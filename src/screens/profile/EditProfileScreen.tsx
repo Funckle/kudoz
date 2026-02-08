@@ -88,19 +88,19 @@ export function EditProfileScreen({ navigation }: ProfileScreenProps<'EditProfil
         style={styles.flex}
         keyboardVerticalOffset={88}
       >
-      <ScrollView style={styles.container} keyboardShouldPersistTaps="handled">
-        <View style={styles.avatarSection}>
-          <TouchableOpacity onPress={handlePickAvatar}>
-            <Avatar uri={avatarUri} name={name} size={80} />
-          </TouchableOpacity>
-          <Button title="Change photo" onPress={handlePickAvatar} variant="secondary" style={styles.photoBtn} />
-        </View>
-        <TextInput label="Name" value={name} onChangeText={setName} />
-        <TextInput label="Username" value={username} onChangeText={(t) => setUsername(t.toLowerCase())} maxLength={LIMITS.USERNAME_MAX} autoCapitalize="none" />
-        <TextInput label="Bio" value={bio} onChangeText={setBio} maxLength={LIMITS.BIO} multiline />
-        <TextInput label="Website" value={website} onChangeText={setWebsite} keyboardType="url" autoCapitalize="none" />
-        <Button title="Save" onPress={handleSave} loading={saving} />
-      </ScrollView>
+        <ScrollView style={styles.container} keyboardShouldPersistTaps="handled">
+          <View style={styles.avatarSection}>
+            <TouchableOpacity onPress={handlePickAvatar}>
+              <Avatar uri={avatarUri} name={name} size={80} />
+            </TouchableOpacity>
+            <Button title="Change photo" onPress={handlePickAvatar} variant="secondary" style={styles.photoBtn} />
+          </View>
+          <TextInput label="Name" value={name} onChangeText={setName} />
+          <TextInput label="Username" value={username} onChangeText={(t) => setUsername(t.toLowerCase())} maxLength={LIMITS.USERNAME_MAX} autoCapitalize="none" />
+          <TextInput label="Bio" value={bio} onChangeText={setBio} maxLength={LIMITS.BIO} multiline />
+          <TextInput label="Website" value={website} onChangeText={setWebsite} keyboardType="url" autoCapitalize="none" />
+          <Button title="Save" onPress={handleSave} loading={saving} />
+        </ScrollView>
       </KeyboardAvoidingView>
     </ScreenContainer>
   );
