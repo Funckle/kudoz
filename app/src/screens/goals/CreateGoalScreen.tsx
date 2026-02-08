@@ -45,7 +45,7 @@ export function CreateGoalScreen({ navigation }: CreateScreenProps<'CreateGoal'>
     setCategoryError(false);
     setSelectedCategories((prev) => {
       if (prev.includes(id)) return prev.filter((c) => c !== id);
-      if (prev.length >= LIMITS.MAX_getCategories()_PER_GOAL) return prev;
+      if (prev.length >= LIMITS.MAX_CATEGORIES_PER_GOAL) return prev;
       return [...prev, id];
     });
   };
