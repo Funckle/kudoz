@@ -107,11 +107,12 @@ export function CreatePostScreen({ route, navigation }: CreateScreenProps<'Creat
     }
 
     setPosting(false);
-    // Navigate to Feed explicitly to ensure it refreshes with the new post
-    navigation.getParent()?.navigate('Main', {
-      screen: 'HomeTab',
-      params: { screen: 'Feed' },
-    });
+    // Dismiss the modal, then switch to the Feed tab
+    const root = navigation.getParent();
+    if (root) {
+      root.goBack();
+      root.navigate('Main', { screen: 'HomeTab', params: { screen: 'Feed' } });
+    }
   };
 
   if (loading) return <LoadingSpinner />;
