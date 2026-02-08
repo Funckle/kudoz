@@ -69,6 +69,9 @@ export function ProfileScreen({ navigation }: ProfileScreenProps<'Profile'>) {
         <TouchableOpacity style={[styles.editBtn, { borderColor: colors.border }]} onPress={() => navigation.navigate('EditProfile')}>
           <Text style={[styles.editBtnText, { color: colors.text }]}>Edit profile</Text>
         </TouchableOpacity>
+        <TouchableOpacity style={[styles.editBtn, { borderColor: colors.border }]} onPress={() => navigation.navigate('Analytics')}>
+          <Text style={[styles.editBtnText, { color: colors.text }]}>Analytics</Text>
+        </TouchableOpacity>
         <TouchableOpacity style={[styles.editBtn, { borderColor: colors.border }]} onPress={() => navigation.navigate('Settings')}>
           <Text style={[styles.editBtnText, { color: colors.text }]}>Settings</Text>
         </TouchableOpacity>
