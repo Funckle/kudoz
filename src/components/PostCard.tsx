@@ -133,16 +133,16 @@ export const PostCard = React.memo(function PostCard({
 
         {/* Media */}
         {post.media_url && (
-          <Image
-            source={{ uri: post.media_url }}
-            style={{
-              width: '100%',
-              borderRadius: 8,
-              marginBottom: 8,
-              aspectRatio: (post.media_width || 1) / (post.media_height || 1),
-            }}
-            resizeMode="contain"
-          />
+          <YStack borderRadius={8} overflow="hidden" marginBottom="$sm">
+            <Image
+              source={{ uri: post.media_url }}
+              style={{
+                width: '100%',
+                aspectRatio: (post.media_width || 1) / (post.media_height || 1),
+              }}
+              resizeMode="cover"
+            />
+          </YStack>
         )}
 
         {/* Edited label */}

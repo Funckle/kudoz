@@ -34,9 +34,25 @@ export async function optimizeImage(uri: string): Promise<{
   width: number;
   height: number;
 }> {
-  const result = await ImageManipulator.manipulateAsync(
+  if (Platform.OS === 'web') {
+    const result = await ImageManipulator.manipulateAsync(
+      uri,
+      [{ resize: { width: LIMITS.IMAGE_MAX_DIMENSION } }],
+      { compress: 0.8, format: ImageManipulator.SaveFormat.JPEG }
+    );
+    return { uri: result.uri, width: result.width, height: result.height };
+  }
+
+  // On native, the resize interpolation produces 1px artifacts at edges.
+  // Resize slightly larger, then crop the border away.
+  const resized = await ImageManipulator.manipulateAsync(
     uri,
-    [{ resize: { width: LIMITS.IMAGE_MAX_DIMENSION } }],
+    [{ resize: { width: LIMITS.IMAGE_MAX_DIMENSION + 2 } }],
+    { format: ImageManipulator.SaveFormat.JPEG }
+  );
+  const result = await ImageManipulator.manipulateAsync(
+    resized.uri,
+    [{ crop: { originX: 1, originY: 1, width: resized.width - 2, height: resized.height - 2 } }],
     { compress: 0.8, format: ImageManipulator.SaveFormat.JPEG }
   );
   return { uri: result.uri, width: result.width, height: result.height };

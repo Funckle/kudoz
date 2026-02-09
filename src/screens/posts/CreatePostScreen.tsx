@@ -194,8 +194,8 @@ export function CreatePostScreen({ route, navigation }: CreateScreenProps<'Creat
         />
 
         {imageUri ? (
-          <YStack marginBottom="$md">
-            <Image source={{ uri: imageUri }} style={{ width: '100%', borderRadius: 8, ...(imageSize && { aspectRatio: imageSize.width / imageSize.height }) }} resizeMode="contain" />
+          <YStack marginBottom="$md" borderRadius={8} overflow="hidden">
+            <Image source={{ uri: imageUri }} style={{ width: '100%', ...(imageSize && { aspectRatio: imageSize.width / imageSize.height }) }} resizeMode="cover" />
             <TouchableOpacity style={{ marginTop: 4, alignSelf: 'flex-end' }} onPress={() => { setImageUri(null); setImageSize(null); }}>
               <Text fontSize="$1" color="$error">Remove</Text>
             </TouchableOpacity>
