@@ -98,21 +98,50 @@ export const PostCard = React.memo(function PostCard({
                 <Text fontSize={18} color="$colorSecondary" paddingLeft="$sm">···</Text>
               </TouchableOpacity>
             </DropdownMenu.Trigger>
-            <DropdownMenu.Content>
+            <DropdownMenu.Content
+              style={{
+                backgroundColor: theme.surface.val,
+                borderRadius: 8,
+                borderWidth: 1,
+                borderColor: theme.borderColor.val,
+                padding: 4,
+                minWidth: 140,
+                boxShadow: '0 4px 12px rgba(0,0,0,0.12)',
+              }}
+            >
               {isOwner ? (
                 <>
                   {post.post_type === 'progress' && (
-                    <DropdownMenu.Item key="edit" onSelect={() => onEdit?.()}>
-                      <DropdownMenu.ItemTitle>Edit</DropdownMenu.ItemTitle>
+                    <DropdownMenu.Item
+                      key="edit"
+                      onSelect={() => onEdit?.()}
+                      style={{ padding: '8px 12px', borderRadius: 4 }}
+                    >
+                      <DropdownMenu.ItemTitle style={{ fontSize: 14, color: theme.color.val }}>
+                        Edit
+                      </DropdownMenu.ItemTitle>
                     </DropdownMenu.Item>
                   )}
-                  <DropdownMenu.Item key="delete" destructive onSelect={handleDelete}>
-                    <DropdownMenu.ItemTitle>Delete</DropdownMenu.ItemTitle>
+                  <DropdownMenu.Item
+                    key="delete"
+                    destructive
+                    onSelect={handleDelete}
+                    style={{ padding: '8px 12px', borderRadius: 4 }}
+                  >
+                    <DropdownMenu.ItemTitle style={{ fontSize: 14, color: theme.error.val }}>
+                      Delete
+                    </DropdownMenu.ItemTitle>
                   </DropdownMenu.Item>
                 </>
               ) : (
-                <DropdownMenu.Item key="report" onSelect={() => onReport?.()}>
-                  <DropdownMenu.ItemTitle>Report</DropdownMenu.ItemTitle>
+                <DropdownMenu.Item
+                  key="report"
+                  onSelect={() => onReport?.()}
+                  style={{ padding: '8px 12px', borderRadius: 4 }}
+                >
+                  <DropdownMenu.ItemTitle style={{ fontSize: 14, color: theme.color.val }}>
+                    Report
+                  </DropdownMenu.ItemTitle>
                 </DropdownMenu.Item>
               )}
             </DropdownMenu.Content>
