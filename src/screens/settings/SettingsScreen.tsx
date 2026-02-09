@@ -44,7 +44,7 @@ export function SettingsScreen({ navigation }: ProfileScreenProps<'Settings'>) {
   if (!user) return <LoadingSpinner />;
 
   return (
-    <ScreenContainer>
+    <ScreenContainer noTopInset>
       <ScrollView style={{ flex: 1, padding: 16 }}>
         <Text fontSize="$1" fontWeight="600" color="$colorSecondary" marginTop="$lg" marginBottom="$sm" textTransform="uppercase">Subscription</Text>
         <TouchableOpacity style={{ paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: theme.borderColor.val, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }} onPress={() => navigation.navigate('Subscription')}>

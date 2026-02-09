@@ -5,7 +5,7 @@ import { ScreenContainer } from '../../components/ScreenContainer';
 
 export function PrivacyPolicyScreen() {
   return (
-    <ScreenContainer>
+    <ScreenContainer noTopInset>
       <ScrollView style={{ flex: 1, padding: 16 }}>
         <Text fontSize="$5" fontWeight="700" color="$color" marginBottom="$xs">Privacy Policy</Text>
         <Text fontSize="$1" color="$colorSecondary" marginBottom="$lg">Last updated: February 8, 2026</Text>

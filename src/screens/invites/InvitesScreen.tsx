@@ -47,7 +47,7 @@ export function InvitesScreen() {
   if (loading) return <LoadingSpinner />;
 
   return (
-    <ScreenContainer>
+    <ScreenContainer noTopInset>
       <YStack flex={1} padding="$md">
         <Text fontSize="$5" fontWeight="700" marginBottom="$xs" color="$color">Invites</Text>
         <Text fontSize="$2" marginBottom="$md" color="$colorSecondary">{remaining} invites remaining</Text>

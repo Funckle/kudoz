@@ -5,7 +5,7 @@ import { ScreenContainer } from '../../components/ScreenContainer';
 
 export function AboutScreen() {
   return (
-    <ScreenContainer>
+    <ScreenContainer noTopInset>
       <ScrollView style={{ flex: 1, padding: 16 }}>
         <Text fontSize="$5" fontWeight="700" color="$color" marginBottom="$xs">About Kudoz</Text>
         <Text fontSize="$2" color="$colorSecondary" lineHeight={22} marginBottom="$lg">Track goals that matter. Celebrate with friends.</Text>

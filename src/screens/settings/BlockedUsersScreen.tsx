@@ -39,7 +39,7 @@ export function BlockedUsersScreen() {
   if (loading) return <LoadingSpinner />;
 
   return (
-    <ScreenContainer>
+    <ScreenContainer noTopInset>
       <FlatList
         data={blockedUsers}
         keyExtractor={(item) => item.id}

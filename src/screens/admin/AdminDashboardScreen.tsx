@@ -32,7 +32,7 @@ export function AdminDashboardScreen({ navigation }: ProfileScreenProps<'AdminDa
   if (loading) return <LoadingSpinner />;
 
   return (
-    <ScreenContainer>
+    <ScreenContainer noTopInset>
       <ScrollView
         style={{ flex: 1, padding: 16 }}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}

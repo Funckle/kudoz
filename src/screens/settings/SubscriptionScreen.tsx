@@ -18,7 +18,7 @@ export function SubscriptionScreen() {
   ];
 
   return (
-    <ScreenContainer>
+    <ScreenContainer noTopInset>
       <YStack flex={1} padding="$md" justifyContent="center">
         <Text fontSize="$5" fontWeight="700" color="$color" textAlign="center" marginBottom="$xs">{isPaid ? 'Premium' : 'Free Plan'}</Text>
         {isPaid && user?.subscription_expires_at && (

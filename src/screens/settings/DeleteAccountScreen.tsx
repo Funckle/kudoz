@@ -34,7 +34,7 @@ export function DeleteAccountScreen() {
   };
 
   return (
-    <ScreenContainer>
+    <ScreenContainer noTopInset>
       <YStack flex={1} padding="$md" justifyContent="center">
         <Text fontSize="$5" fontWeight="700" color="$error" marginBottom="$sm">Delete Account</Text>
         <Text fontSize="$2" fontWeight="600" color="$error" marginBottom="$md">This action is permanent and cannot be undone.</Text>

@@ -39,7 +39,7 @@ export function MutedUsersScreen() {
   if (loading) return <LoadingSpinner />;
 
   return (
-    <ScreenContainer>
+    <ScreenContainer noTopInset>
       <FlatList
         data={mutedUsers}
         keyExtractor={(item) => item.id}
