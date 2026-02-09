@@ -1,7 +1,8 @@
 import React, { useCallback } from 'react';
-import { TouchableOpacity, Image, Alert } from 'react-native';
+import { TouchableOpacity, Image, Alert, Platform } from 'react-native';
 import { MessageCircle } from 'lucide-react-native';
 import { YStack, XStack, Text, useTheme } from 'tamagui';
+import * as DropdownMenu from 'zeego/dropdown-menu';
 import { Avatar } from './Avatar';
 import { CategoryBadge } from './CategoryBadge';
 import { KudozButton } from './KudozButton';
@@ -50,33 +51,26 @@ export const PostCard = React.memo(function PostCard({
     return date.toLocaleDateString();
   };
 
-  const handleDelete = useCallback(() => {
-    Alert.alert('Delete post?', 'This action cannot be undone. Progress will be reversed.', [
-      { text: 'Cancel', style: 'cancel' },
-      {
-        text: 'Delete',
-        style: 'destructive',
-        onPress: async () => {
-          await deletePost(post.id);
-          onDeleted?.();
-        },
-      },
-    ]);
-  }, [post.id, onDeleted]);
-
-  const handleMenu = () => {
-    const options: Array<{ text: string; onPress?: () => void; style?: 'cancel' | 'destructive' }> = [];
-    if (isOwner) {
-      if (post.post_type === 'progress') {
-        options.push({ text: 'Edit', onPress: onEdit });
+  const handleDelete = useCallback(async () => {
+    if (Platform.OS === 'web') {
+      if (window.confirm('Delete post? This action cannot be undone. Progress will be reversed.')) {
+        await deletePost(post.id);
+        onDeleted?.();
       }
-      options.push({ text: 'Delete', onPress: handleDelete, style: 'destructive' });
     } else {
-      options.push({ text: 'Report', onPress: onReport });
+      Alert.alert('Delete post?', 'This action cannot be undone. Progress will be reversed.', [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: async () => {
+            await deletePost(post.id);
+            onDeleted?.();
+          },
+        },
+      ]);
     }
-    options.push({ text: 'Cancel', style: 'cancel' });
-    Alert.alert('Options', '', options);
-  };
+  }, [post.id, onDeleted]);
 
   const postTypeLabel = post.post_type === 'goal_created'
     ? 'started a goal'
@@ -98,9 +92,31 @@ export const PostCard = React.memo(function PostCard({
               </Text>
             </YStack>
           </TouchableOpacity>
-          <TouchableOpacity onPress={handleMenu} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
-            <Text fontSize={18} color="$colorSecondary" paddingLeft="$sm">···</Text>
-          </TouchableOpacity>
+          <DropdownMenu.Root>
+            <DropdownMenu.Trigger>
+              <TouchableOpacity hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+                <Text fontSize={18} color="$colorSecondary" paddingLeft="$sm">···</Text>
+              </TouchableOpacity>
+            </DropdownMenu.Trigger>
+            <DropdownMenu.Content>
+              {isOwner ? (
+                <>
+                  {post.post_type === 'progress' && (
+                    <DropdownMenu.Item key="edit" onSelect={() => onEdit?.()}>
+                      <DropdownMenu.ItemTitle>Edit</DropdownMenu.ItemTitle>
+                    </DropdownMenu.Item>
+                  )}
+                  <DropdownMenu.Item key="delete" destructive onSelect={handleDelete}>
+                    <DropdownMenu.ItemTitle>Delete</DropdownMenu.ItemTitle>
+                  </DropdownMenu.Item>
+                </>
+              ) : (
+                <DropdownMenu.Item key="report" onSelect={() => onReport?.()}>
+                  <DropdownMenu.ItemTitle>Report</DropdownMenu.ItemTitle>
+                </DropdownMenu.Item>
+              )}
+            </DropdownMenu.Content>
+          </DropdownMenu.Root>
         </XStack>
 
         {/* Goal link */}
