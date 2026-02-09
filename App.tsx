@@ -1,4 +1,3 @@
-import '@tamagui/native/setup-zeego';
 import React, { useEffect, useRef } from 'react';
 import { Platform, useColorScheme } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
