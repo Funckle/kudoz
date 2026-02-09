@@ -67,53 +67,56 @@ export function CreatePostScreen({ route, navigation }: CreateScreenProps<'Creat
 
     setPosting(true);
 
-    let mediaUrl: string | undefined;
-    let mediaWidth: number | undefined;
-    let mediaHeight: number | undefined;
+    try {
+      let mediaUrl: string | undefined;
+      let mediaWidth: number | undefined;
+      let mediaHeight: number | undefined;
 
-    if (imageUri) {
-      const upload = await uploadImage(imageUri, user.id, Date.now().toString());
-      if (upload.error) {
-        Alert.alert('Upload failed', upload.error);
-        setPosting(false);
+      if (imageUri) {
+        const upload = await uploadImage(imageUri, user.id, Date.now().toString());
+        if (upload.error) {
+          Alert.alert('Upload failed', upload.error);
+          return;
+        }
+        mediaUrl = upload.url;
+        mediaWidth = imageSize?.width;
+        mediaHeight = imageSize?.height;
+      }
+
+      const pv = progressValue ? parseFloat(progressValue) : undefined;
+
+      const result = await createPost({
+        user_id: user.id,
+        goal_id: selectedGoal.id,
+        content: content.trim() || undefined,
+        post_type: 'progress',
+        progress_value: pv,
+        media_url: mediaUrl,
+        media_type: mediaUrl ? 'image' : undefined,
+        media_width: mediaWidth,
+        media_height: mediaHeight,
+      });
+
+      if (result.error) {
+        Alert.alert('Error', result.error);
         return;
       }
-      mediaUrl = upload.url;
-      mediaWidth = imageSize?.width;
-      mediaHeight = imageSize?.height;
-    }
 
-    const pv = progressValue ? parseFloat(progressValue) : undefined;
+      // Check auto-completion
+      if (pv) {
+        await checkGoalCompletion(selectedGoal.id, user.id);
+      }
 
-    const result = await createPost({
-      user_id: user.id,
-      goal_id: selectedGoal.id,
-      content: content.trim() || undefined,
-      post_type: 'progress',
-      progress_value: pv,
-      media_url: mediaUrl,
-      media_type: mediaUrl ? 'image' : undefined,
-      media_width: mediaWidth,
-      media_height: mediaHeight,
-    });
-
-    if (result.error) {
-      Alert.alert('Error', result.error);
+      // Dismiss the modal, then switch to the Feed tab
+      const root = navigation.getParent();
+      if (root) {
+        root.goBack();
+        root.navigate('Main', { screen: 'HomeTab', params: { screen: 'Feed' } });
+      }
+    } catch (e: any) {
+      Alert.alert('Error', e?.message || 'Something went wrong');
+    } finally {
       setPosting(false);
-      return;
-    }
-
-    // Check auto-completion
-    if (pv) {
-      await checkGoalCompletion(selectedGoal.id, user.id);
-    }
-
-    setPosting(false);
-    // Dismiss the modal, then switch to the Feed tab
-    const root = navigation.getParent();
-    if (root) {
-      root.goBack();
-      root.navigate('Main', { screen: 'HomeTab', params: { screen: 'Feed' } });
     }
   };
 

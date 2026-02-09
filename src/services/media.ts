@@ -1,5 +1,7 @@
 import * as ImagePicker from 'expo-image-picker';
 import * as ImageManipulator from 'expo-image-manipulator';
+import { File as ExpoFile } from 'expo-file-system';
+import { Platform } from 'react-native';
 import { supabase } from './supabase';
 import { LIMITS } from '../utils/validation';
 
@@ -49,26 +51,42 @@ export async function uploadImage(
 ): Promise<{ url?: string; error?: string }> {
   const path = `${userId}/${fileName}.jpg`;
 
-  const response = await fetch(uri);
-  const blob = await response.blob();
+  try {
+    let body: ArrayBuffer | Blob;
 
-  const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
-  if (!allowedTypes.includes(blob.type)) {
-    return { error: 'Only JPEG, PNG, WebP, and GIF images are allowed' };
+    if (Platform.OS !== 'web') {
+      // On native (iOS/Android), fetch(file://) produces corrupt blobs.
+      // Use expo-file-system's File class to read as ArrayBuffer instead.
+      const file = new ExpoFile(uri);
+      const buffer = await file.arrayBuffer();
+      if (buffer.byteLength > LIMITS.IMAGE_MAX_SIZE) {
+        return { error: 'Image must be under 2MB' };
+      }
+      body = buffer;
+    } else {
+      const response = await fetch(uri);
+      const blob = await response.blob();
+      const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+      if (!allowedTypes.includes(blob.type)) {
+        return { error: 'Only JPEG, PNG, WebP, and GIF images are allowed' };
+      }
+      if (blob.size > LIMITS.IMAGE_MAX_SIZE) {
+        return { error: 'Image must be under 2MB' };
+      }
+      body = blob;
+    }
+
+    const { error } = await supabase.storage
+      .from(bucket)
+      .upload(path, body, { contentType: 'image/jpeg', upsert: true });
+
+    if (error) return { error: error.message };
+
+    const { data } = supabase.storage.from(bucket).getPublicUrl(path);
+    return { url: data.publicUrl };
+  } catch (e: any) {
+    return { error: e?.message || 'Failed to upload image' };
   }
-
-  if (blob.size > LIMITS.IMAGE_MAX_SIZE) {
-    return { error: 'Image must be under 2MB' };
-  }
-
-  const { error } = await supabase.storage
-    .from(bucket)
-    .upload(path, blob, { contentType: 'image/jpeg', upsert: true });
-
-  if (error) return { error: error.message };
-
-  const { data } = supabase.storage.from(bucket).getPublicUrl(path);
-  return { url: data.publicUrl };
 }
 
 export async function deleteImage(url: string, bucket: 'post-images' | 'avatars' = 'post-images') {
