@@ -1,5 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { ScrollView, TouchableOpacity, Image, Alert } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
 import { YStack, Text, useTheme } from 'tamagui';
 import { ScreenContainer } from '../../components/ScreenContainer';
@@ -21,6 +22,7 @@ import type { CreateScreenProps } from '../../types/navigation';
 
 export function CreatePostScreen({ route, navigation }: CreateScreenProps<'CreatePost'>) {
   const theme = useTheme();
+  const insets = useSafeAreaInsets();
   const { user } = useAuth();
   const { isSuspended } = useRole();
   const [goals, setGoals] = useState<GoalWithCategories[]>([]);
@@ -203,9 +205,10 @@ export function CreatePostScreen({ route, navigation }: CreateScreenProps<'Creat
         ) : (
           <Button title="Add photo" onPress={handlePickImage} variant="secondary" style={{ marginBottom: 16 }} />
         )}
-
-        <Button title="Post" onPress={handlePost} loading={posting} disabled={!content.trim() && !progressValue} />
       </ScrollView>
+      <YStack padding="$md" paddingBottom={insets.bottom || 16} borderTopWidth={1} borderTopColor="$borderColor">
+        <Button title="Post" onPress={handlePost} loading={posting} disabled={!content.trim() && !progressValue} />
+      </YStack>
     </ScreenContainer>
   );
 }
