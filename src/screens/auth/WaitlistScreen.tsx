@@ -51,7 +51,7 @@ export function WaitlistScreen() {
           Join the Waitlist
         </Text>
         <Text fontSize="$2" marginBottom="$xl" color="$colorSecondary">
-          Kudoz is currently invite-only. Join the waitlist to get early access.
+          Mokudos is currently invite-only. Join the waitlist to get early access.
         </Text>
         <TextInput
           label="Email"

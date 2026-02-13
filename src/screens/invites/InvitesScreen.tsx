@@ -40,7 +40,7 @@ export function InvitesScreen() {
 
   const handleShare = (code: string) => {
     Share.share({
-      message: `Join me on Kudoz! Use invite code: ${code}\n\nkudoz://invite/${code}`,
+      message: `Join me on Mokudos! Use invite code: ${code}\n\nmokudos://invite/${code}`,
     });
   };
 

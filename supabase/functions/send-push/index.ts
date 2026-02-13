@@ -15,8 +15,8 @@ function getNotificationContent(notification: NotificationRecord): { title: stri
   const actorName = (data.actor_name as string) || 'Someone';
 
   switch (notification.type) {
-    case 'kudoz':
-      return { title: 'Kudoz!', body: `${actorName} gave you Kudoz` };
+    case 'kudos':
+      return { title: 'Kudos!', body: `${actorName} gave you Kudos` };
     case 'comment':
       return { title: 'New Comment', body: `${actorName} commented on your post` };
     case 'follow':
@@ -48,7 +48,7 @@ function getNotificationContent(notification: NotificationRecord): { title: stri
     case 'moderation_ban':
       return { title: 'Account Banned', body: 'Your account has been permanently banned' };
     default:
-      return { title: 'Kudoz', body: 'You have a new notification' };
+      return { title: 'Mokudos', body: 'You have a new notification' };
   }
 }
 

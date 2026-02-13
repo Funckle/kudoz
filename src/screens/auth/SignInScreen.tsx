@@ -51,7 +51,7 @@ export function SignInScreen({ navigation }: AuthScreenProps<'SignIn'>) {
             marginBottom="$sm"
             color="$color"
           >
-            Kudoz
+            Mokudos
           </Text>
           <Text
             fontSize="$2"

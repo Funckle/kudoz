@@ -32,7 +32,7 @@ export function PublicFeedScreen({ onSignIn, onWaitlist, onRedeemInvite }: Publi
       .limit(10)
       .then(({ data }) => {
         setPosts((data || []).map((p: Record<string, unknown>) => ({
-          ...p, kudoz_count: 0, comment_count: 0, has_kudozd: false,
+          ...p, kudos_count: 0, comment_count: 0, has_given_kudos: false,
         })) as PostWithAuthor[]);
         setLoading(false);
       });
@@ -58,7 +58,7 @@ export function PublicFeedScreen({ onSignIn, onWaitlist, onRedeemInvite }: Publi
       <Modal visible={showGate} transparent animationType="fade">
         <YStack flex={1} backgroundColor="rgba(0,0,0,0.7)" justifyContent="center" alignItems="center" padding="$lg">
           <YStack borderRadius="$md" padding="$lg" width="100%" maxWidth={360} backgroundColor="$background">
-            <Text fontSize="$5" fontWeight="700" textAlign="center" marginBottom="$xs" color="$color">Join Kudoz</Text>
+            <Text fontSize="$5" fontWeight="700" textAlign="center" marginBottom="$xs" color="$color">Join Mokudos</Text>
             <Text fontSize="$2" textAlign="center" marginBottom="$lg" color="$colorSecondary">Create goals, share progress, and celebrate with friends.</Text>
             <Button title="Sign in" onPress={onSignIn} style={{ marginBottom: 8 }} />
             <Button title="Redeem invite" onPress={onRedeemInvite} variant="secondary" style={{ marginBottom: 8 }} />

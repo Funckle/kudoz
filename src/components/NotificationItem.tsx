@@ -13,10 +13,10 @@ export function NotificationItem({ notification, onPress }: NotificationItemProp
   const getMessage = () => {
     const name = notification.actor?.name || 'Someone';
     switch (notification.type) {
-      case 'kudoz':
-        return `${name} gave you Kudoz`;
-      case 'comment_kudoz':
-        return `${name} gave Kudoz to your comment`;
+      case 'kudos':
+        return `${name} gave you Kudos`;
+      case 'comment_kudos':
+        return `${name} gave Kudos to your comment`;
       case 'comment':
         return `${name} commented on your post`;
       case 'follow':

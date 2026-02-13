@@ -1,4 +1,4 @@
-# Kudoz Mobile App
+# Mokudos Mobile App
 
 Social goal-tracking platform built with Expo and React Native.
 

@@ -1,13 +1,13 @@
 {
   "expo": {
-    "name": "Kudoz",
-    "slug": "kudoz",
+    "name": "Mokudos",
+    "slug": "mokudos",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
-    "scheme": "kudoz",
+    "scheme": "mokudos",
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
@@ -15,7 +15,7 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.kudoz.app",
+      "bundleIdentifier": "com.mokudos.app",
       "infoPlist": {
         "NSAppTransportSecurity": {
           "NSAllowsArbitraryLoads": false
@@ -29,7 +29,7 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.kudoz.app",
+      "package": "com.mokudos.app",
       "usesCleartextTraffic": false
     },
     "web": {

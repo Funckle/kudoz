@@ -104,7 +104,7 @@ export function SettingsScreen({ navigation }: ProfileScreenProps<'Settings'>) {
 
         <Text fontSize="$1" fontWeight="600" color="$colorSecondary" marginTop="$lg" marginBottom="$sm" textTransform="uppercase">About</Text>
         <TouchableOpacity style={{ paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: theme.borderColor.val, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }} onPress={() => navigation.navigate('About')}>
-          <Text fontSize="$2" color="$color">About Kudoz</Text>
+          <Text fontSize="$2" color="$color">About Mokudos</Text>
         </TouchableOpacity>
         <TouchableOpacity style={{ paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: theme.borderColor.val, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }} onPress={() => navigation.navigate('YourData')}>
           <Text fontSize="$2" color="$color">Your data</Text>

@@ -7,11 +7,11 @@ export function AboutScreen() {
   return (
     <ScreenContainer noTopInset>
       <ScrollView style={{ flex: 1, padding: 16 }}>
-        <Text fontSize="$5" fontWeight="700" color="$color" marginBottom="$xs">About Kudoz</Text>
+        <Text fontSize="$5" fontWeight="700" color="$color" marginBottom="$xs">About Mokudos</Text>
         <Text fontSize="$2" color="$colorSecondary" lineHeight={22} marginBottom="$lg">Track goals that matter. Celebrate with friends.</Text>
 
         <Text fontSize="$2" color="$colorSecondary" lineHeight={22} marginBottom="$sm">
-          Set a goal, share your progress, and let your friends cheer you on. Every post on Kudoz is tied to a real goal — no noise, just forward movement.
+          Set a goal, share your progress, and let your friends cheer you on. Every post on Mokudos is tied to a real goal — no noise, just forward movement.
         </Text>
 
         <Text fontSize="$4" fontWeight="600" color="$color" marginTop="$md" marginBottom="$xs">Your feed, unfiltered</Text>
@@ -26,7 +26,7 @@ export function AboutScreen() {
 
         <Text fontSize="$4" fontWeight="600" color="$color" marginTop="$md" marginBottom="$xs">What you won't find here</Text>
         <Text fontSize="$2" color="$colorSecondary" lineHeight={22} marginBottom="$sm">
-          No rankings or leaderboards. No like counts on your profile. No streak-shaming or guilt notifications. Kudoz is built to help you grow, not to keep you scrolling.
+          No rankings or leaderboards. No like counts on your profile. No streak-shaming or guilt notifications. Mokudos is built to help you grow, not to keep you scrolling.
         </Text>
       </ScrollView>
     </ScreenContainer>

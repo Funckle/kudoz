@@ -58,9 +58,9 @@ export async function getPostsByCategory(
 
   const posts: PostWithAuthor[] = (data || []).map((p: Record<string, unknown>) => ({
     ...p,
-    kudoz_count: 0,
+    kudos_count: 0,
     comment_count: 0,
-    has_kudozd: false,
+    has_given_kudos: false,
   })) as PostWithAuthor[];
 
   return { posts };

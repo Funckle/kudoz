@@ -34,9 +34,9 @@ export function NotificationsScreen({ navigation }: NotificationsScreenProps<'No
 
     const data = notification.data as Record<string, string>;
     switch (notification.type) {
-      case 'kudoz':
+      case 'kudos':
       case 'comment':
-      case 'comment_kudoz':
+      case 'comment_kudos':
         if (data.post_id) navigation.navigate('PostDetail', { postId: data.post_id });
         break;
       case 'follow':

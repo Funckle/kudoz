@@ -26,20 +26,20 @@ export function YourDataScreen({ navigation }: ProfileScreenProps<'YourData'>) {
 
         <Text fontSize="$4" fontWeight="600" color="$color" marginTop="$md" marginBottom="$xs">What We Collect</Text>
         <Text fontSize="$2" color="$colorSecondary" lineHeight={22} marginBottom="$sm">
-          We store only what's necessary to make Kudoz work: your email address, profile information
+          We store only what's necessary to make Mokudos work: your email address, profile information
           (name, username, bio, avatar), goals, posts, comments, reactions, and follow relationships.
         </Text>
 
         <Text fontSize="$4" fontWeight="600" color="$color" marginTop="$md" marginBottom="$xs">How It's Used</Text>
         <Text fontSize="$2" color="$colorSecondary" lineHeight={22} marginBottom="$sm">
-          Your data is used exclusively to provide the Kudoz service. We show your goals and posts to
+          Your data is used exclusively to provide the Mokudos service. We show your goals and posts to
           people you've chosen to share with based on your visibility settings. We never sell your data
           or share it with advertisers.
         </Text>
 
         <Text fontSize="$4" fontWeight="600" color="$color" marginTop="$md" marginBottom="$xs">Where It Lives</Text>
         <Text fontSize="$2" color="$colorSecondary" lineHeight={22} marginBottom="$sm">
-          Your data is stored securely on protected servers. Other users can only see what you've chosen to share. Kudoz administrators can access data when needed to run and maintain the service, but we'll never share it with anyone else.
+          Your data is stored securely on protected servers. Other users can only see what you've chosen to share. Mokudos administrators can access data when needed to run and maintain the service, but we'll never share it with anyone else.
         </Text>
 
         <Text fontSize="$4" fontWeight="600" color="$color" marginTop="$md" marginBottom="$xs">Your Rights</Text>

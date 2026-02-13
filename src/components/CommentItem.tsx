@@ -3,7 +3,7 @@ import { TouchableOpacity, Alert } from 'react-native';
 import { Reply, Pencil, Trash2, Flag } from 'lucide-react-native';
 import { YStack, XStack, Text, useTheme } from 'tamagui';
 import { Avatar } from './Avatar';
-import { CommentKudozButton } from './CommentKudozButton';
+import { CommentKudosButton } from './CommentKudosButton';
 import { useAuth } from '../hooks/useAuth';
 import { deleteComment } from '../services/comments';
 import type { CommentWithAuthor } from '../types/database';
@@ -86,10 +86,10 @@ export const CommentItem = React.memo(function CommentItem({ comment, depth = 0,
           )}
           <Text fontSize="$2" color="$color" marginTop={2}>{comment.content}</Text>
           <XStack marginTop="$sm">
-            <CommentKudozButton
+            <CommentKudosButton
               commentId={comment.id}
-              initialCount={comment.kudoz_count}
-              initialActive={comment.has_kudozd}
+              initialCount={comment.kudos_count}
+              initialActive={comment.has_given_kudos}
             />
             <TouchableOpacity
               style={{ flexDirection: 'row', alignItems: 'center', marginRight: 16 }}

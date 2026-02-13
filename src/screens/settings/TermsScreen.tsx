@@ -10,18 +10,18 @@ export function TermsScreen() {
         <Text fontSize="$5" fontWeight="700" color="$color" marginBottom="$xs">Terms & Conditions</Text>
         <Text fontSize="$1" color="$colorSecondary" marginBottom="$lg">Last updated: February 8, 2026</Text>
         <Text fontSize="$2" color="$colorSecondary" lineHeight={22} marginBottom="$sm">
-          These are the rules for using Kudoz. We kept them short and readable because we believe you should know what you're agreeing to. By using Kudoz, you agree to these terms.
+          These are the rules for using Mokudos. We kept them short and readable because we believe you should know what you're agreeing to. By using Mokudos, you agree to these terms.
         </Text>
 
-        <Text fontSize="$4" fontWeight="600" color="$color" marginTop="$lg" marginBottom="$xs">What Kudoz is</Text>
+        <Text fontSize="$4" fontWeight="600" color="$color" marginTop="$lg" marginBottom="$xs">What Mokudos is</Text>
         <Text fontSize="$2" color="$colorSecondary" lineHeight={22} marginBottom="$sm">
-          Kudoz is a social goal-tracking platform where you set goals, share progress updates, and celebrate achievements with friends. It's designed to be positive, simple, and respectful of your time and data.
+          Mokudos is a social goal-tracking platform where you set goals, share progress updates, and celebrate achievements with friends. It's designed to be positive, simple, and respectful of your time and data.
         </Text>
 
         <Text fontSize="$4" fontWeight="600" color="$color" marginTop="$lg" marginBottom="$xs">Your account</Text>
         <Text fontSize="$2" color="$colorSecondary" lineHeight={22} marginBottom="$sm">
           {'\u2022'} You need a valid email address to create an account{'\n'}
-          {'\u2022'} You must be at least 13 years old to use Kudoz{'\n'}
+          {'\u2022'} You must be at least 13 years old to use Mokudos{'\n'}
           {'\u2022'} You're responsible for your account activity{'\n'}
           {'\u2022'} Your username must be appropriate and can't impersonate another person{'\n'}
           {'\u2022'} You can change your username once per day{'\n'}
@@ -32,7 +32,7 @@ export function TermsScreen() {
         <Text fontSize="$3" fontWeight="600" color="$color" marginTop="$sm" marginBottom="$xs">Free tier</Text>
         <Text fontSize="$2" color="$colorSecondary" lineHeight={22} marginBottom="$sm">
           {'\u2022'} Up to 3 active goals{'\n'}
-          {'\u2022'} Post progress updates, give Kudoz reactions, follow users{'\n'}
+          {'\u2022'} Post progress updates, give Kudos reactions, follow users{'\n'}
           {'\u2022'} No commenting
         </Text>
         <Text fontSize="$3" fontWeight="600" color="$color" marginTop="$sm" marginBottom="$xs">Paid tier ($12/year)</Text>
@@ -49,7 +49,7 @@ export function TermsScreen() {
           {'\u2022'} You can reactivate anytime by renewing
         </Text>
         <Text fontSize="$2" color="$colorSecondary" lineHeight={22} marginBottom="$sm">
-          Subscriptions are managed through Apple or Google. Refund requests must go through the respective app store, not through Kudoz.
+          Subscriptions are managed through Apple or Google. Refund requests must go through the respective app store, not through Mokudos.
         </Text>
 
         <Text fontSize="$4" fontWeight="600" color="$color" marginTop="$lg" marginBottom="$xs">Invites (Year 1)</Text>
@@ -59,7 +59,7 @@ export function TermsScreen() {
 
         <Text fontSize="$4" fontWeight="600" color="$color" marginTop="$lg" marginBottom="$xs">Content rules</Text>
         <Text fontSize="$2" color="$colorSecondary" lineHeight={22} marginBottom="$sm">
-          Kudoz is a place for celebrating personal progress. To keep it that way:
+          Mokudos is a place for celebrating personal progress. To keep it that way:
         </Text>
         <Text fontSize="$3" fontWeight="600" color="$color" marginTop="$sm" marginBottom="$xs">What's welcome</Text>
         <Text fontSize="$2" color="$colorSecondary" lineHeight={22} marginBottom="$sm">
@@ -82,7 +82,7 @@ export function TermsScreen() {
 
         <Text fontSize="$3" fontWeight="600" color="$color" marginTop="$sm" marginBottom="$xs">Automated content screening</Text>
         <Text fontSize="$2" color="$colorSecondary" lineHeight={22} marginBottom="$sm">
-          Kudoz uses AI-powered content screening to detect harmful content — such as hate speech, harassment, threats, and inappropriate images — before it's posted. If your content is flagged, you'll see a message and can revise it before resubmitting. This screening classifies intent, not individual words, so normal language (including casual profanity) is allowed. Automated screening is one layer of our moderation — it doesn't catch everything, which is why we also have manual reporting.
+          Mokudos uses AI-powered content screening to detect harmful content — such as hate speech, harassment, threats, and inappropriate images — before it's posted. If your content is flagged, you'll see a message and can revise it before resubmitting. This screening classifies intent, not individual words, so normal language (including casual profanity) is allowed. Automated screening is one layer of our moderation — it doesn't catch everything, which is why we also have manual reporting.
         </Text>
 
         <Text fontSize="$3" fontWeight="600" color="$color" marginTop="$sm" marginBottom="$xs">Character limits</Text>
@@ -105,7 +105,7 @@ export function TermsScreen() {
         <Text fontSize="$4" fontWeight="600" color="$color" marginTop="$lg" marginBottom="$xs">Your content</Text>
         <Text fontSize="$2" color="$colorSecondary" lineHeight={22} marginBottom="$sm">
           {'\u2022'} You own the content you post (goals, updates, comments, images){'\n'}
-          {'\u2022'} By posting on Kudoz, you grant us a license to display your content to other users according to your visibility settings, and to store it on our servers. By using Kudoz, you agree to this license{'\n'}
+          {'\u2022'} By posting on Mokudos, you grant us a license to display your content to other users according to your visibility settings, and to store it on our servers. By using Mokudos, you agree to this license{'\n'}
           {'\u2022'} This license ends when you delete your content or your account{'\n'}
           {'\u2022'} We don't claim ownership of anything you create{'\n'}
           {'\u2022'} We don't use your content to train AI models or sell to third parties. (Content is sent to OpenAI's moderation endpoint for safety screening only — see our Privacy Policy for details.)
@@ -156,7 +156,7 @@ export function TermsScreen() {
 
         <Text fontSize="$4" fontWeight="600" color="$color" marginTop="$lg" marginBottom="$xs">Availability</Text>
         <Text fontSize="$2" color="$colorSecondary" lineHeight={22} marginBottom="$sm">
-          {'\u2022'} Kudoz requires an internet connection — there's no offline mode{'\n'}
+          {'\u2022'} Mokudos requires an internet connection — there's no offline mode{'\n'}
           {'\u2022'} We aim for high availability but can't guarantee uninterrupted service{'\n'}
           {'\u2022'} We may need to perform maintenance that temporarily affects access{'\n'}
           {'\u2022'} We're not liable for losses caused by service downtime
@@ -164,7 +164,7 @@ export function TermsScreen() {
 
         <Text fontSize="$4" fontWeight="600" color="$color" marginTop="$lg" marginBottom="$xs">Limitation of liability</Text>
         <Text fontSize="$2" color="$colorSecondary" lineHeight={22} marginBottom="$sm">
-          Kudoz is provided "as is." While we work hard to make it reliable and useful, we can't guarantee it will be error-free. To the extent permitted by law:{'\n\n'}
+          Mokudos is provided "as is." While we work hard to make it reliable and useful, we can't guarantee it will be error-free. To the extent permitted by law:{'\n\n'}
           {'\u2022'} We're not liable for indirect, incidental, or consequential damages{'\n'}
           {'\u2022'} Our total liability is limited to the amount you've paid us in the past 12 months{'\n'}
           {'\u2022'} We're not responsible for content posted by other users
@@ -180,7 +180,7 @@ export function TermsScreen() {
 
         <Text fontSize="$4" fontWeight="600" color="$color" marginTop="$lg" marginBottom="$xs">Changes to these terms</Text>
         <Text fontSize="$2" color="$colorSecondary" lineHeight={22} marginBottom="$sm">
-          If we update these terms, we'll change the date at the top and notify users through the app. Continued use of Kudoz after changes means you accept the updated terms. If you disagree with changes, you can delete your account.
+          If we update these terms, we'll change the date at the top and notify users through the app. Continued use of Mokudos after changes means you accept the updated terms. If you disagree with changes, you can delete your account.
         </Text>
 
         <Text fontSize="$4" fontWeight="600" color="$color" marginTop="$lg" marginBottom="$xs">Governing law</Text>
@@ -190,7 +190,7 @@ export function TermsScreen() {
 
         <Text fontSize="$4" fontWeight="600" color="$color" marginTop="$lg" marginBottom="$xs">Contact</Text>
         <Text fontSize="$2" color="$colorSecondary" lineHeight={22} marginBottom="$sm">
-          Questions? Reach us at support@kudoz.me
+          Questions? Reach us at support@mokudos.com
         </Text>
 
         <YStack height="$xl" />

@@ -106,7 +106,7 @@ export async function getCompletionRateOverTime(userId: string): Promise<Array<{
     .slice(-6); // Last 6 months
 }
 
-export async function getMostKudozdGoals(userId: string, limit = 5): Promise<Array<{ id: string; title: string; kudoz_count: number }>> {
+export async function getMostKudosedGoals(userId: string, limit = 5): Promise<Array<{ id: string; title: string; kudos_count: number }>> {
   const { data: goals } = await supabase
     .from('goals')
     .select('id, title')
@@ -114,25 +114,25 @@ export async function getMostKudozdGoals(userId: string, limit = 5): Promise<Arr
 
   if (!goals || goals.length === 0) return [];
 
-  // Count kudoz per goal in parallel
+  // Count kudos per goal in parallel
   const results = await Promise.all(
     goals.map(async (g) => {
       const { data: postIds } = await supabase.from('posts').select('id').eq('goal_id', g.id);
-      if (!postIds || postIds.length === 0) return { ...g, kudoz_count: 0 };
+      if (!postIds || postIds.length === 0) return { ...g, kudos_count: 0 };
 
       const { count } = await supabase
         .from('reactions')
         .select('id', { count: 'exact', head: true })
         .in('post_id', postIds.map((p) => p.id));
 
-      return { id: g.id, title: g.title, kudoz_count: count ?? 0 };
+      return { id: g.id, title: g.title, kudos_count: count ?? 0 };
     })
   );
 
-  return results.filter((g) => g.kudoz_count > 0).sort((a, b) => b.kudoz_count - a.kudoz_count).slice(0, limit);
+  return results.filter((g) => g.kudos_count > 0).sort((a, b) => b.kudos_count - a.kudos_count).slice(0, limit);
 }
 
-export async function getMostKudozdComments(userId: string, limit = 5): Promise<Array<{ id: string; content: string; kudoz_count: number }>> {
+export async function getMostKudosedComments(userId: string, limit = 5): Promise<Array<{ id: string; content: string; kudos_count: number }>> {
   const { data: comments } = await supabase
     .from('comments')
     .select('id, content')
@@ -148,14 +148,14 @@ export async function getMostKudozdComments(userId: string, limit = 5): Promise<
         .from('comment_reactions')
         .select('id', { count: 'exact', head: true })
         .eq('comment_id', c.id);
-      return { ...c, kudoz_count: count ?? 0 };
+      return { ...c, kudos_count: count ?? 0 };
     })
   );
 
-  return results.filter((c) => c.kudoz_count > 0).sort((a, b) => b.kudoz_count - a.kudoz_count).slice(0, limit);
+  return results.filter((c) => c.kudos_count > 0).sort((a, b) => b.kudos_count - a.kudos_count).slice(0, limit);
 }
 
-export async function getMostKudozdPosts(userId: string, limit = 5): Promise<Array<{ id: string; content: string; kudoz_count: number }>> {
+export async function getMostKudosedPosts(userId: string, limit = 5): Promise<Array<{ id: string; content: string; kudos_count: number }>> {
   const { data: posts } = await supabase
     .from('posts')
     .select('id, content')
@@ -171,9 +171,9 @@ export async function getMostKudozdPosts(userId: string, limit = 5): Promise<Arr
         .from('reactions')
         .select('id', { count: 'exact', head: true })
         .eq('post_id', p.id);
-      return { ...p, kudoz_count: count ?? 0 };
+      return { ...p, kudos_count: count ?? 0 };
     })
   );
 
-  return results.sort((a, b) => b.kudoz_count - a.kudoz_count).slice(0, limit);
+  return results.sort((a, b) => b.kudos_count - a.kudos_count).slice(0, limit);
 }

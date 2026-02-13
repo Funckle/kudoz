@@ -100,20 +100,20 @@ export async function getCommentsForPost(postId: string, currentUserId?: string)
     .select('comment_id, user_id')
     .in('comment_id', commentIds);
 
-  // Build count map and user-has-kudozd set
+  // Build count map and user-has-given-kudos set
   const countMap = new Map<string, number>();
-  const userKudozdSet = new Set<string>();
+  const userKudosSet = new Set<string>();
   for (const r of reactions || []) {
     countMap.set(r.comment_id, (countMap.get(r.comment_id) || 0) + 1);
     if (currentUserId && r.user_id === currentUserId) {
-      userKudozdSet.add(r.comment_id);
+      userKudosSet.add(r.comment_id);
     }
   }
 
-  // Enrich comments with kudoz data
+  // Enrich comments with kudos data
   for (const comment of flat) {
-    comment.kudoz_count = countMap.get(comment.id) || 0;
-    comment.has_kudozd = userKudozdSet.has(comment.id);
+    comment.kudos_count = countMap.get(comment.id) || 0;
+    comment.has_given_kudos = userKudosSet.has(comment.id);
   }
 
   // Organize into tree

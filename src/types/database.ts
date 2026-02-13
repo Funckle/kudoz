@@ -7,9 +7,9 @@ export type SubscriptionStatus = 'active' | 'lapsed' | 'none';
 export type UserRole = 'user' | 'moderator' | 'admin';
 export type ModerationActionType = 'warn' | 'remove_content' | 'suspend' | 'ban' | 'dismiss' | 'lift_suspension';
 export type NotificationType =
-  | 'kudoz'
+  | 'kudos'
   | 'comment'
-  | 'comment_kudoz'
+  | 'comment_kudos'
   | 'follow'
   | 'mutual_follow'
   | 'goal_completed'
@@ -186,16 +186,16 @@ export interface PostWithAuthor extends Post {
   user: Pick<User, 'id' | 'name' | 'username' | 'avatar_url'>;
   goal: Pick<Goal, 'id' | 'title' | 'goal_type' | 'target_value' | 'current_value' | 'status'>;
   categories?: Category[];
-  kudoz_count: number;
+  kudos_count: number;
   comment_count: number;
-  has_kudozd: boolean;
+  has_given_kudos: boolean;
 }
 
 export interface CommentWithAuthor extends Comment {
   user: Pick<User, 'id' | 'name' | 'username' | 'avatar_url'>;
   replies?: CommentWithAuthor[];
-  kudoz_count: number;
-  has_kudozd: boolean;
+  kudos_count: number;
+  has_given_kudos: boolean;
 }
 
 export interface GoalWithCategories extends Goal {

@@ -8,7 +8,7 @@ interface RateLimitConfig {
 
 export const RATE_LIMITS: Record<string, RateLimitConfig> = {
   post: { maxActions: 5, windowMs: 10 * 60 * 1000, cooldownMs: 5 * 60 * 1000 },
-  kudoz: { maxActions: 10, windowMs: 60 * 1000, cooldownMs: 30 * 1000 },
+  kudos: { maxActions: 10, windowMs: 60 * 1000, cooldownMs: 30 * 1000 },
   report: { maxActions: 10, windowMs: 24 * 60 * 60 * 1000, cooldownMs: 60 * 60 * 1000 },
 };
 

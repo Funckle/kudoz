@@ -71,14 +71,14 @@ export async function exportUserData(userId: string): Promise<{ error?: string }
     ));
 
     const csv = sections.join('\n');
-    const fileUri = (FileSystem.documentDirectory || '') + 'kudoz-export.csv';
+    const fileUri = (FileSystem.documentDirectory || '') + 'mokudos-export.csv';
     await FileSystem.writeAsStringAsync(fileUri, csv);
 
     const canShare = await Sharing.isAvailableAsync();
     if (canShare) {
       await Sharing.shareAsync(fileUri, {
         mimeType: 'text/csv',
-        dialogTitle: 'Export your Kudoz data',
+        dialogTitle: 'Export your Mokudos data',
       });
     }
 

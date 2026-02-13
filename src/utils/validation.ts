@@ -14,7 +14,7 @@ export const LIMITS = {
 } as const;
 
 const RESERVED_USERNAMES = [
-  'admin', 'kudoz', 'support', 'help', 'mod', 'moderator',
+  'admin', 'mokudos', 'support', 'help', 'mod', 'moderator',
   'system', 'official', 'staff', 'team', 'null', 'undefined',
   'api', 'settings', 'profile', 'search', 'notifications',
   'home', 'feed', 'create', 'edit', 'delete', 'login', 'signup',

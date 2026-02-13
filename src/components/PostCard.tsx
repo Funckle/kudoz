@@ -5,7 +5,7 @@ import { YStack, XStack, Text, useTheme } from 'tamagui';
 import * as DropdownMenu from 'zeego/dropdown-menu';
 import { Avatar } from './Avatar';
 import { CategoryBadge } from './CategoryBadge';
-import { KudozButton } from './KudozButton';
+import { KudosButton } from './KudosButton';
 import type { PostWithAuthor } from '../types/database';
 import { useAuth } from '../hooks/useAuth';
 import { deletePost } from '../services/posts';
@@ -206,7 +206,7 @@ export const PostCard = React.memo(function PostCard({
 
         {/* Actions */}
         <XStack alignItems="center">
-          <KudozButton postId={post.id} initialCount={post.kudoz_count} initialActive={post.has_kudozd} />
+          <KudosButton postId={post.id} initialCount={post.kudos_count} initialActive={post.has_given_kudos} />
           <TouchableOpacity
             onPress={onPressComments}
             style={{ flexDirection: 'row', alignItems: 'center', marginLeft: 16, paddingVertical: 4 }}
@@ -222,9 +222,9 @@ export const PostCard = React.memo(function PostCard({
   );
 }, (prev, next) => {
   return prev.post.id === next.post.id
-    && prev.post.kudoz_count === next.post.kudoz_count
+    && prev.post.kudos_count === next.post.kudos_count
     && prev.post.comment_count === next.post.comment_count
-    && prev.post.has_kudozd === next.post.has_kudozd
+    && prev.post.has_given_kudos === next.post.has_given_kudos
     && prev.post.edited_at === next.post.edited_at
     && prev.post.content === next.post.content
     && prev.isExpanded === next.isExpanded;

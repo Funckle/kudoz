@@ -37,7 +37,7 @@ export function RedeemInviteScreen({ route, navigation }: AuthScreenProps<'Redee
           Redeem Invite
         </Text>
         <Text fontSize="$2" marginBottom="$xl" color="$colorSecondary">
-          Enter your invite code to join Kudoz.
+          Enter your invite code to join Mokudos.
         </Text>
         <TextInput
           label="Invite code"

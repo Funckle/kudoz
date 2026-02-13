@@ -159,9 +159,9 @@ export async function getFeedPosts(
       current_value: row.goal_current_value,
       status: row.goal_status,
     },
-    kudoz_count: Number(row.kudoz_count) || 0,
+    kudos_count: Number(row.kudos_count) || 0,
     comment_count: Number(row.comment_count) || 0,
-    has_kudozd: Boolean(row.has_kudozd),
+    has_given_kudos: Boolean(row.has_given_kudos),
   }));
 
   return { posts: await enrichWithCategories(posts) };
@@ -203,15 +203,15 @@ export async function getPostsByGoalWithAuthors(
 
   const posts: PostWithAuthor[] = await Promise.all(
     (data || []).map(async (p: Record<string, unknown>) => {
-      const [{ count: kudozCount }, { count: commentCount }] = await Promise.all([
+      const [{ count: kudosCount }, { count: commentCount }] = await Promise.all([
         supabase.from('reactions').select('id', { count: 'exact', head: true }).eq('post_id', p.id as string),
         supabase.from('comments').select('id', { count: 'exact', head: true }).eq('post_id', p.id as string),
       ]);
       return {
         ...p,
-        kudoz_count: kudozCount ?? 0,
+        kudos_count: kudosCount ?? 0,
         comment_count: commentCount ?? 0,
-        has_kudozd: false,
+        has_given_kudos: false,
       } as PostWithAuthor;
     })
   );
@@ -233,7 +233,7 @@ export async function getPost(postId: string): Promise<{ post?: PostWithAuthor; 
   if (error) return { error: error.message };
 
   // Get counts
-  const [{ count: kudozCount }, { count: commentCount }, { data: kudozd }] = await Promise.all([
+  const [{ count: kudosCount }, { count: commentCount }, { data: givenKudos }] = await Promise.all([
     supabase.from('reactions').select('id', { count: 'exact', head: true }).eq('post_id', postId),
     supabase.from('comments').select('id', { count: 'exact', head: true }).eq('post_id', postId),
     supabase.from('reactions').select('id').eq('post_id', postId).eq('user_id', data.user_id).maybeSingle(),
@@ -241,9 +241,9 @@ export async function getPost(postId: string): Promise<{ post?: PostWithAuthor; 
 
   const post: PostWithAuthor = {
     ...data,
-    kudoz_count: kudozCount ?? 0,
+    kudos_count: kudosCount ?? 0,
     comment_count: commentCount ?? 0,
-    has_kudozd: !!kudozd,
+    has_given_kudos: !!givenKudos,
   } as PostWithAuthor;
 
   const [enriched] = await enrichWithCategories([post]);

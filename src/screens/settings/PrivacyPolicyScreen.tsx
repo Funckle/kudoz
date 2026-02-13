@@ -10,7 +10,7 @@ export function PrivacyPolicyScreen() {
         <Text fontSize="$5" fontWeight="700" color="$color" marginBottom="$xs">Privacy Policy</Text>
         <Text fontSize="$1" color="$colorSecondary" marginBottom="$lg">Last updated: February 8, 2026</Text>
         <Text fontSize="$2" color="$colorSecondary" lineHeight={22} marginBottom="$sm">
-          Kudoz is built on a simple principle: your data is yours. This policy explains what we collect, why, and what we'll never do. We wrote it in plain language because we think you should actually be able to read it.
+          Mokudos is built on a simple principle: your data is yours. This policy explains what we collect, why, and what we'll never do. We wrote it in plain language because we think you should actually be able to read it.
         </Text>
 
         <Text fontSize="$4" fontWeight="600" color="$color" marginTop="$lg" marginBottom="$xs">What we collect</Text>
@@ -29,7 +29,7 @@ export function PrivacyPolicyScreen() {
           {'\u2022'} Goals, progress updates, and comments you post{'\n'}
           {'\u2022'} Categories you assign to your goals{'\n'}
           {'\u2022'} Images you upload with your posts{'\n'}
-          {'\u2022'} Kudoz reactions you give to others{'\n'}
+          {'\u2022'} Kudos reactions you give to others{'\n'}
           {'\u2022'} Reports you submit about content or users
         </Text>
 
@@ -65,7 +65,7 @@ export function PrivacyPolicyScreen() {
         <Text fontSize="$4" fontWeight="600" color="$color" marginTop="$lg" marginBottom="$xs">What we will never do</Text>
         <Text fontSize="$2" color="$colorSecondary" lineHeight={22} marginBottom="$sm">
           {'\u2022'} Sell your data. Not to advertisers, data brokers, or anyone else. Ever.{'\n'}
-          {'\u2022'} Show you ads. Kudoz is funded by subscriptions, not advertising.{'\n'}
+          {'\u2022'} Show you ads. Mokudos is funded by subscriptions, not advertising.{'\n'}
           {'\u2022'} Use third-party trackers. No Google Analytics, no Facebook Pixel, no tracking scripts.{'\n'}
           {'\u2022'} Build a behavioral profile on you. We don't analyze your usage patterns to target or manipulate you.{'\n'}
           {'\u2022'} Use an algorithmic feed. Your feed is chronological — we don't optimize for engagement.{'\n'}
@@ -74,7 +74,7 @@ export function PrivacyPolicyScreen() {
 
         <Text fontSize="$4" fontWeight="600" color="$color" marginTop="$lg" marginBottom="$xs">Third-party services</Text>
         <Text fontSize="$2" color="$colorSecondary" lineHeight={22} marginBottom="$sm">
-          Kudoz uses the following services to operate. These providers host or process data on our behalf — they don't actively review or analyze your content.
+          Mokudos uses the following services to operate. These providers host or process data on our behalf — they don't actively review or analyze your content.
         </Text>
         <Text fontSize="$2" color="$colorSecondary" lineHeight={22} marginBottom="$sm">
           Supabase — Database, authentication, file storage. Your account data, content, and uploaded images are stored on their infrastructure.
@@ -153,7 +153,7 @@ export function PrivacyPolicyScreen() {
 
         <Text fontSize="$4" fontWeight="600" color="$color" marginTop="$lg" marginBottom="$xs">Children</Text>
         <Text fontSize="$2" color="$colorSecondary" lineHeight={22} marginBottom="$sm">
-          Kudoz is not intended for users under the age of 13. We don't knowingly collect data from children. If you believe a child under 13 has created an account, contact us and we'll remove it.
+          Mokudos is not intended for users under the age of 13. We don't knowingly collect data from children. If you believe a child under 13 has created an account, contact us and we'll remove it.
         </Text>
 
         <Text fontSize="$4" fontWeight="600" color="$color" marginTop="$lg" marginBottom="$xs">Changes to this policy</Text>
@@ -163,7 +163,7 @@ export function PrivacyPolicyScreen() {
 
         <Text fontSize="$4" fontWeight="600" color="$color" marginTop="$lg" marginBottom="$xs">Contact</Text>
         <Text fontSize="$2" color="$colorSecondary" lineHeight={22} marginBottom="$sm">
-          Questions about your privacy? Reach us at privacy@kudoz.me
+          Questions about your privacy? Reach us at privacy@mokudos.com
         </Text>
 
         <YStack height="$xl" />

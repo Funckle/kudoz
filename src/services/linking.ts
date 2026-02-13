@@ -5,7 +5,7 @@ import { supabase } from './supabase';
 import type { RootStackParamList } from '../types/navigation';
 
 export const linking: LinkingOptions<RootStackParamList> = {
-  prefixes: [Linking.createURL('/'), 'kudoz://'],
+  prefixes: [Linking.createURL('/'), 'mokudos://'],
   config: {
     screens: {
       Auth: {
@@ -28,12 +28,12 @@ export function getAuthRedirectUrl(): string {
     if (typeof window !== 'undefined') {
       return window.location.origin;
     }
-    return 'https://kudoz-app.vercel.app';
+    return 'https://mokudos.com';
   }
   return Linking.createURL('auth/callback');
 }
 
-const ALLOWED_ORIGINS = ['https://kudoz-app.vercel.app', 'kudoz://'];
+const ALLOWED_ORIGINS = ['https://mokudos.com', 'mokudos://'];
 
 /**
  * Validates that a string looks like a JWT (3 dot-separated base64 segments).

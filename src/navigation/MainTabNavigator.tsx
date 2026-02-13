@@ -47,7 +47,7 @@ const HomeStack = createNativeStackNavigator<HomeStackParamList>();
 function HomeStackNavigator() {
   return (
     <HomeStack.Navigator>
-      <HomeStack.Screen name="Feed" component={FeedScreen} options={{ title: 'Kudoz' }} />
+      <HomeStack.Screen name="Feed" component={FeedScreen} options={{ title: 'Mokudos' }} />
       <HomeStack.Screen name="PostDetail" component={PostDetailScreen} options={{ title: 'Post' }} />
       <HomeStack.Screen name="GoalDetail" component={GoalDetailScreen} options={{ title: 'Goal' }} />
       <HomeStack.Screen name="UserProfile" component={UserProfileScreen} options={{ title: 'Profile' }} />
